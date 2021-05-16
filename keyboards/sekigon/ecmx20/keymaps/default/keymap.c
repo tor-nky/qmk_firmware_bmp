@@ -88,3 +88,5 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) { return true; }
+
+void keyboard_post_init_user() { layer_state_set_user(layer_state); }
