@@ -39,8 +39,8 @@ typedef enum {
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [0] = {{KC_BTN1, KC_BTN2, KC_BTN3, KC_BTN4, KC_BTN5, LCTL(KC_C), LCTL(KC_V), MO(1)}, {KC_NO}},
-    [1] = {{KC_ENT, KC_BSPC, SPD_3, LCTL(KC_Z), LCTL(KC_Y), SPD_1, SPD_2, _______}, {KC_PGUP, KC_PGDN, KC_HOME, KC_END}},
+    [0] = {{KC_BTN1, KC_BTN2, KC_BTN3, KC_BTN4, KC_BTN5, LCTL(KC_C), LCTL(KC_V), MO(1)}, {KC_NO, KC_NO, KC_NO, KC_NO, KC_MS_WH_UP, KC_MS_WH_DOWN, KC_MS_WH_LEFT, KC_MS_WH_RIGHT }},
+    [1] = {{KC_ENT, KC_BSPC, SPD_3, LCTL(KC_Z), LCTL(KC_Y), SPD_1, SPD_2, _______}, {KC_PGUP, KC_PGDN, KC_HOME, KC_END, KC_MS_WH_UP, KC_MS_WH_DOWN, KC_MS_WH_LEFT, KC_MS_WH_RIGHT }},
 };
 // clang-format on
 
@@ -53,6 +53,8 @@ static int16_t gesture_move_y     = 0;
 static bool    gesture_wait       = false;
 static uint8_t kc_no_to_kc_offset = 0;
 static uint8_t btn_release_flag   = 0;
+static int16_t wheel_move_v       = 0;
+static int16_t wheel_move_h       = 0;
 
 gesture_id_t recognize_gesture(int16_t x, int16_t y) {
     gesture_id_t gesture_id = 0;
@@ -95,6 +97,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             pointing_device_set_report(mouse);
 
+            return false;
+        } break;
+
+        case KC_MS_WH_UP ... KC_MS_WH_RIGHT: {
+            report_mouse_t report = pointing_device_get_report();
+            report.v              = wheel_move_v;
+            report.h              = wheel_move_h;
+            pointing_device_set_report(report);
+            mouse_send_flag = true;
             return false;
         } break;
 
@@ -245,6 +256,32 @@ void mouse_report_hook(mouse_parse_result_t const* report) {
         mouse.buttons = 0;
     }
 
+    //
+    // Assign wheel to key action
+    //
+    if (report->v != 0) {
+        keypos_t key;
+        wheel_move_v = report->v;
+        key.row      = MATRIX_MSWHEEL_ROW;
+        key.col = report->v > 0 ? MATRIX_MSWHEEL_COL : MATRIX_MSWHEEL_COL + 1;
+        action_exec((keyevent_t){
+            .key = key, .pressed = true, .time = (timer_read() | 1)});
+        action_exec((keyevent_t){
+            .key = key, .pressed = false, .time = (timer_read() | 1)});
+    }
+
+    if (report->h != 0) {
+        keypos_t key;
+        wheel_move_h = report->h;
+        key.row      = MATRIX_MSWHEEL_ROW;
+        key.col =
+            report->h > 0 ? MATRIX_MSWHEEL_COL + 2 : MATRIX_MSWHEEL_COL + 3;
+        action_exec((keyevent_t){
+            .key = key, .pressed = true, .time = (timer_read() | 1)});
+        action_exec((keyevent_t){
+            .key = key, .pressed = false, .time = (timer_read() | 1)});
+    }
+
     static int16_t x_rem;
     static int16_t y_rem;
 
@@ -261,8 +298,6 @@ void mouse_report_hook(mouse_parse_result_t const* report) {
 
     mouse.x += x;
     mouse.y += y;
-    mouse.v += report->v;
-    mouse.h += report->h;
 
     pointing_device_set_report(mouse);
 
