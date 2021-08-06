@@ -100,13 +100,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
         } break;
 
-        case KC_MS_WH_UP ... KC_MS_WH_RIGHT: {
-            report_mouse_t report = pointing_device_get_report();
-            report.v              = wheel_move_v;
-            report.h              = wheel_move_h;
-            pointing_device_set_report(report);
-            mouse_send_flag = true;
-            return false;
+        case KC_MS_WH_UP ... KC_MS_WH_DOWN: {
+            if (wheel_move_v != 0) {
+                report_mouse_t report = pointing_device_get_report();
+                report.v = keycode == KC_MS_WH_UP ? abs(wheel_move_v)
+                                                  : -abs(wheel_move_v);
+                pointing_device_set_report(report);
+                mouse_send_flag = true;
+                return false;
+            } else {
+                return true;
+            }
+        } break;
+
+        case KC_MS_WH_LEFT ... KC_MS_WH_RIGHT: {
+            if (wheel_move_h != 0) {
+                report_mouse_t report = pointing_device_get_report();
+                report.h = keycode == KC_MS_WH_LEFT ? abs(wheel_move_h)
+                                                    : -abs(wheel_move_h);
+                pointing_device_set_report(report);
+                mouse_send_flag = true;
+                return false;
+            } else {
+                return true;
+            }
         } break;
 
         case SPD_1:
@@ -133,7 +150,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         uint8_t kc = keycode & 0xFF;
         if (kc == KC_NO) {
             kc = kc_no_to_kc_offset;
-            dprintf("KC:%d, tap:%d\n", kc, record->tap.count);
+            // dprintf("KC:%d, tap:%d\n", kc, record->tap.count);
             if (record->tap.count > 0 && !record->tap.interrupted) {
                 // set mouse button bit
                 report_mouse_t mouse = pointing_device_get_report();
@@ -232,7 +249,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
 
             process_gesture(layer, gesture_id);
-            dprintf("id:%d x:%d,y:%d\n", gesture_id, gesture_move_x, gesture_move_y);
+            // dprintf("id:%d x:%d,y:%d\n", gesture_id, gesture_move_x, gesture_move_y);
         }
     }
 }
