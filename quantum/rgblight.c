@@ -40,7 +40,7 @@
 #endif
 
 #ifdef PROTOCOL_NRF
-#include "eeprom.h"
+#    include "eeprom.h"
 #endif
 
 #ifndef MIN
