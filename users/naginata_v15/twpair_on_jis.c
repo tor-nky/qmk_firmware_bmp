@@ -39,7 +39,7 @@ const uint16_t us2jis[][2] = {
   {KC_MINS, JP_MINS},
   {KC_EQL,  JP_EQL},
   {KC_BSLS, JP_BSLS},
-  {KC_SCLN, JP_SCLN},
+//{KC_SCLN, JP_SCLN},
   {KC_QUOT, JP_QUOT},
   {KC_GRV,  JP_GRV},
   {KC_PLUS, JP_PLUS},

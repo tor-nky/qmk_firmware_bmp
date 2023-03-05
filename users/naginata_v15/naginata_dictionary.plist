@@ -4,81 +4,57 @@
 <array>
 	<dict>
 		<key>phrase</key>
-		<string>【</string>
+		<string>……</string>
 		<key>shortcut</key>
-		<string>なぎかっこひあ</string>
+		<string>なぎてて</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>】</string>
+		<string>││</string>
 		<key>shortcut</key>
-		<string>なぎかっこみあ</string>
+		<string>なぎたせ</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>〈</string>
+		<string>──</string>
 		<key>shortcut</key>
-		<string>なぎかっこひい</string>
+		<string>なぎよせ</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>〉</string>
+		<string>《》</string>
 		<key>shortcut</key>
-		<string>なぎかっこみい</string>
+		<string>なぎにや</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>「</string>
+		<string>（）</string>
 		<key>shortcut</key>
-		<string>なぎかっこひう</string>
+		<string>なぎまか</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>」</string>
+		<string>【】</string>
 		<key>shortcut</key>
-		<string>なぎかっこみう</string>
+		<string>なぎすか</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>『</string>
+		<string>「」</string>
 		<key>shortcut</key>
-		<string>なぎかっこひえ</string>
+		<string>なぎかぎ</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>』</string>
+		<string>『』</string>
 		<key>shortcut</key>
-		<string>なぎかっこみえ</string>
+		<string>なぎにか</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>《</string>
+		<string>／</string>
 		<key>shortcut</key>
-		<string>なぎかっこひお</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
-		<string>》</string>
-		<key>shortcut</key>
-		<string>なぎかっこみお</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
-		<string>（</string>
-		<key>shortcut</key>
-		<string>なぎかっこひか</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
-		<string>）</string>
-		<key>shortcut</key>
-		<string>なぎかっこみか</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
-		<string>○</string>
-		<key>shortcut</key>
-		<string>なぎまる</string>
+		<string>なぎなめ</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
@@ -88,39 +64,15 @@
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>・</string>
-		<key>shortcut</key>
-		<string>なぎちゅうてん</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
 		<string>｜</string>
 		<key>shortcut</key>
-		<string>なぎたてせん</string>
-	</dict>
-  <dict>
-		<key>phrase</key>
-		<string>││</string>
-		<key>shortcut</key>
-		<string>なぎたてせんい</string>
+		<string>なぎたぼ</string>
 	</dict>
 	<dict>
 		<key>phrase</key>
-		<string>／</string>
+		<string>○</string>
 		<key>shortcut</key>
-		<string>なぎななめ</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
-		<string>……</string>
-		<key>shortcut</key>
-		<string>なぎてんてん</string>
-	</dict>
-	<dict>
-		<key>phrase</key>
-		<string>──</string>
-		<key>shortcut</key>
-		<string>なぎせんせん</string>
+		<string>なぎまる</string>
 	</dict>
 </array>
 </plist>

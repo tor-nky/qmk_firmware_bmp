@@ -18,6 +18,9 @@
 #include "bmp_custom_keycode.h"
 #include "keycode_str_converter.h"
 
+#include "keymap_jp.h"
+#include "twpair_on_jis.h"
+
 // 薙刀式
 #include "naginata.h"
 NGKEYS naginata_keys;
@@ -27,6 +30,8 @@ NGKEYS naginata_keys;
 enum custom_keycodes {
     LOWER = BMP_SAFE_RANGE,
     RAISE,
+    US_KEY,
+    US2JIS,
 };
 
 const key_string_map_t custom_keys_user =
@@ -35,13 +40,14 @@ const key_string_map_t custom_keys_user =
 //    .end_kc = RAISE,
 //    .key_strings = "LOWER\0RAISE\0"
     .end_kc = NG_KOTI,
-    .key_strings = "LOWER\0RAISE\0NG_Q\0NG_W\0NG_E\0NG_R\0NG_T\0NG_Y\0NG_U\0NG_I\0NG_O\0NG_P\0NG_A\0NG_S\0NG_D\0NG_F\0NG_G\0NG_H\0NG_J\0NG_K\0NG_L\0NG_SCLN\0NG_Z\0NG_X\0NG_C\0NG_V\0NG_B\0NG_N\0NG_M\0NG_COMM\0NG_DOT\0NG_SLSH\0NG_SHFT\0NG_SHFT2\0NG_ON\0NG_OFF\0NG_CLR\0NGSW_WIN\0NGSW_MAC\0NGSW_LNX\0NG_MLV\0NG_SHOS\0NG_TAYO\0NG_KOTI\0"
+    .key_strings = "LOWER\0RAISE\0US_KEY\0US2JIS\0NG_Q\0NG_W\0NG_E\0NG_R\0NG_T\0NG_Y\0NG_U\0NG_I\0NG_O\0NG_P\0NG_A\0NG_S\0NG_D\0NG_F\0NG_G\0NG_H\0NG_J\0NG_K\0NG_L\0NG_SCLN\0NG_Z\0NG_X\0NG_C\0NG_V\0NG_B\0NG_N\0NG_M\0NG_COMM\0NG_DOT\0NG_SLSH\0NG_SHFT\0NG_SHFT2\0NG_ON\0NG_OFF\0NG_CLR\0NGSW_WIN\0NGSW_MAC\0NGSW_LNX\0NG_MLV\0NG_SHOS\0NG_TAYO\0NG_KOTI\0"
 };
 
 enum layers {
     _BASE,
     _NAGINATA, // 薙刀式入力レイヤー
-    _LOWER, _RAISE, _ADJUST
+    _LOWER, _RAISE, _ADJUST,
+    _BMP
 };
 
 const uint16_t keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -56,6 +62,7 @@ uint32_t keymaps_len() {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  static int us2jis = 0;
   bool continue_process = process_record_user_bmp(keycode, record);
   if (continue_process == false)
   {
@@ -72,7 +79,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         update_tri_layer(_LOWER, _RAISE, _ADJUST);
       }
       return false;
-      break;
     case RAISE:
       if (record->event.pressed) {
         layer_on(_RAISE);
@@ -82,12 +88,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         update_tri_layer(_LOWER, _RAISE, _ADJUST);
       }
       return false;
-      break;
+    case US_KEY:
+      if (record->event.pressed) {
+        us2jis = 0;
+      }
+      return false;
+    case US2JIS:
+      if (record->event.pressed) {
+        us2jis = 1;
+      }
+      return false;
     default:
       // 薙刀式
       if (!process_naginata(keycode, record))
         return false;
       // 薙刀式
+      // typewriter pairing on jis keyboard
+      if (us2jis && !twpair_on_jis(keycode, record))
+        return false;
       break;
   }
 

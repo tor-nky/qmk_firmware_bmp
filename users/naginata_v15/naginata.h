@@ -38,7 +38,7 @@ void mac_live_conversion_toggle(void);
 void tategaki_toggle(void);
 void kouchi_shift_toggle(void);
 void ty_send_string(char *);
-void copyTYtable(void);
+void send_back(void);
 
 bool process_naginata(uint16_t, keyrecord_t *);
 // void set_naginata(uint8_t);
@@ -50,7 +50,7 @@ void set_naginata(uint8_t, uint16_t *, uint16_t *);
 // 1. 英字レイアウトがQWERTYでない場合でもOK
 // 2. 薙刀式レイヤーでもKC_を定義すれば、かな変換せず出力できる
 typedef enum naginata_keycodes {
-  NG_Q = BMP_SAFE_RANGE + 2, // 薙刀式シフトキー
+  NG_Q = BMP_SAFE_RANGE + 4, // 薙刀式シフトキー
   NG_W,
   NG_E,
   NG_R,
