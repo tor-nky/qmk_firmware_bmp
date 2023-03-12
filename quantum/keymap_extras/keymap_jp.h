@@ -92,7 +92,7 @@
 #define JP_COMM KC_COMM // ,
 #define JP_DOT  KC_DOT  // .
 #define JP_SLSH KC_SLSH // /
-#define JP_BSLS KC_JYEN // (backslash)
+#define JP_BSLS KC_INT1 // (backslash)
 // Row 5
 #define JP_MHEN KC_INT5 // Muhenkan (無変換)
 #define JP_HENK KC_INT4 // Henkan (変換)
