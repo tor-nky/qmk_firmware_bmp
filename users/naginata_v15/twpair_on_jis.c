@@ -69,17 +69,19 @@ bool twpair_on_jis(uint16_t keycode, keyrecord_t *record) {
 
   for (int i = 0; i < sizeof(us2jis) / sizeof(us2jis[0]); i++) {
     if (us2jis[i][0] == skeycode) {
-      unregister_code(KC_LSFT);
-      unregister_code(KC_RSFT);
-      if ((us2jis[i][1] & QK_LSFT) == QK_LSFT || (us2jis[i][1] & QK_RSFT) == QK_RSFT) {
+      if (((us2jis[i][1] & QK_LSFT) == QK_LSFT) == shifted) {
+        tap_code(us2jis[i][1]);
+      } else if (shifted) {
+        if (lshifted) unregister_code(KC_LSFT);
+        if (rshifted) unregister_code(KC_RSFT);
+        tap_code(us2jis[i][1]);
+        if (lshifted) register_code(KC_LSFT);
+        if (rshifted) register_code(KC_RSFT);
+      } else {
         register_code(KC_LSFT);
         tap_code(us2jis[i][1]);
         unregister_code(KC_LSFT);
-      } else {
-        tap_code(us2jis[i][1]);
       }
-      if (lshifted) register_code(KC_LSFT);
-      if (rshifted) register_code(KC_RSFT);
       return false;
     }
   }
