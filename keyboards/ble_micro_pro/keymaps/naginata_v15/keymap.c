@@ -62,7 +62,6 @@ uint32_t keymaps_len() {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  static int us2jis = 0;
   bool continue_process = process_record_user_bmp(keycode, record);
   if (continue_process == false)
   {
@@ -90,12 +89,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;
     case US_KEY:
       if (record->event.pressed) {
-        us2jis = 0;
+        us2jis_off();
       }
       return false;
     case US2JIS:
       if (record->event.pressed) {
-        us2jis = 1;
+        us2jis_on();
       }
       return false;
     default:
@@ -104,7 +103,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
       // 薙刀式
       // typewriter pairing on jis keyboard
-      if (us2jis && !twpair_on_jis(keycode, record))
+      if (!twpair_on_jis(keycode, record))
         return false;
       break;
   }

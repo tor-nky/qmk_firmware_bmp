@@ -28,6 +28,8 @@
 #include QMK_KEYBOARD_H
 #include "keymap_jp.h"
 
+static bool is_us2jis = false;  // JIS変換がオンかオフか
+
 const uint16_t us2jis[][2] = {
   {KC_LPRN, JP_LPRN},
   {KC_RPRN, JP_RPRN},
@@ -53,8 +55,23 @@ const uint16_t us2jis[][2] = {
   {KC_CIRC, JP_CIRC},
 };
 
+// JIS変換をオン
+void us2jis_on(void) {
+  is_us2jis = true;
+}
+
+// JIS変換をオフ
+void us2jis_off(void) {
+  is_us2jis = false;
+}
+
+// JIS変換のon/off状態を返す
+bool us2jis_state(void) {
+  return is_us2jis;
+}
+
 bool twpair_on_jis(uint16_t keycode, keyrecord_t *record) {
-  if (!record->event.pressed) return true;
+  if (!is_us2jis || !record->event.pressed) return true;
 
   uint16_t skeycode; // シフトビットを反映したキーコード
   bool lshifted = keyboard_report->mods & MOD_BIT(KC_LSFT); // シフトキーの状態

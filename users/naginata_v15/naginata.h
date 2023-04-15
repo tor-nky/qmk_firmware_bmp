@@ -20,10 +20,9 @@
 
 void naginata_type(void);
 void naginata_clear(void);
-void compress_buffer(int nt);
-bool naginata_lookup(int nt, bool shifted);
-int number_of_candidates(void);
-int count_bit(uint32_t);
+void compress_buffer(uint_fast8_t nt);
+bool naginata_lookup(uint_fast8_t nt, bool shifted);
+int_fast8_t number_of_candidates(void);
 
 bool process_modifier(uint16_t, keyrecord_t *);
 
@@ -38,7 +37,12 @@ void mac_live_conversion_toggle(void);
 void tategaki_toggle(void);
 void kouchi_shift_toggle(void);
 void ty_send_string(char *);
+
+void cursor_move(bool shift, uint8_t code, uint_fast8_t count);
+void send_nagimaka(void);
+void send_nagikagi(void);
 void send_back(void);
+void paste_and_clear_clipboard(void);
 
 bool process_naginata(uint16_t, keyrecord_t *);
 // void set_naginata(uint8_t);
