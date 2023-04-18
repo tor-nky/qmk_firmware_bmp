@@ -24,8 +24,8 @@
 
 [    "RESET",   "KC_NO",   "KC_NO", "KC_MPRV", "KC_MPLY", "KC_MNXT",   "KC_WH_L", "KC_WH_D", "KC_WH_U", "KC_WH_R",  "US2JIS",   "NK_ON",     "KC_NO",   "KC_NO",
    "RGB_TOG", "RGB_HUI", "RGB_SAI", "RGB_VAI", "KC_VOLU", "KC_BRIU",     "KC_NO",  "NG_CLR", "NG_KOTI",  "NG_MLV",  "US_KEY",  "NK_OFF",     "KC_NO",
-   "RGB_MOD", "RGB_HUD", "RGB_SAD", "RGB_VAD", "KC_VOLD", "KC_BRID",  "NGSW_WIN","NGSW_MAC","NGSW_LNX", "NG_TAYO", "NG_SHOS",   "KC_NO",        "KC_NO",
-     "KC_NO",   "KC_NO",      "MO(5)",       "KC_TRNS",           "SAVE_EE",        "KC_TRNS",      "KC_TRNS",        "KC_NO",        "KC_NO",  "KC_NO",  "KC_NO"],
+   "RGB_MOD", "RGB_HUD", "RGB_SAD", "RGB_VAD", "KC_VOLD", "KC_BRID",  "NGSW_WIN","NGSW_MAC","NGSW_LNX", "NG_TAYO", "NG_SHOS", "KC_RSFT",        "KC_NO",
+     "KC_NO",   "KC_NO",      "MO(5)",       "KC_TRNS",           "SAVE_EE",        "KC_TRNS",       "MO(5)",         "KC_NO",        "KC_NO",  "KC_NO",  "KC_NO"],
 
 [  "ENT_DFU", "DEL_ID0", "DEL_ID1", "DEL_ID2", "DEL_ID3", "DEL_ID4",   "DEL_ID5", "DEL_ID6", "DEL_ID7",   "KC_NO",   "KC_NO", "DELBNDS",     "KC_NO",   "KC_NO",
      "KC_NO", "ADV_ID0", "ADV_ID1", "ADV_ID2", "ADV_ID3", "ADV_ID4",   "ADV_ID5", "ADV_ID6", "ADV_ID7",   "KC_NO",   "KC_NO",   "KC_NO",     "KC_NO",

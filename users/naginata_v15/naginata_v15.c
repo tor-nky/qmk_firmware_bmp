@@ -20,6 +20,8 @@
 
 #include <string.h>
 
+#define TAP_ENTER()   send_string(SS_TAP(X_LCTL)SS_TAP(X_LSFT)"\n") // ディレイの代わりをつける
+
 #define NGBUFFER 10 // キー入力バッファのサイズ
 
 // カーソル定義
@@ -318,8 +320,6 @@ const PROGMEM naginata_keymap ngmap[] = {
 
   // 追加
   {.key = B_SHFT            , .kana = " "},
-  {.key = B_V|B_SHFT        , .kana = ",\n"},  // 、{Enter}
-  {.key = B_M|B_SHFT        , .kana = ".\n"},  // 。{Enter}
   {.key = B_U               , .kana = "\b"},
 
   // enter
@@ -329,6 +329,9 @@ const PROGMEM naginata_keymap ngmap[] = {
 };
 
 const PROGMEM naginata_keymap_long ngmapl[] = {
+  {.key = B_V|B_SHFT        , .kana = ","SS_TAP(KAKT)},  // 、{Enter}
+  {.key = B_M|B_SHFT        , .kana = "."SS_TAP(KAKT)},  // 。{Enter}
+
 // 編集モード Win/Linux
   {.key = B_J|B_K|B_Q		, .kana = SS_LCTL(SS_TAP(X_END))}, // ^{End}
 //{.key = B_J|B_K|B_W		, .macro , // 《》{改行}{↑}
@@ -336,12 +339,12 @@ const PROGMEM naginata_keymap_long ngmapl[] = {
   {.key = B_J|B_K|B_T		, .kana = "/"}, // ・
 //{.key = B_J|B_K|B_A		, .win   = "……",		.mac = "nagitete"}, // ……{改行}
 //{.key = B_J|B_K|B_S		, .macro , // (){改行}{↑}
-  {.key = B_J|B_K|B_D		, .kana = "?\n"}, // ？{改行}
+  {.key = B_J|B_K|B_D		, .kana = "?"SS_TAP(KAKT)}, // ？{改行}
 //{.key = B_J|B_K|B_F		, .macro , // 「」{改行}{↑}
 //{.key = B_J|B_K|B_G		, .macro , // 『』{改行}{↑}
 //{.key = B_J|B_K|B_Z		, .macro , // ││{改行}
 //{.key = B_J|B_K|B_X		, .macro , // 【】{改行}{↑}
-  {.key = B_J|B_K|B_C		, .kana = "!\n"}, // ！{改行}
+  {.key = B_J|B_K|B_C		, .kana = "!"SS_TAP(KAKT)}, // ！{改行}
   {.key = B_J|B_K|B_V		, .kana = SS_TAP(KAKT)SS_TAP(NGDN)}, // {改行}{↓}
 //{.key = B_J|B_K|B_B		, .win   = "／",		.mac = "naginame"}, // ／{改行}
   {.key = B_D|B_F|B_Y		, .kana = SS_TAP(X_HOME)}, // {Home}
@@ -404,8 +407,8 @@ const PROGMEM naginata_keymap_long ngmapl_mac[] = {
   {.key = B_C|B_V|B_H		, .kana = SS_LCMD("c")}, // ^c
 
   // 追加
-  {.key = B_J|B_K|B_A		, .kana = SS_LALT(";;")SS_TAP(X_ENTER)}, // ……{改行}
-  {.key = B_J|B_K|B_B		, .kana = SS_LALT("/")SS_TAP(X_ENTER)}, // ／{改行}
+  {.key = B_J|B_K|B_A		, .kana = SS_LALT(";;")SS_TAP(KAKT)}, // ……{改行}
+  {.key = B_J|B_K|B_B		, .kana = SS_LALT("/")SS_TAP(KAKT)}, // ／{改行}
 };
 
 const PROGMEM naginata_keymap_unicode ngmapu[] = {
@@ -565,7 +568,7 @@ void tategaki_toggle() {
 void ty_send_string(char *s) {
   if (naginata_config.os == NG_MAC) {
     replace(s, SS_TAP(X_HOME), SS_LGUI(SS_TAP(NGUP)));  // 6バイト増える
-    replace(s, SS_TAP(X_END), SS_LGUI(SS_TAP(NGDN)));
+    replace(s, SS_TAP(X_END), SS_LGUI(SS_TAP(NGDN))); // 6バイト増える
     replace(s, SS_TAP(KAKT), SS_TAP(X_LANG2)SS_TAP(X_LANG1)); // 3バイト増える
   } else {
     replace(s, SS_TAP(KAKT), "\n");
@@ -615,7 +618,7 @@ void send_nagimaka() {
   } else {
     send_string(SS_LSFT("90"));
   }
-  tap_code(KC_ENT);
+  TAP_ENTER();
   send_back();
 }
 
@@ -626,7 +629,7 @@ void send_nagikagi() {
   } else {
     send_string("[]");
   }
-  tap_code(KC_ENT);
+  TAP_ENTER();
   send_back();
 }
 
@@ -694,7 +697,9 @@ void ng_show_os(void) {
 }
 
 void mac_send_string(const char *str) {
+  send_string(SS_TAP(X_LANG2)SS_TAP(X_LANG1));  // IME確定
   send_string(str);
+  send_string(SS_TAP(X_LCTL)SS_TAP(X_LSFT)SS_TAP(X_LCTL));  // ディレイの代わり
   if (!naginata_config.live_conv) tap_code(KC_SPC);
   tap_code(KC_ENT);
 }
@@ -973,7 +978,7 @@ int_fast8_t number_of_candidates() {
 // 検索に成功したらtrue、失敗したらfalseを返す
 bool naginata_lookup(uint_fast8_t nt, bool shifted) {
   uint32_t key; // PROGMEM buffer
-  char kana[sizeof(ngmapl[0].kana) + 6];  // PROGMEM buffer
+  char kana[sizeof(ngmapl[0].kana) + 9];  // PROGMEM buffer
 
   // keycomb_bufはバッファ内のキーの組み合わせ、keycombはリリースしたキーを含んでいない
   uint32_t keycomb_buf = 0UL;

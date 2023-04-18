@@ -562,8 +562,8 @@ END
 $henshu = {
 #"/*ディ*/"         => ["kana", "\"dhi\""],
 "・"            => ["kana"  , "\"/\""],
-"？{改行}"      => ["kana"  , "\"\?\\n\""],
-"！{改行}"      => ["kana"  , "\"!\\n\""],
+"？{改行}"      => ["kana"  , "\"\?\"SS_TAP(KAKT)"],
+"！{改行}"      => ["kana"  , "\"!\"SS_TAP(KAKT)"],
 "{Home}"        => ["kana", "SS_TAP(X_HOME)"],
 "{End}"         => ["kana", "SS_TAP(X_END)"],
 "+{Home}"       => ["kana", "SS_LSFT(SS_TAP(X_HOME))"],
