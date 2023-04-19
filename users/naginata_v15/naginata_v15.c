@@ -20,7 +20,8 @@
 
 #include <string.h>
 
-#define TAP_ENTER()   send_string(SS_TAP(X_LCTL)SS_TAP(X_LSFT)"\n") // ディレイの代わりをつける
+#define TAP_ENTER()   send_string(SS_TAP(X_LCTL)SS_TAP(X_LSFT)SS_TAP(X_LCTL)"\n") // ディレイの代わりをつける
+#define TAP_KAKUTEI() tap_code(KC_LANG2);tap_code(KC_LANG1); // IME確定
 
 #define NGBUFFER 10 // キー入力バッファのサイズ
 
@@ -569,7 +570,7 @@ void ty_send_string(char *s) {
   if (naginata_config.os == NG_MAC) {
     replace(s, SS_TAP(X_HOME), SS_LGUI(SS_TAP(NGUP)));  // 6バイト増える
     replace(s, SS_TAP(X_END), SS_LGUI(SS_TAP(NGDN))); // 6バイト増える
-    replace(s, SS_TAP(KAKT), SS_TAP(X_LANG2)SS_TAP(X_LANG1)); // 3バイト増える
+    replace(s, SS_TAP(KAKT), SS_TAP(X_LANG2)SS_TAP(X_LANG1)); // IME確定  // 3バイト増える
   } else {
     replace(s, SS_TAP(KAKT), "\n");
   }
@@ -635,6 +636,7 @@ void send_nagikagi() {
 
 // 1文字戻る
 void send_back() {
+  tap_code(KC_LCTRL); // ディレイの代わり
   if (naginata_config.tategaki) {
     tap_code(KC_UP);
   } else {
@@ -642,7 +644,10 @@ void send_back() {
   }
 }
 
-void paste_and_clear_clipboard() {
+// ペーストして1文字進む
+void paste_and_forward() {
+  tap_code(KC_LCTRL); tap_code(KC_LSFT); // ディレイの代わり
+
   if (naginata_config.os != NG_MAC) {
     send_string(SS_LCTL("v"));
   } else {
@@ -650,15 +655,9 @@ void paste_and_clear_clipboard() {
   }
 
   if (naginata_config.tategaki) {
-    send_string(SS_TAP(X_DOWN)" "SS_LSFT(SS_TAP(X_UP)));
+    tap_code(KC_DOWN);
   } else {
-    send_string(SS_TAP(X_RIGHT)" "SS_LSFT(SS_TAP(X_LEFT)));
-  }
-
-  if (naginata_config.os != NG_MAC) {
-    send_string(SS_LCTL("x"));
-  } else {
-    send_string(SS_LCMD("x"));
+    tap_code(KC_RIGHT);
   }
 }
 
@@ -697,9 +696,8 @@ void ng_show_os(void) {
 }
 
 void mac_send_string(const char *str) {
-  send_string(SS_TAP(X_LANG2)SS_TAP(X_LANG1));  // IME確定
   send_string(str);
-  send_string(SS_TAP(X_LCTL)SS_TAP(X_LSFT)SS_TAP(X_LCTL));  // ディレイの代わり
+  tap_code(KC_LCTRL); tap_code(KC_LSFT);  tap_code(KC_LCTRL); // ディレイの代わり
   if (!naginata_config.live_conv) tap_code(KC_SPC);
   tap_code(KC_ENT);
 }
@@ -1038,6 +1036,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
       if (naginata_config.os != NG_MAC) {
         ng_send_unicode_string("《》");
       } else {
+        TAP_KAKUTEI();
         mac_send_string("naginiya");
       }
       send_back();
@@ -1052,6 +1051,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
       if (naginata_config.os != NG_MAC) {
         ng_send_unicode_string("『』");
       } else {
+        TAP_KAKUTEI();
         mac_send_string("naginika");
       }
       send_back();
@@ -1063,16 +1063,20 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
         } else {
           ng_send_unicode_string("──");
         }
-      } else if (naginata_config.tategaki) {
-        mac_send_string("nagitase");
       } else {
-        mac_send_string("nagiyose");
+        TAP_KAKUTEI();
+        if (naginata_config.tategaki) {
+          mac_send_string("nagitase");
+        } else {
+          mac_send_string("nagiyose");
+        }
       }
       break;
     case B_J|B_K|B_X: // 【】{改行}{↑}
       if (naginata_config.os != NG_MAC) {
         ng_send_unicode_string("【】");
       } else {
+        TAP_KAKUTEI();
         mac_send_string("nagisuka");
       }
       send_back();
@@ -1098,16 +1102,16 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
     case B_M|B_COMM|B_W: // ^x｜{改行}^v《》{改行}{↑}
       if (naginata_config.os != NG_MAC) {
         send_string(SS_LCTL("x"));
-        ng_send_unicode_string("｜");
-        send_string(SS_LCTL("v"));
-        ng_send_unicode_string("《》");
+        ng_send_unicode_string("｜《》");
       } else {
         send_string(SS_LCMD("x"));
-        mac_send_string("nagitabo");
-        send_string(SS_LCMD("v"));
-        mac_send_string("naginiya");
+        mac_send_string("nagiru");
       }
+      // 2文字戻る
       send_back();
+      send_back();
+      // ペーストして1文字進む
+      paste_and_forward();
       break;
     case B_M|B_COMM|B_S: // ^x(^v){改行}{Space}+{↑}^x
       if (naginata_config.os != NG_MAC) {
@@ -1116,7 +1120,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
         send_string(SS_LCMD("x"));
       }
       send_nagimaka();
-      paste_and_clear_clipboard();
+      paste_and_forward();
       break;
     case B_M|B_COMM|B_F: // ^x「^v」{改行}{Space}+{↑}^x
       if (naginata_config.os != NG_MAC) {
@@ -1125,7 +1129,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
         send_string(SS_LCMD("x"));
       }
       send_nagikagi();
-      paste_and_clear_clipboard();
+      paste_and_forward();
       break;
     case B_M|B_COMM|B_G: // ^x『^v』{改行}{Space}+{↑}^x
       if (naginata_config.os != NG_MAC) {
@@ -1136,7 +1140,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
         mac_send_string("naginika");
       }
       send_back();
-      paste_and_clear_clipboard();
+      paste_and_forward();
       break;
     case B_M|B_COMM|B_Z: //　　　×　　　×　　　×{改行 2}
       if (naginata_config.os != NG_MAC) {
@@ -1158,7 +1162,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
         mac_send_string("nagisuka");
       }
       send_back();
-      paste_and_clear_clipboard();
+      paste_and_forward();
       break;
     case B_M|B_COMM|B_V: // {改行}{End}{改行}「」{改行}{↑}
       if (naginata_config.os != NG_MAC) {
@@ -1166,8 +1170,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
         tap_code(KC_END);
         tap_code(KC_ENT);
       } else {
-        tap_code(KC_LANG2);
-        tap_code(KC_LANG1);
+        TAP_KAKUTEI();
         if (naginata_config.tategaki) {
           send_string(SS_LGUI(SS_TAP(X_DOWN)));
         } else {
