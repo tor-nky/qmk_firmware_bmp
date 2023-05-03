@@ -475,10 +475,11 @@ void naginata_on(void) {
   naginata_clear();
   layer_on(naginata_layer);
 
-  if (naginata_config.os != NG_LINUX) {
-    tap_code(KC_LANG1); // (Mac)かな
+  if (naginata_config.os != NG_MAC && us2jis_state()) {
+    tap_code(KC_KANA); // ひらがな
+    tap_code(KC_KANA);
   } else {
-    tap_code(KC_HENK);  // 変換
+    tap_code(KC_LANG1); // (Mac)かな
   }
 }
 
@@ -489,10 +490,21 @@ void naginata_off(void) {
   naginata_clear();
   layer_off(naginata_layer);
 
-  if (naginata_config.os != NG_LINUX) {
-    tap_code(KC_LANG2); // (Mac)英数
-  } else {
-    tap_code(KC_MHEN);  // 無変換
+  switch (naginata_config.os) {
+    case NG_WIN:
+      // 確定→ひらがな→半角/全角
+      tap_code16(S(C(KC_HENK)));  // Shift+Ctrl+変換 にIMEの確定を設定しておくこと
+      tap_code(KC_KANA);
+      tap_code(KC_ZKHK);
+      break;
+    case NG_MAC:
+      tap_code(KC_LANG2); // (Mac)英数
+      break;
+    case NG_LINUX:
+      // ひらがな→半角/全角
+      tap_code(KC_KANA);
+      tap_code(KC_ZKHK);
+      break;
   }
 }
 
@@ -520,12 +532,14 @@ void switchOS(uint8_t os) {
 void ng_set_unicode_mode(uint8_t os) {
   switch (os) {
     case NG_WIN:
+      us2jis_on();
       set_unicode_input_mode(UC_WINC);
       break;
     case NG_MAC:
       set_unicode_input_mode(UC_MAC);
       break;
     case NG_LINUX:
+      us2jis_on();
       set_unicode_input_mode(UC_LNX);
       break;
   }
@@ -567,12 +581,18 @@ void tategaki_toggle() {
 }
 
 void ty_send_string(char *s) {
-  if (naginata_config.os == NG_MAC) {
-    replace(s, SS_TAP(X_HOME), SS_LGUI(SS_TAP(NGUP)));  // 6バイト増える
-    replace(s, SS_TAP(X_END), SS_LGUI(SS_TAP(NGDN))); // 6バイト増える
-    replace(s, SS_TAP(KAKT), SS_TAP(X_LANG2)SS_TAP(X_LANG1)); // IME確定  // 3バイト増える
-  } else {
-    replace(s, SS_TAP(KAKT), "\n");
+  switch (naginata_config.os) {
+    case NG_WIN:
+      replace(s, SS_TAP(KAKT), "\n");
+      break;
+    case NG_MAC:
+      replace(s, SS_TAP(X_HOME), SS_LGUI(SS_TAP(NGUP)));  // 6バイト増える
+      replace(s, SS_TAP(X_END), SS_LGUI(SS_TAP(NGDN))); // 6バイト増える
+      replace(s, SS_TAP(KAKT), SS_TAP(X_LANG2)SS_TAP(X_LANG1)); // IME確定  // 3バイト増える
+      break;
+    case NG_LINUX:
+      replace(s, SS_TAP(KAKT), SS_TAP(X_ZKHK)SS_TAP(X_KANA)); // 半角/全角→ひらがな // 3バイト増える
+      break;
   }
 
   if (naginata_config.tategaki) {
@@ -705,9 +725,9 @@ void mac_send_string(const char *str) {
 void ng_send_unicode_string(const char *str) {
   switch (naginata_config.os) {
     case NG_LINUX:
-      tap_code(KC_MHEN);
+      tap_code(KC_ZKHK);
       send_unicode_string(str);
-      tap_code(KC_HENK);
+      tap_code(KC_KANA);
       break;
     case NG_WIN:
     case NG_MAC:
