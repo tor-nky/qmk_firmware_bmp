@@ -21,7 +21,7 @@
 #include <string.h>
 
 #define TAP_ENTER()   send_string(SS_TAP(X_LCTL)SS_TAP(X_LSFT)SS_TAP(X_LCTL)"\n") // ディレイの代わりをつける
-#define TAP_KAKUTEI() tap_code(KC_LANG2);tap_code(KC_LANG1); // IME確定
+#define TAP_MAC_KAKUTEI() tap_code(KC_LANG2);tap_code(KC_LANG1); // IME確定
 
 #define NGBUFFER 10 // キー入力バッファのサイズ
 
@@ -1056,7 +1056,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
       if (naginata_config.os != NG_MAC) {
         ng_send_unicode_string("《》");
       } else {
-        TAP_KAKUTEI();
+        TAP_MAC_KAKUTEI();
         mac_send_string("naginiya");
       }
       send_back();
@@ -1071,7 +1071,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
       if (naginata_config.os != NG_MAC) {
         ng_send_unicode_string("『』");
       } else {
-        TAP_KAKUTEI();
+        TAP_MAC_KAKUTEI();
         mac_send_string("naginika");
       }
       send_back();
@@ -1084,7 +1084,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
           ng_send_unicode_string("──");
         }
       } else {
-        TAP_KAKUTEI();
+        TAP_MAC_KAKUTEI();
         if (naginata_config.tategaki) {
           mac_send_string("nagitase");
         } else {
@@ -1096,7 +1096,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
       if (naginata_config.os != NG_MAC) {
         ng_send_unicode_string("【】");
       } else {
-        TAP_KAKUTEI();
+        TAP_MAC_KAKUTEI();
         mac_send_string("nagisuka");
       }
       send_back();
@@ -1190,7 +1190,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
         tap_code(KC_END);
         tap_code(KC_ENT);
       } else {
-        TAP_KAKUTEI();
+        TAP_MAC_KAKUTEI();
         if (naginata_config.tategaki) {
           send_string(SS_LGUI(SS_TAP(X_DOWN)));
         } else {
