@@ -97,6 +97,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         us2jis_on();
       }
       return false;
+    case KC_PEQL:
+      if (naginata_config.os != NG_MAC) {
+        // USキーボードには KC_EQL を出力し、
+        // JISキーボードに対しては twpair_on_jis() を使って「=」を出力する
+        if (twpair_on_jis(KC_EQL, record) && record->event.pressed) {
+          tap_code(KC_EQL);
+        }
+        return false;
+      }
+      break;
     default:
       // 薙刀式
       if (!process_naginata(keycode, record))
