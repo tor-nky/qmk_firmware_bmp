@@ -12,9 +12,9 @@
    "KC_TRNS",    "NG_Z",    "NG_X",    "NG_C",    "NG_V",    "NG_B",      "NG_N",    "NG_M", "NG_COMM",  "NG_DOT", "NG_SLSH", "KC_TRNS",      "KC_TRNS",
    "KC_TRNS", "KC_TRNS",    "KC_TRNS",       "KC_TRNS",           "NG_SHFT",        "KC_TRNS",      "KC_TRNS",      "KC_TRNS",      "KC_TRNS","KC_TRNS","KC_TRNS"],
 
-[        "`",       "^",       "]",       "&",       "[",      "\\",         ":",       "7",       "8",       "9", "KC_PSLS",       "-",   "KC_TRNS", "KC_TRNS",
-   "KC_TRNS",       "!",       "@",       "|",       "(",       ")",         "=",       "4",       "5",       "6",       "+",       "*",   "KC_TRNS",
-   "KC_TRNS",       "~",       "$",       "#",       "{",       "}",         "0",       "1",       "2",       "3", "KC_PDOT",       "%",      "KC_TRNS",
+[        "`",       "^",       "]",       "&",       "[",      "\\",         ":",   "KC_P7",   "KC_P8",   "KC_P9", "KC_PSLS", "KC_PMNS",   "KC_TRNS", "KC_TRNS",
+   "KC_TRNS",       "!",       "@",       "|",       "(",       ")",   "KC_PEQL",   "KC_P4",   "KC_P5",   "KC_P6", "KC_PPLS", "KC_PAST",   "KC_TRNS",
+   "KC_TRNS",       "~",       "$",       "#",       "{",       "}",     "KC_P0",   "KC_P1",   "KC_P2",   "KC_P3", "KC_PDOT",       "%",      "KC_TRNS",
      "TO(0)", "KC_TRNS",    "KC_TRNS",       "KC_TRNS",           "KC_TRNS",     "LT(4,KC_PENT)",   "KC_TRNS",      "KC_TRNS",      "KC_TRNS","KC_TRNS","KC_TRNS"],
 
 [   "KC_PWR",   "KC_F1",   "KC_F2",   "KC_F3",   "KC_F4",   "KC_F5",   "KC_MS_L", "KC_MS_D", "KC_MS_U", "KC_MS_R", "KC_BTN1", "KC_BTN2",   "KC_TRNS", "KC_TRNS",
