@@ -458,9 +458,9 @@ void set_naginata(uint8_t layer, uint16_t *onk, uint16_t *offk) {
 
   naginata_config.raw = eeconfig_read_user();
   if (naginata_config.os != NG_WIN && naginata_config.os != NG_MAC && naginata_config.os != NG_LINUX) {
-    naginata_config.os = NG_WIN;
-    naginata_config.live_conv = 1;
-    naginata_config.tategaki = 1;
+    naginata_config.os = NG_MAC;
+    naginata_config.live_conv = 0;
+    naginata_config.tategaki = 0;
     naginata_config.kouchi_shift = 0;
     eeconfig_update_user(naginata_config.raw);
   }
