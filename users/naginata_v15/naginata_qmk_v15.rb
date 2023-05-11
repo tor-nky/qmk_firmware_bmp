@@ -272,7 +272,7 @@ macro1 =<<END
       if (naginata_config.os != NG_MAC) {
         ng_send_unicode_string("『』");
       } else {
-        TAP_KAKUTEI();
+        TAP_MAC_KAKUTEI();
         mac_send_string("naginika");
       }
       send_back();
@@ -281,13 +281,25 @@ END
 
 macro2 =<<END
 // (){改行}{↑}
-      send_nagimaka();
+      if (naginata_config.os != NG_MAC) {
+        ng_send_unicode_string("（）");
+      } else {
+        TAP_MAC_KAKUTEI();
+        mac_send_string("nagimaka");
+      }
+      send_back();
       break;
 END
 
 macro3 =<<END
 // 「」{改行}{↑}
-      send_nagikagi();
+      if (naginata_config.os != NG_MAC) {
+        ng_send_unicode_string("「」");
+      } else {
+        TAP_MAC_KAKUTEI();
+        mac_send_string("nagikagi");
+      }
+      send_back();
       break;
 END
 
@@ -297,16 +309,18 @@ macro4 =<<END
         tap_code(KC_ENT);
         tap_code(KC_END);
         tap_code(KC_ENT);
+        ng_send_unicode_string("「」");
       } else {
-        TAP_KAKUTEI();
+        TAP_MAC_KAKUTEI();
         if (naginata_config.tategaki) {
           send_string(SS_LGUI(SS_TAP(X_DOWN)));
         } else {
           send_string(SS_LGUI(SS_TAP(X_RIGHT)));
         }
         tap_code(KC_ENT);
+        mac_send_string("nagikagi");
       }
-      send_nagikagi();
+      send_back();
       break;
 END
 
@@ -315,7 +329,7 @@ macro5 =<<END
       if (naginata_config.os != NG_MAC) {
         ng_send_unicode_string("【】");
       } else {
-        TAP_KAKUTEI();
+        TAP_MAC_KAKUTEI();
         mac_send_string("nagisuka");
       }
       send_back();
@@ -341,7 +355,7 @@ macro7 =<<END
       if (naginata_config.os != NG_MAC) {
         ng_send_unicode_string("《》");
       } else {
-        TAP_KAKUTEI();
+        TAP_MAC_KAKUTEI();
         mac_send_string("naginiya");
       }
       send_back();
@@ -352,10 +366,12 @@ macro8 =<<END
 // ^x(^v){改行}{Space}+{↑}^x
       if (naginata_config.os != NG_MAC) {
         send_string(SS_LCTL("x"));
+        ng_send_unicode_string("（）");
       } else {
         send_string(SS_LCMD("x"));
+        mac_send_string("nagimaka");
       }
-      send_nagimaka();
+      send_back();
       paste_and_forward();
       break;
 END
@@ -364,10 +380,12 @@ macro9 =<<END
 // ^x「^v」{改行}{Space}+{↑}^x
       if (naginata_config.os != NG_MAC) {
         send_string(SS_LCTL("x"));
+        ng_send_unicode_string("「」");
       } else {
         send_string(SS_LCMD("x"));
+        mac_send_string("nagikagi");
       }
-      send_nagikagi();
+      send_back();
       paste_and_forward();
       break;
 END
@@ -376,21 +394,23 @@ macro10 =<<END
 // ^x｜{改行}^v《》{改行}{↑}{Space}+{↑}^x
       if (naginata_config.os != NG_MAC) {
         send_string(SS_LCTL("x"));
-        ng_send_unicode_string("｜");
-        send_string(SS_LCTL("v"));
-        ng_send_unicode_string("《》");
-        send_back();
-        tap_code(KC_SPC);
-        send_back();
-        send_string(SS_LCTL("x"));
+        ng_send_unicode_string("｜《》");
       } else {
         send_string(SS_LCMD("x"));
-        mac_send_string("nagitabo");
-        send_string(SS_LCMD("v"));
-        mac_send_string("naginiya");
-        send_back();
-        tap_code(KC_SPC);
-        send_back();
+        mac_send_string("nagiru");
+      }
+      // 2文字戻る
+      send_back();
+      send_back();
+      // ペーストして1文字進む
+      paste_and_forward();
+
+      // クリップボードに空白を入れる
+      tap_code(KC_SPC);
+      send_back();
+      if (naginata_config.os != NG_MAC) {
+        send_string(SS_LCTL("x"));
+      } else {
         send_string(SS_LCMD("x"));
       }
       break;
@@ -462,7 +482,7 @@ macro16 =<<END
           ng_send_unicode_string("──");
         }
       } else {
-        TAP_KAKUTEI();
+        TAP_MAC_KAKUTEI();
         if (naginata_config.tategaki) {
           mac_send_string("nagitase");
         } else {

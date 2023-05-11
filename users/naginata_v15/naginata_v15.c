@@ -15,7 +15,6 @@
  */
 
 #include QMK_KEYBOARD_H
-#include "twpair_on_jis.h"
 #include "naginata.h"
 
 #include <string.h>
@@ -475,7 +474,7 @@ void naginata_on(void) {
   naginata_clear();
   layer_on(naginata_layer);
 
-  if (naginata_config.os != NG_MAC && us2jis_state()) {
+  if (naginata_config.os != NG_MAC) {
     tap_code(KC_KANA); // ひらがな
     tap_code(KC_KANA);
   } else {
@@ -532,14 +531,12 @@ void switchOS(uint8_t os) {
 void ng_set_unicode_mode(uint8_t os) {
   switch (os) {
     case NG_WIN:
-      us2jis_on();
       set_unicode_input_mode(UC_WINC);
       break;
     case NG_MAC:
       set_unicode_input_mode(UC_MAC);
       break;
     case NG_LINUX:
-      us2jis_on();
       set_unicode_input_mode(UC_LNX);
       break;
   }
@@ -630,28 +627,6 @@ void cursor_move(bool shift, uint8_t code, uint_fast8_t count) {
   if (shift) {
     unregister_code(KC_LSFT);
   }
-}
-
-// （）{改行}{↑}
-void send_nagimaka() {
-  if (us2jis_state()) {
-    send_string(SS_LSFT("89"));
-  } else {
-    send_string(SS_LSFT("90"));
-  }
-  TAP_ENTER();
-  send_back();
-}
-
-// 「」{改行}{↑}
-void send_nagikagi() {
-  if (us2jis_state()) {
-    send_string("]"SS_TAP(X_NUHS));
-  } else {
-    send_string("[]");
-  }
-  TAP_ENTER();
-  send_back();
 }
 
 // 1文字戻る
@@ -1043,7 +1018,8 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
     case B_Y: // {→}
       cursor_move(false, KC_RIGHT, 1);
       break;
-/*  case B_SHFT|B_T:  // +{←}
+/*  同じ動作があるのでそちらにまとめるもの
+    case B_SHFT|B_T:  // +{←}
       cursor_move(true, KC_LEFT, 1);
       break;
     case B_SHFT|B_Y:  // +{→}
@@ -1062,10 +1038,22 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
       send_back();
       break;
     case B_J|B_K|B_S: // (){改行}{↑}
-      send_nagimaka();
+      if (naginata_config.os != NG_MAC) {
+        ng_send_unicode_string("（）");
+      } else {
+        TAP_MAC_KAKUTEI();
+        mac_send_string("nagimaka");
+      }
+      send_back();
       break;
     case B_J|B_K|B_F: // 「」{改行}{↑}
-      send_nagikagi();
+      if (naginata_config.os != NG_MAC) {
+        ng_send_unicode_string("「」");
+      } else {
+        TAP_MAC_KAKUTEI();
+        mac_send_string("nagikagi");
+      }
+      send_back();
       break;
     case B_J|B_K|B_G: // 『』{改行}{↑}
       if (naginata_config.os != NG_MAC) {
@@ -1136,19 +1124,23 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
     case B_M|B_COMM|B_S: // ^x(^v){改行}{Space}+{↑}^x
       if (naginata_config.os != NG_MAC) {
         send_string(SS_LCTL("x"));
+        ng_send_unicode_string("（）");
       } else {
         send_string(SS_LCMD("x"));
+        mac_send_string("nagimaka");
       }
-      send_nagimaka();
+      send_back();
       paste_and_forward();
       break;
     case B_M|B_COMM|B_F: // ^x「^v」{改行}{Space}+{↑}^x
       if (naginata_config.os != NG_MAC) {
         send_string(SS_LCTL("x"));
+        ng_send_unicode_string("「」");
       } else {
         send_string(SS_LCMD("x"));
+        mac_send_string("nagikagi");
       }
-      send_nagikagi();
+      send_back();
       paste_and_forward();
       break;
     case B_M|B_COMM|B_G: // ^x『^v』{改行}{Space}+{↑}^x
@@ -1189,6 +1181,7 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
         tap_code(KC_ENT);
         tap_code(KC_END);
         tap_code(KC_ENT);
+        ng_send_unicode_string("「」");
       } else {
         TAP_MAC_KAKUTEI();
         if (naginata_config.tategaki) {
@@ -1197,8 +1190,9 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
           send_string(SS_LGUI(SS_TAP(X_RIGHT)));
         }
         tap_code(KC_ENT);
+        mac_send_string("nagikagi");
       }
-      send_nagikagi();
+      send_back();
       break;
     case B_C|B_V|B_J: // {→ 5}
       cursor_move(false, KC_RIGHT, 5);

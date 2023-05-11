@@ -19,7 +19,6 @@
 #include "keycode_str_converter.h"
 
 #include "keymap_jp.h"
-#include "twpair_on_jis.h"
 
 // 薙刀式
 #include "naginata.h"
@@ -30,8 +29,6 @@ NGKEYS naginata_keys;
 enum custom_keycodes {
     LOWER = BMP_SAFE_RANGE,
     RAISE,
-    US_KEY,
-    US2JIS,
 };
 
 const key_string_map_t custom_keys_user =
@@ -40,7 +37,7 @@ const key_string_map_t custom_keys_user =
 //    .end_kc = RAISE,
 //    .key_strings = "LOWER\0RAISE\0"
     .end_kc = NG_KOTI,
-    .key_strings = "LOWER\0RAISE\0US_KEY\0US2JIS\0NG_Q\0NG_W\0NG_E\0NG_R\0NG_T\0NG_Y\0NG_U\0NG_I\0NG_O\0NG_P\0NG_A\0NG_S\0NG_D\0NG_F\0NG_G\0NG_H\0NG_J\0NG_K\0NG_L\0NG_SCLN\0NG_Z\0NG_X\0NG_C\0NG_V\0NG_B\0NG_N\0NG_M\0NG_COMM\0NG_DOT\0NG_SLSH\0NG_SHFT\0NG_SHFT2\0NG_ON\0NG_OFF\0NG_CLR\0NGSW_WIN\0NGSW_MAC\0NGSW_LNX\0NG_MLV\0NG_SHOS\0NG_TAYO\0NG_KOTI\0"
+    .key_strings = "LOWER\0RAISE\0NG_Q\0NG_W\0NG_E\0NG_R\0NG_T\0NG_Y\0NG_U\0NG_I\0NG_O\0NG_P\0NG_A\0NG_S\0NG_D\0NG_F\0NG_G\0NG_H\0NG_J\0NG_K\0NG_L\0NG_SCLN\0NG_Z\0NG_X\0NG_C\0NG_V\0NG_B\0NG_N\0NG_M\0NG_COMM\0NG_DOT\0NG_SLSH\0NG_SHFT\0NG_SHFT2\0NG_ON\0NG_OFF\0NG_CLR\0NGSW_WIN\0NGSW_MAC\0NGSW_LNX\0NG_MLV\0NG_SHOS\0NG_TAYO\0NG_KOTI\0"
 };
 
 enum layers {
@@ -87,34 +84,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         update_tri_layer(_LOWER, _RAISE, _ADJUST);
       }
       return false;
-    case US_KEY:
-      if (record->event.pressed) {
-        us2jis_off();
-      }
-      return false;
-    case US2JIS:
-      if (record->event.pressed) {
-        us2jis_on();
-      }
-      return false;
-    case KC_PEQL:
-      if (naginata_config.os != NG_MAC) {
-        // USキーボードには KC_EQL を出力し、
-        // JISキーボードに対しては twpair_on_jis() を使って「=」を出力する
-        if (twpair_on_jis(KC_EQL, record) && record->event.pressed) {
-          tap_code(KC_EQL);
-        }
-        return false;
-      }
-      break;
     default:
       // 薙刀式
       if (!process_naginata(keycode, record))
         return false;
       // 薙刀式
-      // typewriter pairing on jis keyboard
-      if (!twpair_on_jis(keycode, record))
-        return false;
       break;
   }
 
