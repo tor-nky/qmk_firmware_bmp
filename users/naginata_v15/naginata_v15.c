@@ -669,7 +669,7 @@ void ng_show_os(void) {
     case NG_MAC:
       send_string("mac");
       if (naginata_config.live_conv) {
-        send_string("/:lc");
+        send_string("/"SS_TAP(X_KP_PLUS)"lc");
       } else {
         send_string("/-lc");
       }
@@ -684,7 +684,7 @@ void ng_show_os(void) {
     send_string("/yoko");
   }
   if (naginata_config.kouchi_shift) {
-    send_string("/:kouchi");
+    send_string("/"SS_TAP(X_KP_PLUS)"kouchi");
   } else {
     send_string("/-kouchi");
   }
@@ -714,7 +714,7 @@ void ng_send_unicode_string(const char *str) {
 
 // modifierが押されたら薙刀式レイヤーをオフしてベースレイヤーに戻す
 // get_mods()がうまく動かない
-static int n_modifier = 0;
+static int8_t n_modifier = 0;
 
 bool process_modifier(uint16_t keycode, keyrecord_t *record) {
   // 参考： ./quantum/keycode.h, ./quantum/quantum_keycodes.h
@@ -736,7 +736,7 @@ bool process_modifier(uint16_t keycode, keyrecord_t *record) {
 
 static uint16_t fghj_buf = 0; // 押しているJかKのキーコード
 
-// 薙刀式の起動処理(COMBOを使わない)
+// 薙刀式の起動処理(容量が大きいCOMBOを使わない)
 bool enable_naginata(uint16_t keycode, keyrecord_t *record) {
   // キープレス
   if (record->event.pressed) {
@@ -818,33 +818,43 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
       case NG_ON:
         naginata_on();
         return false;
+        break;
       case NG_OFF:
         naginata_off();
         return false;
+        break;
       case NG_CLR:
         naginata_clear();
         return false;
+        break;
       case NGSW_WIN:
         switchOS(NG_WIN);
         return false;
+        break;
       case NGSW_MAC:
         switchOS(NG_MAC);
         return false;
+        break;
       case NGSW_LNX:
         switchOS(NG_LINUX);
         return false;
+        break;
       case NG_MLV:
         mac_live_conversion_toggle();
         return false;
+        break;
       case NG_SHOS:
         ng_show_os();
         return false;
+        break;
       case NG_TAYO:
         tategaki_toggle();
         return false;
+        break;
       case NG_KOTI:
         kouchi_shift_toggle();
         return false;
+        break;
     }
   }
 
@@ -875,6 +885,7 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
           naginata_type();
         }
         return false;
+        break;
     }
   } else { // key release
     switch (keycode) {
@@ -885,6 +896,7 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
         }
         keycomb &= ~ng_key[keycode - NG_Q]; // キーの重ね合わせ
         return false;
+        break;
     }
   }
   return true;
@@ -1269,5 +1281,5 @@ bool naginata_lookup(uint_fast8_t nt, bool shifted) {
       }
       return false;
   }
-  return true;
+  return true;  // switch文でdefault以外
 }
