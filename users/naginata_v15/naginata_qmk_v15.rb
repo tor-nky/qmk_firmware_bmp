@@ -11,9 +11,9 @@ shifted = <<ESHIFTED
 ESHIFTED
 
 mode1l = <<MEND
-^{End}    |《》{改行}{↑}|/*ディ*/|^s            |・            ||||||||
-……{改行}|(){改行}{↑}  |？{改行}|「」{改行}{↑}|『』{改行}{↑}||||||||
-││{改行}|【】{改行}{↑}|！{改行}|{改行}{↓}    |／{改行}      |||||||
+^{End}    |『』{改行}{↑}|/*ディ*/|^s            |・            ||||||||
+……{改行}|(){改行}{↑}  |？{改行}|「」{改行}{↑}|《》{改行}{↑}||||||||
+――{改行}|【】{改行}{↑}|！{改行}|{改行}{↓}    |{改行}{←}    |||||||
 MEND
 
 mode1r = <<MEND
@@ -23,15 +23,15 @@ mode1r = <<MEND
 MEND
 
 mode2l = <<MEND
-{Home}{Del 3}{BS}{←}           |^x｜{改行}^v《》{改行}{↑}  |{Home}{改行}{Space 3}{←}|{Space 3}                      |〇{改行}      ||||||||
-{Home}{Del 1}{BS}{←}           |^x(^v){改行}{Space}+{↑}^x  |{Home}{改行}{Space 1}{←}|^x「^v」{改行}{Space}+{↑}^x   |^x『^v』{改行}{Space}+{↑}^x||||||||
-　　　×　　　×　　　×{改行 2}|^x【^v】{改行}{Space}+{↑}^x|{改行}{End}{改行}}       |{改行}{End}{改行}「」{改行}{↑}|{End}{改行}   |||||||
+{Home}{→}{End}{Del 4}{←}      |^x『^v』{改行}{Space}+{↑}^x|{Home}{改行}{Space 3}{←}|{Space 3}                      |〇{改行}                                ||||||||
+{Home}{→}{End}{Del 2}{←}      |^x(^v){改行}{Space}+{↑}^x  |{Home}{改行}{Space 1}{←}|^x「^v」{改行}{Space}+{↑}^x   |^x｜{改行}^v《》{改行}{↑}{Space}+{↑}^x||||||||
+　　　×　　　×　　　×{改行 2}|^x【^v】{改行}{Space}+{↑}^x|／{改行}                 |{改行}{End}{改行}「」{改行}{↑}|{改行}{End}{改行}{Space}                |||||||
 MEND
 
 mode2r = <<MEND
-|||||+{Home}|^x    |^z   |^y      |^v      |  |  |
-|||||^c     |{→ 5}|+{→}|+{→ 5} |+{→ 20}|  |  |
-|||||+{End} |{← 5}|+{←}|+{← 5} |+{← 20}|  |
+|||||+{Home}|^x  |^v   |^y      |^z      |  |  |
+|||||^c     |{→}|+{→}|+{→ 5} |+{→ 20}|  |  |
+|||||+{End} |{←}|+{←}|+{← 5} |+{← 20}|  |
 MEND
 
 eiji    = %w(Q W E R T  Y U I O P  A S D F G  H J K L SCLN  Z X C V B  N M COMM DOT SLSH)
@@ -474,20 +474,12 @@ macro15 =<<END
 END
 
 macro16 =<<END
-// ││{改行}
+// ――{改行}
       if (naginata_config.os != NG_MAC) {
-        if (naginata_config.tategaki) {
-          ng_send_unicode_string("││");
-        } else {
-          ng_send_unicode_string("──");
-        }
+        ng_send_unicode_string("――");
       } else {
         TAP_MAC_KAKUTEI();
-        if (naginata_config.tategaki) {
-          mac_send_string("nagitase");
-        } else {
-          mac_send_string("nagiyose");
-        }
+        mac_send_string("nagiyose");
       }
       break;
 END
@@ -631,6 +623,7 @@ $henshu = {
 "{←}" => ["macro", macro117],
 "+{←}" => ["macro", macro118],
 "{改行}{↓}" => ["kana", "SS_TAP(KAKT)SS_TAP(NGDN)"],
+"{改行}{←}" => ["kana", "SS_TAP(KAKT)SS_TAP(NGLT)"],
 "{改行}{End}{改行}{Space}" => ["kana", "SS_TAP(KAKT)SS_TAP(X_END)\"\\n \""],
 
 "^x(^v){改行}{Space}+{↑}^x" => ["macro", macro8],
@@ -643,6 +636,8 @@ $henshu = {
 "《》{改行}{↑}" => ["macro", macro7],
 "^x『^v』{改行}{Space}+{↑}^x" => ["macro", macro6],
 
+"{Home}{→}{End}{Del 4}{←}" => ["kana", "SS_TAP(X_HOME)SS_TAP(NGRT)SS_TAP(X_END)\"\\x7F\\x7F\\x7F\\x7F\"SS_TAP(NGLT)"],
+"{Home}{→}{End}{Del 2}{←}" => ["kana", "SS_TAP(X_HOME)SS_TAP(NGRT)SS_TAP(X_END)\"\\x7F\\x7F\"SS_TAP(NGLT)"],
 "{Home}{Del 3}{BS}{←}" => ["kana", "SS_TAP(X_HOME)\"\\x7F\\x7F\\x7F\\b\"SS_TAP(NGLT)"],
 "^x｜{改行}^v《》{改行}{↑}" => ["macro", macro15],
 "{Home}{改行}{Space 3}{←}" => ["kana", "SS_TAP(X_HOME)\"\\n   \"SS_TAP(NGLT)"],
@@ -655,7 +650,7 @@ $henshu = {
 "……{改行}"    => ["uc"  , "……", "nagitete"],  # Mac: SS_LALT(";;")"\n"
 "／{改行}"      => ["uc"  , "／", "naginame"],  # Mac: SS_LALT("/")"\n"
 "││{改行}"    => ["macro", macro16], #["uc"  , "││", "nagitase"],
-"──{改行}"    => ["macro", macro16], #["uc"  , "──", "nagiyose"],
+"――{改行}"    => ["macro", macro16], #["uc"  , "――", "nagiyose"],
 "〇{改行}"      => ["uc"  , "〇", "nagimaru"],
 
 "^x｜{改行}^v《》{改行}{↑}{Space}+{↑}^x"=> ["macro", macro10], # ルビ
