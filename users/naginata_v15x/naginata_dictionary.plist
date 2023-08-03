@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>phrase</key>
+		<string>……</string>
+		<key>shortcut</key>
+		<string>なぎてて</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>――</string>
+		<key>shortcut</key>
+		<string>なぎよせ</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>《》</string>
+		<key>shortcut</key>
+		<string>なぎにや</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>（）</string>
+		<key>shortcut</key>
+		<string>なぎまか</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>【】</string>
+		<key>shortcut</key>
+		<string>なぎすか</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>「」</string>
+		<key>shortcut</key>
+		<string>なぎかぎ</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>『』</string>
+		<key>shortcut</key>
+		<string>なぎにか</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>／</string>
+		<key>shortcut</key>
+		<string>なぎなめ</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>×　　　×　　　×</string>
+		<key>shortcut</key>
+		<string>なぎばつ</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>｜《》</string>
+		<key>shortcut</key>
+		<string>なぎる</string>
+	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>○</string>
+		<key>shortcut</key>
+		<string>なぎまる</string>
+	</dict>
+</array>
+</plist>
