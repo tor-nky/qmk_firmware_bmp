@@ -482,8 +482,10 @@ const PROGMEM naginata_keymap ngmap[] = {
   {.key = B_X|B_C|B_M       , .kana = "pyu"     }, // ピュ
 
   // 別途処理しないといけない変換
-  {.key = B_T               , .kana = ""}, //
-  {.key = B_Y               , .kana = ""}, //
+  {.key = B_T               , .kana = ""}, // {←}
+  {.key = B_Y               , .kana = ""}, // {→}
+  {.key = B_T|B_SHFT        , .kana = ""}, // +{←}
+  {.key = B_Y|B_SHFT        , .kana = ""}, // +{→}
   {.key = B_V|B_SHFT        , .kana = ""}, // 、{Enter}
   {.key = B_M|B_SHFT        , .kana = ""}, // 。{Enter}
   {.key = B_H|B_J           , .kana = ""}, //　かなオン
@@ -993,11 +995,21 @@ uint8_t naginata_type(bool partial) {
       keycomb_buf |= ng_key[ngingroup[i][j].keycode - NG_Q];
     }
     switch (keycomb_buf) {
-      case B_T:
+      case B_T: // {←}
         ng_left(1);
         break;
-      case B_Y:
+      case B_Y: // {→}
         ng_right(1);
+        break;
+      case B_T|B_SHFT:  // +{←}
+        register_code(KC_LSFT);
+        ng_left(1);
+        unregister_code(KC_LSFT);
+        break;
+      case B_Y|B_SHFT:  // +{→}
+        register_code(KC_LSFT);
+        ng_right(1);
+        unregister_code(KC_LSFT);
         break;
       case B_V|B_SHFT:  // 、{Enter}
         tap_code(KC_COMM);
@@ -1021,10 +1033,10 @@ uint8_t naginata_type(bool partial) {
             break;
         }
         break;
-      case B_H|B_J:
+      case B_H|B_J: //　かなオン
         naginata_on();
         break;
-      case B_F|B_G:
+      case B_F|B_G: //　かなオフ
         naginata_off();
         break;
       default:
