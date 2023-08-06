@@ -473,8 +473,6 @@ const PROGMEM naginata_keymap ngmap[] = {
 
   // 追加
   {.key = B_SHFT            , .kana = " "},
-  {.key = B_V|B_SHFT        , .kana = ","SS_TAP(X_ENTER)},
-  {.key = B_M|B_SHFT        , .kana = "."SS_TAP(X_ENTER)},
   {.key = B_U               , .kana = SS_TAP(X_BACKSPACE)},
 
   // enter
@@ -486,6 +484,8 @@ const PROGMEM naginata_keymap ngmap[] = {
   // 別途処理しないといけない変換
   {.key = B_T               , .kana = ""}, //
   {.key = B_Y               , .kana = ""}, //
+  {.key = B_V|B_SHFT        , .kana = ""}, // 、{Enter}
+  {.key = B_M|B_SHFT        , .kana = ""}, // 。{Enter}
   {.key = B_H|B_J           , .kana = ""}, //　かなオン
   {.key = B_F|B_G           , .kana = ""}, //　かなオフ
 
@@ -998,6 +998,28 @@ uint8_t naginata_type(bool partial) {
         break;
       case B_Y:
         ng_right(1);
+        break;
+      case B_V|B_SHFT:  // 、{Enter}
+        tap_code(KC_COMM);
+        switch (naginata_config.os) {
+          case NG_IOS:
+            ng_ime_complete();
+            break;
+          default:
+            tap_code(KC_ENT);
+            break;
+        }
+        break;
+      case B_M|B_SHFT:  // 。{Enter}
+        tap_code(KC_DOT);
+        switch (naginata_config.os) {
+          case NG_IOS:
+            ng_ime_complete();
+            break;
+          default:
+            tap_code(KC_ENT);
+            break;
+        }
         break;
       case B_H|B_J:
         naginata_on();
