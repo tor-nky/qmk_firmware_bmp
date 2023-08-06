@@ -324,8 +324,6 @@ const PROGMEM naginata_keymap ngmap[] = {
 
   // enter
   {.key = B_V|B_M           , .kana = "\n"},
-  // enter+シフト(連続シフト)
-  {.key = B_SHFT|B_V|B_M    , .kana = "\n"},
 };
 
 const PROGMEM naginata_keymap_long ngmapl[] = {
