@@ -1473,9 +1473,8 @@ void ng_ime_complete() {
 }
 
 void ios_send_string(const char *str) {
-    ng_ime_complete();
     send_string(str);
-    tap_code(KC_LCTRL); tap_code(KC_LSFT);  tap_code(KC_LCTRL); // ディレイの代わり
+    tap_code(KC_LCTRL); tap_code(KC_LSFT); tap_code(KC_LCTRL); // ディレイの代わり
     tap_code(KC_SPC);
     tap_code(KC_ENT);
     tap_code(KC_LCTRL); // ディレイの代わり
@@ -1835,11 +1834,11 @@ bool exec_henshu(uint32_t keycomb) {
           ng_cut();
           ios_send_string("nagiru"); // "｜《》"
           ng_up(1);     // 1文字戻る
-          tap_code(KC_LCTRL); // ディレイの代わり
+//          tap_code(KC_LCTRL); // ディレイの代わり
           ng_up(1);     // 1文字戻る
           tap_code(KC_LCTRL); tap_code(KC_LSFT); // ディレイの代わり
           ng_paste();
-//          tap_code(KC_LCTRL); // ディレイの代わり
+          tap_code(KC_LCTRL); // ディレイの代わり
           ng_down(1);   // 1文字進む
           break;
         default:
