@@ -352,8 +352,6 @@ const PROGMEM naginata_keymap ngmap[] = {
   {.key = B_SHFT|B_C               , .kana = "wo"      }, // を
   {.key = B_COMM                   , .kana = "nn"      }, // ん
   {.key = B_SCLN                   , .kana = "-"       }, // ー
-  {.key = B_Q                      , .kana = "vu"      }, // ヴ
-  {.key = B_SHFT|B_Q               , .kana = "vu"      }, // ヴ
 
   // 濁音
   {.key = B_J|B_F                  , .kana = "ga"      }, // が
@@ -376,6 +374,8 @@ const PROGMEM naginata_keymap ngmap[] = {
   {.key = B_F|B_SCLN               , .kana = "bu"      }, // ぶ
   {.key = B_F|B_P                  , .kana = "be"      }, // べ
   {.key = B_J|B_Z                  , .kana = "bo"      }, // ぼ
+  {.key = B_Q                      , .kana = "vu"      }, // ヴ
+  {.key = B_SHFT|B_Q               , .kana = "vu"      }, // ヴ
 
   // 半濁音
   {.key = B_M|B_C                  , .kana = "pa"      }, // ぱ
@@ -395,6 +395,8 @@ const PROGMEM naginata_keymap ngmap[] = {
   {.key = B_Q|B_N                  , .kana = "xo"      }, // ぉ
   {.key = B_Q|B_DOT                , .kana = "xwa"     }, // ゎ
   {.key = B_G                      , .kana = "xtu"     }, // っ
+//  {.key = B_Q|B_S                  , .kana = "xke"     }, // ヶ
+//  {.key = B_Q|B_F                  , .kana = "xka"     }, // ヵ
 
   // 清音拗音 濁音拗音 半濁拗音
   {.key = B_R|B_H                  , .kana = "sya"     }, // しゃ
@@ -479,7 +481,7 @@ const PROGMEM naginata_keymap ngmap[] = {
   {.key = B_V|B_M           , .kana = SS_TAP(X_ENTER)},
 
   // 非標準の変換
-  {.key = B_X|B_C|B_M       , .kana = "pyu"     }, // ピュ
+//  {.key = B_X|B_C|B_M       , .kana = "pyu"     }, // ピュ
 
   // 別途処理しないといけない変換
   {.key = B_T               , .kana = ""}, // {←}
