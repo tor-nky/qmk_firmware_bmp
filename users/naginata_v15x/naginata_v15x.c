@@ -32,6 +32,7 @@ x ガブガブ、FJ両方ともキャリーオーバーするのでうまくい�
 x じょじょの連続シフト
 x 5キーの組み合わせへの拡張
 
+編集モードを英字モードでも使いたい --> v15xxで試す
 グローバル変数を減らす
 単打の時は評価関数を飛ばす
 「なんと」が編集モードに入る
@@ -1422,8 +1423,10 @@ void ng_eof() {
     case NG_MAC:
     case NG_IOS:
       tap_code(KC_LANGUAGE_2);      // (Mac)英数
-      tap_code16(LCMD(KC_LEFT));
-      tap_code16(LCMD(KC_DOWN));
+      if (naginata_config.tategaki)
+        tap_code16(LCMD(KC_LEFT));
+      else
+        tap_code16(LCMD(KC_DOWN));
       tap_code(KC_LANGUAGE_1);      // (Mac)かな
       break;
   }
