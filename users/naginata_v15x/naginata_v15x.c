@@ -1836,9 +1836,7 @@ bool exec_henshu(uint32_t keycomb) {
         case NG_IOS:
           ng_cut();
           ios_send_string("nagiru"); // "｜《》"
-          ng_up(1);     // 1文字戻る
-//          tap_code(KC_LCTRL); // ディレイの代わり
-          ng_up(1);     // 1文字戻る
+          ng_up(2);     // 2文字戻る
           tap_code(KC_LCTRL); tap_code(KC_LSFT); // ディレイの代わり
           ng_paste();
           tap_code(KC_LCTRL); // ディレイの代わり
