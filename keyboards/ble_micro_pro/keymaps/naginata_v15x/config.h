@@ -43,6 +43,9 @@
 #endif
 
 
+// iOS用を使うとき
+#define ENABLE_NG_IOS
+
 //#define MAC_USE_KAWASEMI // Mac汎用 → かわせみ専用
 
 #ifndef MAC_USE_KAWASEMI

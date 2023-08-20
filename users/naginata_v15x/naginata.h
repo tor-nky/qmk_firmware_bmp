@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "bmp_custom_keycode.h"
+#include "bmp_custom_keycode.h" // BMP用
 
 uint8_t naginata_type(bool);
 void naginata_clear(void);
@@ -67,8 +67,10 @@ void ng_saihenkan(void);
 void ng_eof(void);
 void ng_ime_cancel(void);
 void ng_ime_complete(void);
+#ifdef ENABLE_NG_IOS
 void ios_send_string(const char *);
 void ios_send_string_with_cut_paste(const char *);
+#endif
 
 // bool enable_naginata(uint16_t, keyrecord_t *);
 
@@ -76,7 +78,7 @@ void ios_send_string_with_cut_paste(const char *);
 // 1. 英字レイアウトがQWERTYでない場合でもOK
 // 2. 薙刀式レイヤーでもKC_を定義すれば、かな変換せず出力できる
 typedef enum naginata_keycodes {
-  NG_Q = BMP_SAFE_RANGE + 2, // 薙刀式シフトキー
+  NG_Q = BMP_SAFE_RANGE + 2, // 薙刀式シフトキー    // BMP用
   NG_W,
   NG_E,
   NG_R,

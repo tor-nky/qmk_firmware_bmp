@@ -476,6 +476,10 @@ const PROGMEM naginata_keymap ngmap[] = {
 
   // 追加
   {.key = B_SHFT            , .kana = " "},
+  #ifndef ENABLE_NG_IOS
+  {.key = B_V|B_SHFT        , .kana = ","SS_TAP(X_ENTER)},
+  {.key = B_M|B_SHFT        , .kana = "."SS_TAP(X_ENTER)},
+  #endif
   {.key = B_U               , .kana = SS_TAP(X_BACKSPACE)},
 
   // enter
@@ -489,8 +493,10 @@ const PROGMEM naginata_keymap ngmap[] = {
   {.key = B_Y               , .kana = ""}, // {→}
   {.key = B_T|B_SHFT        , .kana = ""}, // +{←}
   {.key = B_Y|B_SHFT        , .kana = ""}, // +{→}
+  #ifdef ENABLE_NG_IOS
   {.key = B_V|B_SHFT        , .kana = ""}, // 、{Enter}
   {.key = B_M|B_SHFT        , .kana = ""}, // 。{Enter}
+  #endif
   {.key = B_H|B_J           , .kana = ""}, //　かなオン
   {.key = B_F|B_G           , .kana = ""}, //　かなオフ
 
@@ -505,7 +511,11 @@ void set_naginata(uint8_t layer, uint16_t *onk, uint16_t *offk) {
   ngoff_keys[1] = *(offk+1);
 
   naginata_config.raw = eeconfig_read_user();
+  #ifdef ENABLE_NG_IOS
   if (naginata_config.os != NG_WIN && naginata_config.os != NG_MAC && naginata_config.os != NG_LINUX && naginata_config.os != NG_IOS) {
+  #else
+  if (naginata_config.os != NG_WIN && naginata_config.os != NG_MAC && naginata_config.os != NG_LINUX) {
+  #endif
     naginata_config.os = NG_WIN;
     naginata_config.live_conv = 1;
     naginata_config.tategaki = 1;
@@ -528,7 +538,9 @@ void naginata_on(void) {
       tap_code(KC_INTERNATIONAL_2);
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       tap_code(KC_LANGUAGE_1);      // (Mac)かな
       break;
   }
@@ -549,7 +561,9 @@ void naginata_off(void) {
       tap_code(KC_GRV); // 半角/全角
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       tap_code(KC_LANGUAGE_2);  // (Mac)英数
       break;
     case NG_LINUX:
@@ -575,7 +589,9 @@ void ng_set_unicode_mode(uint8_t os) {
       set_unicode_input_mode(UNICODE_MODE_WINCOMPOSE);
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       set_unicode_input_mode(UNICODE_MODE_MACOS);
       break;
     case NG_LINUX:
@@ -615,9 +631,11 @@ void ng_show_os(void) {
     case NG_LINUX:
       send_string("linux");
       break;
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
       send_string("ios");
       break;
+    #endif
   }
   if (naginata_config.tategaki) {
     send_string("/tate");
@@ -649,7 +667,9 @@ void ng_send_unicode_string_P(const char *str) {
       tap_code(KC_ENT);
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
 #ifndef MAC_USE_KAWASEMI
       // Karabiner-Elementsが必要
       {
@@ -845,10 +865,12 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
         switchOS(NG_LINUX);
         return false;
         break;
+      #ifdef ENABLE_NG_IOS
       case NGSW_IOS:
         switchOS(NG_IOS);
         return false;
         break;
+      #endif
       case NG_MLV:
         mac_live_conversion_toggle();
         return false;
@@ -1018,6 +1040,7 @@ uint8_t naginata_type(bool partial) {
         ng_right(1);
         unregister_code(KC_LSFT);
         break;
+      #ifdef ENABLE_NG_IOS
       case B_V|B_SHFT:  // 、{Enter}
         tap_code(KC_COMM);
         switch (naginata_config.os) {
@@ -1040,6 +1063,7 @@ uint8_t naginata_type(bool partial) {
             break;
         }
         break;
+      #endif
       case B_H|B_J: //　かなオン
         naginata_on();
         break;
@@ -1247,7 +1271,9 @@ void ng_cut() {
       tap_code16(LCTL(KC_X));
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       tap_code16(LCMD(KC_X));
       break;
   }
@@ -1260,7 +1286,9 @@ void ng_copy() {
       tap_code16(LCTL(KC_C));
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       tap_code16(LCMD(KC_C));
       break;
   }
@@ -1273,7 +1301,9 @@ void ng_paste() {
       tap_code16(LCTL(KC_V));
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       register_code(KC_LCMD);
       wait_ms(100);
       tap_code(KC_V);
@@ -1331,7 +1361,9 @@ void ng_home() {
       tap_code(KC_HOME);
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       tap_code16(LCTL(KC_A));
       break;
   }
@@ -1344,7 +1376,9 @@ void ng_end() {
       tap_code(KC_END);
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       tap_code16(LCTL(KC_E));
       break;
   }
@@ -1361,7 +1395,9 @@ void ng_save() {
       tap_code16(LCTL(KC_S));
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       tap_code16(LCMD(KC_S));
       break;
   }
@@ -1378,7 +1414,9 @@ void ng_redo() {
       tap_code16(LCTL(KC_Y));
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       tap_code16(LCMD(LSFT(KC_Z)));
       break;
   }
@@ -1391,7 +1429,9 @@ void ng_undo() {
       tap_code16(LCTL(KC_Z));
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       tap_code16(LCMD(KC_Z));
       break;
   }
@@ -1406,7 +1446,9 @@ void ng_saihenkan() {
       tap_code(KC_INT4);
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       tap_code(KC_LANGUAGE_1);
       tap_code(KC_LANGUAGE_1);
       break;
@@ -1425,7 +1467,9 @@ void ng_eof() {
       tap_code16(LCTL(KC_END));
       break;
     case NG_MAC:
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
+    #endif
       tap_code(KC_LANGUAGE_2);      // (Mac)英数
       if (naginata_config.tategaki)
         tap_code16(LCMD(KC_LEFT));
@@ -1446,9 +1490,11 @@ void ng_ime_cancel() {
     case NG_MAC:
       tap_code(KC_NUM_LOCK);
       break;
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
       tap_code(KC_ESC);
       break;
+    #endif
   }
 }
 
@@ -1472,13 +1518,16 @@ void ng_ime_complete() {
       tap_code(KC_LANGUAGE_1);  // (Mac)かな
 #endif
       break;
+    #ifdef ENABLE_NG_IOS
     case NG_IOS:
       tap_code(KC_LANGUAGE_2);  // (Mac)英数
       tap_code(KC_LANGUAGE_1);  // (Mac)かな
       break;
+    #endif
   }
 }
 
+#ifdef ENABLE_NG_IOS
 void ios_send_string(const char *str) {
     send_string(str);
     tap_code(KC_LCTRL); tap_code(KC_LSFT); tap_code(KC_LCTRL); // ディレイの代わり
@@ -1495,6 +1544,7 @@ void ios_send_string_with_cut_paste(const char *str) {
   ng_paste();
   ng_down(1);   // 1文字進む
 }
+#endif
 
 bool exec_henshu(uint32_t keycomb) {
   switch (keycomb) {
@@ -1505,14 +1555,18 @@ bool exec_henshu(uint32_t keycomb) {
       return true;
       break;
     case B_J|B_K|B_W: // 『』{改行}{↑}
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string("naginika");  // "『』"
           break;
         default:
+      #endif
           ng_send_unicode_string_P(PSTR("『』"));
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       ng_up(1);
       henshu_done = true;
       return true;
@@ -1528,26 +1582,34 @@ bool exec_henshu(uint32_t keycomb) {
       return true;
       break;
     case B_J|B_K|B_A: // ……{改行}
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string("nagitete");  // "……"
           break;
         default:
+      #endif
           ng_send_unicode_string_P(PSTR("……"));
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       henshu_done = true;
       return true;
       break;
     case B_J|B_K|B_S: // (){改行}{↑}
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string("nagimaka");  // "（）"
           break;
         default:
+      #endif
           ng_send_unicode_string_P(PSTR("（）"));
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       ng_up(1);
       henshu_done = true;
       return true;
@@ -1559,52 +1621,68 @@ bool exec_henshu(uint32_t keycomb) {
       return true;
       break;
     case B_J|B_K|B_F: // 「」{改行}{↑}
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string("nagikagi");  // "「」"
           break;
         default:
+      #endif
           ng_send_unicode_string_P(PSTR("「」"));
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       ng_up(1);
       henshu_done = true;
       return true;
       break;
     case B_J|B_K|B_G: // 《》{改行}{↑}
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string("naginiya");  // "《》"
           break;
         default:
+      #endif
           ng_send_unicode_string_P(PSTR("《》"));
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       ng_up(1);
       henshu_done = true;
       return true;
       break;
     case B_J|B_K|B_Z: // ――{改行}
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string("nagiyose");  // "──"
           break;
         default:
+      #endif
           ng_send_unicode_string_P(PSTR("──"));
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       henshu_done = true;
       return true;
       break;
     case B_J|B_K|B_X: // 【】{改行}{↑}
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string("nagisuka");  // "【】"
           break;
         default:
+      #endif
           ng_send_unicode_string_P(PSTR("【】"));
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       ng_up(1);
       henshu_done = true;
       return true;
@@ -1729,11 +1807,13 @@ bool exec_henshu(uint32_t keycomb) {
       return true;
       break;
     case B_M|B_COMM|B_W: // ^x『^v』{改行}{Space}+{↑}^x
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string_with_cut_paste("naginika"); // "『』"
           break;
         default:
+      #endif
           ng_cut();
           ng_send_unicode_string_P(PSTR("『"));
           ng_paste();
@@ -1743,8 +1823,10 @@ bool exec_henshu(uint32_t keycomb) {
           ng_up(1);
           unregister_code(KC_LSFT);
           ng_cut();
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       henshu_done = true;
       return true;
       break;
@@ -1766,14 +1848,18 @@ bool exec_henshu(uint32_t keycomb) {
       return true;
       break;
     case B_M|B_COMM|B_T: // 〇{改行}
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string("nagimaru");  // "〇"
           break;
         default:
+      #endif
           ng_send_unicode_string_P(PSTR("〇"));
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       henshu_done = true;
       return true;
       break;
@@ -1788,11 +1874,13 @@ bool exec_henshu(uint32_t keycomb) {
       return true;
       break;
     case B_M|B_COMM|B_S: // ^x(^v){改行}{Space}+{↑}^x
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string_with_cut_paste("nagimaka"); // "（）"
           break;
         default:
+      #endif
           ng_cut();
           ng_send_unicode_string_P(PSTR("（"));
           ng_paste();
@@ -1802,8 +1890,10 @@ bool exec_henshu(uint32_t keycomb) {
           ng_up(1);
           unregister_code(KC_LSFT);
           ng_cut();
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       henshu_done = true;
       return true;
       break;
@@ -1816,11 +1906,13 @@ bool exec_henshu(uint32_t keycomb) {
       return true;
       break;
     case B_M|B_COMM|B_F: // ^x「^v」{改行}{Space}+{↑}^x
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string_with_cut_paste("nagikagi"); // "「」"
           break;
         default:
+      #endif
           ng_cut();
           ng_send_unicode_string_P(PSTR("「"));
           ng_paste();
@@ -1830,12 +1922,15 @@ bool exec_henshu(uint32_t keycomb) {
           ng_up(1);
           unregister_code(KC_LSFT);
           ng_cut();
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       henshu_done = true;
       return true;
       break;
     case B_M|B_COMM|B_G: // ^x｜{改行}^v《》{改行}{↑}{Space}+{↑}^x
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ng_cut();
@@ -1847,6 +1942,7 @@ bool exec_henshu(uint32_t keycomb) {
           ng_down(1);   // 1文字進む
           break;
         default:
+      #endif
           ng_cut();
           ng_send_unicode_string_P(PSTR("｜"));
           ng_paste();
@@ -1857,12 +1953,15 @@ bool exec_henshu(uint32_t keycomb) {
           ng_up(1);
           unregister_code(KC_LSFT);
           ng_cut();
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       henshu_done = true;
       return true;
       break;
     case B_M|B_COMM|B_Z: // 　　　×　　　×　　　×{改行 2}
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           tap_code(KC_SPACE);
@@ -1871,19 +1970,24 @@ bool exec_henshu(uint32_t keycomb) {
           ios_send_string("nagibatu");  // "　　　×　　　×　　　×"
           break;
         default:
+      #endif
           ng_send_unicode_string_P(PSTR("　　　×　　　×　　　×"));
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       tap_code(KC_ENT);
       henshu_done = true;
       return true;
       break;
     case B_M|B_COMM|B_X: // ^x【^v】{改行}{Space}+{↑}^x
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string_with_cut_paste("nagisuka"); // "【】"
           break;
         default:
+      #endif
           ng_cut();
           ng_send_unicode_string_P(PSTR("【"));
           ng_paste();
@@ -1893,20 +1997,26 @@ bool exec_henshu(uint32_t keycomb) {
           ng_up(1);
           unregister_code(KC_LSFT);
           ng_cut();
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       henshu_done = true;
       return true;
       break;
     case B_M|B_COMM|B_C: // ／{改行}
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string("naginame");  // "／"
           break;
         default:
+      #endif
           ng_send_unicode_string_P(PSTR("／"));
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       henshu_done = true;
       return true;
       break;
@@ -1914,14 +2024,18 @@ bool exec_henshu(uint32_t keycomb) {
       ng_ime_complete();
       ng_end();
       tap_code(KC_ENT);
+      #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
           ios_send_string("nagikagi");  // "「」"
           break;
         default:
+      #endif
           ng_send_unicode_string_P(PSTR("「」"));
+      #ifdef ENABLE_NG_IOS
           break;
       }
+      #endif
       ng_up(1);
       henshu_done = true;
       return true;
