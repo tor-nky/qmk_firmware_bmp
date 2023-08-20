@@ -491,8 +491,8 @@ const PROGMEM naginata_keymap ngmap[] = {
   // 別途処理しないといけない変換
   {.key = B_T               , .kana = ""}, // {←}
   {.key = B_Y               , .kana = ""}, // {→}
-  {.key = B_T|B_SHFT        , .kana = ""}, // +{←}
-  {.key = B_Y|B_SHFT        , .kana = ""}, // +{→}
+  {.key = B_SHFT|B_T        , .kana = ""}, // +{←}
+  {.key = B_SHFT|B_Y        , .kana = ""}, // +{→}
   #ifdef ENABLE_NG_IOS
   {.key = B_V|B_SHFT        , .kana = ""}, // 、{Enter}
   {.key = B_M|B_SHFT        , .kana = ""}, // 。{Enter}
@@ -1030,12 +1030,12 @@ uint8_t naginata_type(bool partial) {
       case B_Y: // {→}
         ng_right(1);
         break;
-      case B_T|B_SHFT:  // +{←}
+      case B_SHFT|B_T:  // +{←}
         register_code(KC_LSFT);
         ng_left(1);
         unregister_code(KC_LSFT);
         break;
-      case B_Y|B_SHFT:  // +{→}
+      case B_SHFT|B_Y:  // +{→}
         register_code(KC_LSFT);
         ng_right(1);
         unregister_code(KC_LSFT);
@@ -1946,13 +1946,13 @@ bool exec_henshu(uint32_t keycomb) {
           ng_cut();
           ng_send_unicode_string_P(PSTR("｜"));
           ng_paste();
-          ng_send_unicode_string_P(PSTR("《》"));
-          ng_up(1);
           tap_code(KC_SPC);
           register_code(KC_LSFT);
           ng_up(1);
           unregister_code(KC_LSFT);
           ng_cut();
+          ng_send_unicode_string_P(PSTR("《》"));
+          ng_up(1);
       #ifdef ENABLE_NG_IOS
           break;
       }
