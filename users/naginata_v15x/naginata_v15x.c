@@ -1558,6 +1558,7 @@ bool exec_henshu(uint32_t keycomb) {
       #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
+          ng_ime_complete();
           ios_send_string("naginika");  // "『』"
           break;
         default:
@@ -1585,6 +1586,7 @@ bool exec_henshu(uint32_t keycomb) {
       #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
+          ng_ime_complete();
           ios_send_string("nagitete");  // "……"
           break;
         default:
@@ -1601,6 +1603,7 @@ bool exec_henshu(uint32_t keycomb) {
       #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
+          ng_ime_complete();
           ios_send_string("nagimaka");  // "（）"
           break;
         default:
@@ -1624,6 +1627,7 @@ bool exec_henshu(uint32_t keycomb) {
       #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
+          ng_ime_complete();
           ios_send_string("nagikagi");  // "「」"
           break;
         default:
@@ -1641,6 +1645,7 @@ bool exec_henshu(uint32_t keycomb) {
       #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
+          ng_ime_complete();
           ios_send_string("naginiya");  // "《》"
           break;
         default:
@@ -1658,6 +1663,7 @@ bool exec_henshu(uint32_t keycomb) {
       #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
+          ng_ime_complete();
           ios_send_string("nagiyose");  // "──"
           break;
         default:
@@ -1674,6 +1680,7 @@ bool exec_henshu(uint32_t keycomb) {
       #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
+          ng_ime_complete();
           ios_send_string("nagisuka");  // "【】"
           break;
         default:
@@ -1851,6 +1858,7 @@ bool exec_henshu(uint32_t keycomb) {
       #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
+          ng_ime_complete();
           ios_send_string("nagimaru");  // "〇"
           break;
         default:
@@ -2008,6 +2016,7 @@ bool exec_henshu(uint32_t keycomb) {
       #ifdef ENABLE_NG_IOS
       switch (naginata_config.os) {
         case NG_IOS:
+          ng_ime_complete();
           ios_send_string("naginame");  // "／"
           break;
         default:
