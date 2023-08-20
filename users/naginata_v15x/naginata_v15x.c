@@ -1616,7 +1616,7 @@ bool exec_henshu(uint32_t keycomb) {
       break;
     case B_J|B_K|B_D: // ？{改行}
       tap_code16(LSFT(KC_SLSH));
-      tap_code(KC_ENT);
+      ng_ime_complete();
       henshu_done = true;
       return true;
       break;
@@ -1689,7 +1689,7 @@ bool exec_henshu(uint32_t keycomb) {
       break;
     case B_J|B_K|B_C: // ！{改行}
       tap_code16(LSFT(KC_1));
-      tap_code(KC_ENT);
+      ng_ime_complete();
       henshu_done = true;
       return true;
       break;
