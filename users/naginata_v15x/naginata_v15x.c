@@ -1522,7 +1522,7 @@ void ng_ime_complete() {
     case NG_IOS:
       tap_code(KC_LANGUAGE_2);  // (Mac)英数
       tap_code(KC_LANGUAGE_1);  // (Mac)かな
-      tap_code(KC_LCTRL); tap_code(KC_LSFT);  // ディレイの代わり
+      tap_code(KC_LCTRL); // ディレイの代わり
       break;
     #endif
   }
