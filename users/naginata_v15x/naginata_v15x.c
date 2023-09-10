@@ -1365,26 +1365,22 @@ void ng_saihenkan() {
 }
 
 void ng_eof() {
+  ng_ime_complete();
   switch (naginata_config.os) {
     case NG_WIN:
-      tap_code16(LSFT(LCTL(KC_INTERNATIONAL_4))); // Shift+Ctrl+変換
       tap_code16(LCTL(KC_END));
       break;
     case NG_LINUX:
-      tap_code(KC_GRV);             // 半角/全角
-      tap_code(KC_INTERNATIONAL_2); // ひらがな
       tap_code16(LCTL(KC_END));
       break;
     case NG_MAC:
     #ifdef ENABLE_NG_IOS
     case NG_IOS:
     #endif
-      tap_code(KC_LANGUAGE_2);      // (Mac)英数
       if (naginata_config.tategaki)
         tap_code16(LCMD(KC_LEFT));
       else
         tap_code16(LCMD(KC_DOWN));
-      tap_code(KC_LANGUAGE_1);      // (Mac)かな
       break;
   }
 }
