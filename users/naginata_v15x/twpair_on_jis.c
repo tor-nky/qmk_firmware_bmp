@@ -30,7 +30,7 @@
 
 #include QMK_KEYBOARD_H
 
-#ifdef KC_LANGUAGE_9
+#ifdef IS_QK_KB
 #   include "keymap_japanese.h"
 #else
 #   include "keymap_jp.h"

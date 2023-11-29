@@ -19,7 +19,7 @@
 // place overrides here
 
 // 互換性
-#ifndef KC_LANGUAGE_1
+#ifndef IS_QK_KB
 #   define KC_LANGUAGE_1 KC_LANG1
 #   define KC_LANGUAGE_2 KC_LANG2
 #   define KC_INTERNATIONAL_2 KC_KANA
@@ -34,6 +34,7 @@
 #   define KC_RIGHT_SHIFT KC_RSFT
 #   define KC_RIGHT_ALT KC_RALT
 #   define KC_RIGHT_GUI KC_RGUI
+#   define KC_BACKSPACE KC_BSPACE
 #   define X_BACKSPACE X_BSPACE
 #   define UNICODE_MODE_WINCOMPOSE UC_WINC
 #   define UNICODE_MODE_MACOS UC_MAC
