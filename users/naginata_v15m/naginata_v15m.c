@@ -1113,7 +1113,7 @@ void naginata_type(uint16_t keycode, bool pressed) {
       }
     } else if (searching_keys != B_SHFT) {
       // 未出力のキーと同時押しになる定義がなければ、出力する
-      while (!(combinable_keys & recent_key) && searching_keys) {
+      while (searching_keys && !(combinable_keys & recent_key)) {
         // 組み合わせで探し、あったら出力
         if (ng_search_and_send(searching_keys)) {
           searching_keys = 0;
