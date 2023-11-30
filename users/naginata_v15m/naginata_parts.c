@@ -715,9 +715,10 @@ void ng_send_tsa(void) {	// つぁ
 }
 
 // 追加
-extern bool ng_pushed_spc, ng_pushed_ent;
-extern uint8_t ng_center_keycode;
 void ng_space_or_enter(void) {
+    extern bool ng_pushed_spc, ng_pushed_ent;
+    extern uint8_t ng_center_keycode;
+
 	if (ng_center_keycode == KC_NO)	return;
 	if (ng_pushed_spc | ng_pushed_ent) {
 		register_code(KC_LSFT);

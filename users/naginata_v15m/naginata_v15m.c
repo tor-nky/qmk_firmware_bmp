@@ -114,6 +114,12 @@ typedef struct {
   void (*func)(void);
 } naginata_keymap;
 
+// かな定義配列 ngmap[] の添字の型
+// uint8_t で最大254個のかな定義ができる
+typedef uint_fast8_t Ngmap_num;
+// かな定義の要素数
+#define NGMAP_COUNT (sizeof ngmap / sizeof ngmap[0])
+
 const PROGMEM naginata_keymap ngmap[] = {
   // ********** 3キー同時 **********
   // 拗音、外来音
@@ -367,8 +373,6 @@ const PROGMEM naginata_keymap ngmap[] = {
   {.key = B_DOT         , .func = ng_send_ra    },  // ら
   {.key = B_SLSH        , .func = ng_send_re    },  // れ
 };
-
-// const uint8_t ngmap_index[] = { 0, 109, 197, 228};
 
 // 薙刀式のレイヤー、オンオフするキー
 void set_naginata(uint8_t layer, uint16_t *onk, uint16_t *offk) {
@@ -1088,9 +1092,9 @@ void naginata_type(uint16_t keycode, bool pressed) {
     // シフト残りを含める場合
     if (rest_shift) {
       rest_shift = false;
-      uint8_t num = ng_search_with_rest_key(recent_key, pushed_keys);
+      Ngmap_num num = ng_search_with_rest_key(recent_key, pushed_keys);
       // 見つかった
-      if (num < sizeof ngmap / sizeof ngmap[0]) {
+      if (num < NGMAP_COUNT) {
         uint32_t key;
         memcpy_P(&key, &ngmap[num].key, sizeof(key));
         // 押すと同時押しになるキーを探す
@@ -1165,11 +1169,11 @@ void naginata_type(uint16_t keycode, bool pressed) {
   }
 }
 
-// 定義があれば出力する
-// 再検索がいるときは false を返す
+// かな定義を探し出力する
+// 見つかれば true を返す
 bool ng_search_and_send(uint32_t searching_keys) {
 //   if (!searching_keys)  return true;
-  for (uint8_t num = 0; num < sizeof ngmap / sizeof ngmap[0]; num++) {
+  for (Ngmap_num num = 0; num < NGMAP_COUNT; num++) {
     uint32_t key;
     memcpy_P(&key, &ngmap[num].key, sizeof(key));
     if (searching_keys == key) {
@@ -1182,12 +1186,13 @@ bool ng_search_and_send(uint32_t searching_keys) {
   return false;
 }
 
-// 押したままのシフト込みで検索し、配列の添え字を返す
+// すでに押されているキーをシフトとし、いま押したキーを含むかな定義を探し、配列の添え字を返す
+// 見つからなければ、かな定義の要素数 NGMAP_COUNT を返す
 uint8_t ng_search_with_rest_key(uint32_t recent_key, uint32_t pushed_keys) {
-//   if (!(recent_key && pushed_keys))  return sizeof ngmap / sizeof ngmap[0];
+//   if (!(recent_key && pushed_keys))  return NGMAP_COUNT;
   uint32_t hasShift = pushed_keys & B_SHFT;
-  uint8_t num = 0;
-  for ( ; num < sizeof ngmap / sizeof ngmap[0]; num++) {
+  Ngmap_num num = 0;
+  for ( ; num < NGMAP_COUNT; num++) {
     uint32_t key;
     memcpy_P(&key, &ngmap[num].key, sizeof(key));
     // 押しているキーに全て含まれ、今回のキーを含み、シフトの相違はない定義を探す
@@ -1203,7 +1208,7 @@ uint32_t find_combinable_bit(uint32_t search) {
   if (!search)  return ~0UL;
 
   uint32_t combi = 0;
-  for (uint8_t i = 0; i < sizeof ngmap / sizeof ngmap[0]; i++) {
+  for (Ngmap_num i = 0; i < NGMAP_COUNT; i++) {
     uint32_t key;
     memcpy_P(&key, &ngmap[i].key, sizeof(key));
     // 判定中のキーを含むのを登録
