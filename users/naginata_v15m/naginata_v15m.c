@@ -115,8 +115,7 @@ typedef struct {
 } naginata_keymap;
 
 // かな定義配列 ngmap[] の添字の型
-// uint8_t で最大254個のかな定義ができる
-typedef uint_fast8_t Ngmap_num;
+typedef uint_fast16_t Ngmap_num;
 // かな定義の要素数
 #define NGMAP_COUNT (sizeof ngmap / sizeof ngmap[0])
 
