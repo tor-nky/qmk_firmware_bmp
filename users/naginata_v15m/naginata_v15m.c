@@ -1082,10 +1082,10 @@ void naginata_type(uint16_t keycode, bool pressed) {
   if (pressed) {
     pushed_keys |= recent_key;  // キーを加える
 
-    // センターシフトを押したら出力させる
-    if (keycode == NG_SHFT || keycode == NG_SHFT2) {
-      combinable_keys = 0;
+    // 後置シフトなしでセンターシフトを押した時に、未出力のキーを全て出力させる
+    if (recent_key == B_SHFT && !naginata_config.kouchi_shift) {
       rest_shift = false;
+      combinable_keys = 0;
     }
 
     // シフト残りを含める場合
@@ -1121,8 +1121,11 @@ void naginata_type(uint16_t keycode, bool pressed) {
         } else {
           ng_search_and_send(first_pushed_key);
           searching_keys &= ~first_pushed_key;  // キーを取り除く
-          // 一緒に押すと同時押しになるキーを探す
-          combinable_keys = find_combinable_bit(searching_keys);
+          // 後置シフトなしでセンターシフトを押した時に、未出力のキーを全て出力させる
+          if (combinable_keys) {
+            // 一緒に押すと同時押しになるキーを探す
+            combinable_keys = find_combinable_bit(searching_keys);
+          }
         }
         first_pushed_key = searching_keys;
       }
