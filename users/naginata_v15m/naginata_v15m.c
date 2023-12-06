@@ -117,8 +117,6 @@ typedef struct {
   void (*func)(void);
 } naginata_keymap;
 
-// かな定義配列 ngmap[] の添字の型
-typedef uint_fast16_t Ngmap_num;
 // かな定義の要素数
 #define NGMAP_COUNT (sizeof ngmap / sizeof ngmap[0])
 
@@ -1204,7 +1202,7 @@ bool ng_search_and_send(uint32_t searching_key) {
 
 // すでに押されているキーをシフトとし、いま押したキーを含むかな定義を探し、配列の添え字を返す
 // 見つからなければ、かな定義の要素数 NGMAP_COUNT を返す
-uint8_t ng_search_with_rest_key(uint32_t recent_key, uint32_t pushed_key) {
+Ngmap_num ng_search_with_rest_key(uint32_t recent_key, uint32_t pushed_key) {
   if (!(recent_key && pushed_key))  return NGMAP_COUNT;
   uint32_t hasShift = pushed_key & B_SHFT;
   Ngmap_num num = 0;
