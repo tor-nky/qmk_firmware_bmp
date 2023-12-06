@@ -70,10 +70,10 @@ void ios_send_string_with_cut_paste(const char *);
 // かな定義配列 ngmap[] の添字の型
 typedef uint_fast16_t Ngmap_num;
 
-void naginata_type(uint16_t, bool);
+bool naginata_type(uint16_t, bool);
 bool ng_search_and_send(uint32_t);
 Ngmap_num ng_search_with_rest_key(uint32_t, uint32_t);
-uint32_t find_combinable_bit(uint32_t);
+int8_t number_of_candidates(uint32_t);
 
 // bool enable_naginata(uint16_t, keyrecord_t *);
 
