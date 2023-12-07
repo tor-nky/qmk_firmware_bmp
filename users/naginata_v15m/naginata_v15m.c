@@ -121,6 +121,9 @@ typedef struct {
 // かな定義の要素数
 #define NGMAP_COUNT (sizeof ngmap / sizeof ngmap[0])
 
+// かな定義
+// 3キー同時 → 2キー同時 → センターシフト → 単打 の順
+// 3キー同時、2キー同時はシフト残りとして判定させるため順序がある
 const PROGMEM naginata_keymap ngmap[] = {
   // ********** 3キー同時 **********
   // 拗音、外来音
@@ -1163,7 +1166,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
 // 成功すれば true を返す
 bool ng_search_and_send(uint32_t searching_key) {
   // if (!searching_key)  return false;
-  for (Ngmap_num num = 0; num < NGMAP_COUNT; num++) {
+  for (Ngmap_num num = NGMAP_COUNT; num-- > 0; ) {
     uint32_t key;
     memcpy_P(&key, &ngmap[num].key, sizeof(key));
     if (searching_key == key) {
