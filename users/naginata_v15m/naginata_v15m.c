@@ -23,9 +23,9 @@
 
 static bool is_naginata = false; // 薙刀式がオンかオフか
 static uint8_t naginata_layer = 0; // NG_*を配置しているレイヤー番号
-static uint32_t pushed_key = 0; // 同時押しの状態を示す。32bitの各ビットがキーに対応する。
 static uint16_t ngon_keys[2]; // 薙刀式をオンにするキー(通常HJ)
 static uint16_t ngoff_keys[2]; // 薙刀式をオフにするキー(通常FG)
+static uint32_t pushed_key = 0; // 同時押しの状態を示す。各ビットがキーに対応する。
 
 // 31キーを32bitの各ビットに割り当てる
 #define B_Q    (1UL<<0)
@@ -110,7 +110,7 @@ const uint32_t ng_key[] = {
 };
 
 #define NKEYS 3 // 組み合わせにある同時押しするキーの数、薙刀式なら3
-                // 最大何キーまでバッファに貯めるか
+                // (最大何キーまでバッファに貯めるか)
 
 // カナ変換テーブル
 typedef struct {
@@ -123,7 +123,8 @@ typedef struct {
 
 // かな定義
 // 3キー同時 → 2キー同時 → センターシフト → 単打 の順
-// 3キー同時、2キー同時はシフト残りとして判定させるため順序がある
+// シフト残り判定で、2キー同時内の順序が重要になる
+// 同じ key の定義が複数ある時の動作は不明
 const PROGMEM naginata_keymap ngmap[] = {
   // ********** 3キー同時 **********
   // 拗音、外来音
@@ -1036,15 +1037,12 @@ uint8_t ng_center_keycode = KC_NO;
 // 薙刀式のキー入力だったなら false を返す
 // そうでなければ未出力のキーを全て出力し、QMKにまかせるため true を返す
 bool naginata_type(uint16_t keycode, bool pressed) {
+  static uint32_t waiting_keys[NKEYS];  // 各ビットがキーに対応する
   static uint8_t waiting_count = 0; // 文字キー入力のカウンタ
-  // 32bitの各ビットがキーに対応する
-  static uint32_t waiting_keys[NKEYS];
-  // 押すと同時押しになる状態を示す。32bitの各ビットがキーに対応する。
   static bool rest_shift = false;
 
+  uint32_t recent_key;  // 各ビットがキーに対応する
   uint8_t do_count = waiting_count;
-  // 32bitの各ビットがキーに対応する
-  uint32_t recent_key;
 
   switch (keycode) {
     case NG_Q ... NG_SLSH:
