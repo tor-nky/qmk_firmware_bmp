@@ -30,7 +30,7 @@
 
 #include QMK_KEYBOARD_H
 
-#ifdef IS_QK_KB
+#if defined(IS_QK_KB) || defined(KC_LNG9)
 #   include "keymap_japanese.h"
 #else
 #   include "keymap_jp.h"

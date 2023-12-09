@@ -1,4 +1,4 @@
-/* Copyright 2018-2020 eswai <@eswai>
+/* Copyright 2018-2020 eswai <@eswai> / Satoru NAKAYA <@tor-nky>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,19 @@
 
   変換された文字はキーリピートが無効です。
 
+  QMKのKey Overrides機能だとリピートが効く一方、キーマップで定義したJP_ATなどは機能しなかった。
+  実際にシフト+KC_2を押した場合しか機能しない。
+
 */
 
 #include QMK_KEYBOARD_H
-#include "keymap_jp.h"
+
+#if defined(IS_QK_KB) || defined(KC_LNG9)
+#   include "keymap_japanese.h"
+#else
+#   include "keymap_jp.h"
+#endif
+
 
 const uint16_t us2jis[][2] = {
   {KC_LPRN, JP_LPRN},
