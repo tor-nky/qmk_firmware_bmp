@@ -19,10 +19,14 @@
 // place overrides here
 
 
+// スペースキーを離すと文字キーシフト全復活
+// #define USE_SHIFT_WHEN_SPACE_UP // 無効にするとDvorakJ風になる
+
 // iOS用を使うとき
 #define ENABLE_NG_IOS
 
 //#define MAC_USE_KAWASEMI // Mac汎用 → かわせみ専用
+
 
 #ifndef MAC_USE_KAWASEMI
 // UNICODE入力を安定化

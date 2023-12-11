@@ -123,7 +123,7 @@ typedef struct {
 
 // かな定義
 // 3キー同時 → 2キー同時 → センターシフト → 単打 の順
-// シフト残り判定で、2キー同時内の順序が重要になる
+// シフト残り判定は、3キー同時内と2キー同時内の順序で決まる
 // 同じ key の定義が複数ある時の動作は不明
 const PROGMEM naginata_keymap ngmap[] = {
   // ********** 3キー同時 **********
@@ -1042,7 +1042,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
   static bool rest_shift = false;
 
   uint32_t recent_key;  // 各ビットがキーに対応する
-  uint8_t do_count = waiting_count;
+  bool add_key_later = false;
 
   switch (keycode) {
     case NG_Q ... NG_SLSH:
@@ -1072,76 +1072,53 @@ bool naginata_type(uint16_t keycode, bool pressed) {
   if (pressed && recent_key) {
     pushed_key |= recent_key;  // キーを加える
 
-    // シフト残りを含める場合
-    if (rest_shift && pushed_key) {
-      Ngmap_num num = ng_search_with_rest_key(recent_key, pushed_key);
-      // 見つかった
-      if (num < NGMAP_COUNT) {
-        uint32_t key;
-        memcpy_P(&key, &ngmap[num].key, sizeof(key));
-        recent_key |= key;
-      }
-    }
-
-    // 配列に押したキーを保存
-    waiting_keys[waiting_count++] = recent_key;
-
-    // センターシフト
-    if (recent_key == B_SHFT) {
-      // 後置シフトあり
-      if (naginata_config.kouchi_shift) {
-          do_count++; // いま押したキーを含める
-      }
-    // それ以外のキー
+    // センターシフト(後置シフトなし)の時
+    if (recent_key == B_SHFT && !naginata_config.kouchi_shift) {
+      add_key_later = true;
     } else {
-      // バッファ内のキーを組み合わせる
-      uint32_t searching_key = center_shift;
-      for (uint8_t i = 0; i < waiting_count; i++) {
-        searching_key |= waiting_keys[i];
-      }
-      // 変換候補を数える
-      // ※ この時点で do_count は今押したキーを数えていないことに注意！
-      uint8_t nc = number_of_candidates(searching_key);
-      switch (nc) {
-        // 組み合わせが一つしかない = 1: 変換を開始する
-        case 1:
-          do_count++; // いま押したキーを含める
-          break;
-        // 組み合わせがない = 0: 変換を開始する
-        case 0:
-          break;  // いま押したキーを含めない
-        // 組み合わせが複数ある > 1: 変換しない
-        // 組み合わせが一つしかない、ただしキーを全て押していない =-1: 変換しない
-        default:
-          do_count = 0;
-          break;
-      }
+      // 配列に押したキーを保存
+      waiting_keys[waiting_count++] = recent_key;
     }
   }
-  rest_shift = false;
 
   // 出力
   {
-    uint8_t searching_count = do_count;
-    while (do_count) {
+    uint8_t searching_count = waiting_count;
+    while (waiting_count) {
       // バッファ内のキーを組み合わせる
       uint32_t searching_key = center_shift;
       for (uint8_t i = 0; i < searching_count; i++) {
         searching_key |= waiting_keys[i];
       }
-      // いま薙刀式のキーを離したところで、そのキーが含まれていなければループを抜ける
-      if (searching_count == do_count && !((pressed && recent_key) || (searching_key & recent_key))) {
-        break;
+
+      // バッファ内の全てのキーを組み合わせたところ
+      if (searching_count == waiting_count) {
+        // いま薙刀式のキーを離したところで、そのキーが含まれていなければループを抜ける
+        if (!((pressed && recent_key) || (searching_key & recent_key))) {
+          break;
+        }
+        // 変換候補を数える
+        uint8_t nc = number_of_candidates(searching_key);
+        // 組み合わせがない = 0: 変換を開始する
+        if (nc == 0) {
+          searching_count--;  // 最後のキーを減らして検索
+          continue;
+        // 組み合わせが複数ある > 1: 変換しない
+        // 組み合わせが一つしかない、ただしキーを全て押していない =-1: 変換しない
+        } else if (nc != 1 && pressed && recent_key) {
+          break;
+        }
       }
-      // 探してあったら出力
-      if (ng_search_and_send(searching_key)) {
+
+      // 探してあったら出力する
+      // 単打、センターシフトに定義漏れがあった場合の暴走対策
+      if (ng_search_and_send(searching_key) || searching_count == 1) {
         // 見つかった分のキーを配列から取り除く
         waiting_count -= searching_count;
         for (uint8_t i = 0; i < waiting_count; i++) {
           waiting_keys[i] = waiting_keys[i + searching_count];
         }
-        do_count -= searching_count;
-        searching_count = do_count;
+        searching_count = waiting_count;
       // 見つからなかったら最後のキーを減らして再検索
       } else {
         searching_count--;
@@ -1149,12 +1126,42 @@ bool naginata_type(uint16_t keycode, bool pressed) {
     }
   }
 
+  // 薙刀式のキーを押した時
+  if (pressed && recent_key) {
+    // センターシフト(後置シフトなし)の時
+    if (add_key_later) {
+      // 配列に押したキーを保存
+      waiting_keys[waiting_count++] = recent_key;
+    // 今押したキー以外は出力済みの時に、シフト残りを含められる
+    } else if (waiting_count == 1 && rest_shift && pushed_key != recent_key) {
+      Ngmap_num num = ng_search_with_rest_key(recent_key, pushed_key);
+      // 見つかった
+      if (num < NGMAP_COUNT) {
+        uint32_t key;
+        memcpy_P(&key, &ngmap[num].key, sizeof(key));
+        // 変換候補を数える
+        // 組み合わせが一つしかない = 1: 変換を開始する
+        if (number_of_candidates(key) == 1) {
+          // 出力
+          ng_search_and_send(key);
+          waiting_count = 0;
+        } else {
+          waiting_keys[0] = key;
+        }
+      }
+    }
+    rest_shift = false;
   // キーを離した時
-  if (!pressed) {
+  } else {
+#ifdef USE_SHIFT_WHEN_SPACE_UP
+    pushed_key &= ~recent_key; // キーを取り除く
+#endif
     if (!(pushed_key & B_SHFT)) {
       rest_shift = true;  // 次回、シフト残りを含めて探す
     }
+#ifndef USE_SHIFT_WHEN_SPACE_UP
     pushed_key &= ~recent_key; // キーを取り除く
+#endif
   }
 
   return (recent_key == 0);
@@ -1164,7 +1171,8 @@ bool naginata_type(uint16_t keycode, bool pressed) {
 // 成功すれば true を返す
 bool ng_search_and_send(uint32_t searching_key) {
   // if (!searching_key)  return false;
-  for (Ngmap_num num = NGMAP_COUNT; num-- > 0; ) {
+  for (Ngmap_num num = NGMAP_COUNT; num-- > 0; ) {  // 逆順で検索
+#if defined(__AVR__)
     uint32_t key;
     memcpy_P(&key, &ngmap[num].key, sizeof(key));
     if (searching_key == key) {
@@ -1173,6 +1181,12 @@ bool ng_search_and_send(uint32_t searching_key) {
       func();
       return true;
     }
+#else
+    if (searching_key == ngmap[num].key) {
+      ngmap[num].func();
+      return true;
+    }
+#endif
   }
   return false;
 }
