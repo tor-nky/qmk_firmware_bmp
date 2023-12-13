@@ -1093,7 +1093,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
 
       // バッファ内の全てのキーを組み合わせたところ
       if (searching_count == waiting_count) {
-        // いま薙刀式のキーを離したところで、そのキーが含まれていなければループを抜ける
+        // 薙刀式のキーを離した時は、そのキーがバッファにある限り出力を続ける
         if (!((pressed && recent_key) || (searching_key & recent_key))) {
           break;
         }
@@ -1103,15 +1103,14 @@ bool naginata_type(uint16_t keycode, bool pressed) {
         if (nc == 0) {
           searching_count--;  // 最後のキーを減らして検索
           continue;
-        // 組み合わせが複数ある > 1: 変換しない
-        // 組み合わせが一つしかない、ただしキーを全て押していない =-1: 変換しない
+        // 組み合わせをしぼれない = 2: 変換しない
         } else if (nc != 1 && pressed && recent_key) {
           break;
         }
       }
 
-      // 探してあったら出力する
-      // 単打、センターシフトに定義漏れがあった場合の暴走対策
+      // かな定義を探して出力する
+      // 単打、センターシフトに定義漏れがあった場合の暴走対策も
       if (ng_search_and_send(searching_key) || searching_count == 1) {
         // 見つかった分のキーを配列から取り除く
         waiting_count -= searching_count;
@@ -1132,13 +1131,17 @@ bool naginata_type(uint16_t keycode, bool pressed) {
     if (add_key_later) {
       // 配列に押したキーを保存
       waiting_keys[waiting_count++] = recent_key;
-    // 今押したキー以外は出力済みの時に、シフト残りを含められる
+    // 今押したキー以外が出力済みの時にシフト残りを含める
     } else if (waiting_count == 1 && rest_shift && pushed_key != recent_key) {
       Ngmap_num num = ng_search_with_rest_key(recent_key, pushed_key);
       // 見つかった
       if (num < NGMAP_COUNT) {
         uint32_t key;
+#if defined(__AVR__)
         memcpy_P(&key, &ngmap[num].key, sizeof(key));
+#else
+        key = ngmap[num].key;
+#endif
         // 変換候補を数える
         // 組み合わせが一つしかない = 1: 変換を開始する
         if (number_of_candidates(key) == 1) {
@@ -1173,7 +1176,6 @@ bool ng_search_and_send(uint32_t searching_key) {
   // if (!searching_key)  return false;
   for (Ngmap_num num = NGMAP_COUNT; num-- > 0; ) {  // 逆順で検索
 #if defined(__AVR__)
-    uint32_t key;
     memcpy_P(&key, &ngmap[num].key, sizeof(key));
     if (searching_key == key) {
       void (*func)(void);
@@ -1198,7 +1200,11 @@ Ngmap_num ng_search_with_rest_key(uint32_t recent_key, uint32_t pushed_key) {
   Ngmap_num num = 0;
   for ( ; num < NGMAP_COUNT; num++) {
     uint32_t key;
+#if defined(__AVR__)
     memcpy_P(&key, &ngmap[num].key, sizeof(key));
+#else
+    key = ngmap[num].key;
+#endif
     // 押しているキーに全て含まれ、今回のキーを含み、スペースを押さない定義を探す
     if ((pushed_key & key) == key && (key & recent_key) && !(key & B_SHFT)) {
       break;
@@ -1218,7 +1224,11 @@ int8_t number_of_candidates(uint32_t search) {
 
   for (Ngmap_num i = 0; i < NGMAP_COUNT; i++) {
     uint32_t key;
+#if defined(__AVR__)
     memcpy_P(&key, &ngmap[i].key, sizeof(key));
+#else
+    key = ngmap[i].key;
+#endif
     if ((search & key) == search) {
       c++;
       if (c > 1) {
