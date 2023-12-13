@@ -1176,6 +1176,7 @@ bool ng_search_and_send(uint32_t searching_key) {
   // if (!searching_key)  return false;
   for (Ngmap_num num = NGMAP_COUNT; num-- > 0; ) {  // 逆順で検索
 #if defined(__AVR__)
+    uint32_t key;
     memcpy_P(&key, &ngmap[num].key, sizeof(key));
     if (searching_key == key) {
       void (*func)(void);
@@ -1213,15 +1214,11 @@ Ngmap_num ng_search_with_rest_key(uint32_t recent_key, uint32_t pushed_key) {
   return num;
 }
 
-// 組み合わせが複数ある > 1: 変換しない
+// 組み合わせをしぼれない = 2: 変換しない
 // 組み合わせが一つしかない = 1: 変換を開始する
-// 組み合わせが一つしかない、ただしキーを全て押していない =-1: 変換しない
 // 組み合わせがない = 0: 変換を開始する
 int8_t number_of_candidates(uint32_t search) {
   int8_t c = 0;
-  uint32_t hit = 0;
-  uint8_t ng_chrcount = bitpop32(search);
-
   for (Ngmap_num i = 0; i < NGMAP_COUNT; i++) {
     uint32_t key;
 #if defined(__AVR__)
@@ -1231,16 +1228,10 @@ int8_t number_of_candidates(uint32_t search) {
 #endif
     if ((search & key) == search) {
       c++;
-      if (c > 1) {
-        return c;
-      } else {
-        hit = key;
+      if (c > 1 || search != key) {
+        return 2;
       }
     }
-  }
-
-  if (c == 1 && ng_chrcount < bitpop32(hit)) {
-    return -1;
   }
   return c;
 }
