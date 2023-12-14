@@ -1090,21 +1090,24 @@ bool naginata_type(uint16_t keycode, bool pressed) {
       for (uint8_t i = 0; i < searching_count; i++) {
         searching_key |= waiting_keys[i];
       }
-
-      // バッファ内の全てのキーを組み合わせたところ
-      if (searching_count == waiting_count) {
-        // 薙刀式のキーを離した時は、そのキーがバッファにある限り出力を続ける
-        if (!((pressed && recent_key) || (searching_key & recent_key))) {
-          break;
-        }
-        // 変換候補を数える
-        uint8_t nc = number_of_candidates(searching_key);
-        // 組み合わせがない = 0: 変換を開始する
-        if (nc == 0) {
-          searching_count--;  // 最後のキーを減らして検索
-          continue;
-        // 組み合わせをしぼれない = 2: 変換しない
-        } else if (nc != 1 && pressed && recent_key) {
+      // バッファ内の全てのキーを組み合わせた時は
+      // (センターシフト(後置シフトなし)の時は全て出力する)
+      if (searching_count == waiting_count && !add_key_later) {
+        if (pressed && recent_key) {
+            // 変換候補を数える
+            uint8_t nc = number_of_candidates(searching_key);
+            // 組み合わせがない = 0: 変換を開始する
+            if (nc == 0) {
+            searching_count--;  // 最後のキーを減らして検索
+            continue;
+            // 組み合わせをしぼれない = 2: 変換しない
+            // (薙刀式以外のキーを押した時は全て出力する)
+            } else if (nc != 1) {
+            break;
+            }
+        // キーを離した時は、そのキーが関わるところまで出力する
+        // (薙刀式以外のキーを離した時は出力しない)
+        } else if (!pressed && !(searching_key & recent_key)) {
           break;
         }
       }
@@ -1228,7 +1231,7 @@ int8_t number_of_candidates(uint32_t search) {
 #endif
     if ((search & key) == search) {
       c++;
-      if (c > 1 || search != key) {
+      if (search != key || c > 1) {
         return 2;
       }
     }
