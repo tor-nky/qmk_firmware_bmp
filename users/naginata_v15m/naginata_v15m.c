@@ -1092,8 +1092,8 @@ bool naginata_type(uint16_t keycode, bool pressed) {
       }
       // バッファ内の全てのキーを組み合わせた時は
       // (センターシフト(後置シフトなし)の時は全て出力する)
-      if (searching_count == waiting_count && !add_key_later && recent_key) {
-        if (pressed) {
+      if (searching_count == waiting_count && !add_key_later) {
+        if (pressed && recent_key) {
             // 変換候補を数える
             uint8_t nc = number_of_candidates(searching_key);
             // 組み合わせがない = 0: 変換を開始する
@@ -1107,7 +1107,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
             }
         // キーを離した時は、そのキーが関わるところまで出力する
         // (薙刀式以外のキーを離した時は出力しない)
-        } else if (!(searching_key & recent_key)) {
+        } else if (!pressed && !(searching_key & recent_key)) {
           break;
         }
       }
