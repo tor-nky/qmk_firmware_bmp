@@ -1109,8 +1109,9 @@ bool naginata_type(uint16_t keycode, bool pressed) {
       if (searching_count == waiting_count && !add_key_later) {
         if (pressed && recent_key) {
           // 今押したキー以外が出力済みの時にシフト残り処理開始
-          if (waiting_count == 1 && rest_shift_state == Next) {
+          if (waiting_count == 1 && rest_shift_state == Next && pushed_key != recent_key) {
             rest_shift_state = On;
+            continue;
           }
           // 変換候補を数える
           uint8_t nc = number_of_candidates(searching_key);
