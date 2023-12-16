@@ -1084,7 +1084,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
   // 出力
   {
     uint8_t searching_count = waiting_count;
-    while (waiting_count) {
+    while (searching_count) {
       // バッファ内のキーを組み合わせる
       uint32_t searching_key = center_shift;
       for (uint8_t i = 0; i < searching_count; i++) {
@@ -1113,8 +1113,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
       }
 
       // かな定義を探して出力する
-      // 単打、センターシフトに定義漏れがあった場合の暴走対策も
-      if (ng_search_and_send(searching_key) || searching_count == 1) {
+      if (ng_search_and_send(searching_key)) {
         // 見つかった分のキーを配列から取り除く
         waiting_count -= searching_count;
         for (uint8_t i = 0; i < waiting_count; i++) {
@@ -1125,6 +1124,10 @@ bool naginata_type(uint16_t keycode, bool pressed) {
       } else {
         searching_count--;
       }
+    }
+    // 何も定義がないキーへの応急対策
+    if (!searching_count) {
+      waiting_count = 0;
     }
   }
 
