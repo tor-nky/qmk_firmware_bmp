@@ -11,25 +11,31 @@
 【薙刀式】v15fix版、発表
 http://oookaworks.seesaa.net/article/500180437.html#gsc.tab=0
 ## OSの設定
+### Windowsの場合
+キーボード設定を日本語106キーボードにする。[WinCompose](http://wincompose.info/)をインストールする。
 
-1. Windowsの場合はキーボード設定を日本語106キーボードにする。[WinCompose](http://wincompose.info/)をインストールする。
-### IMEのキー設定
+IMEのキー設定
 |* キー|入力/変換済み文字なし|他|
 |---|:---:|:---:|
 |Ctrl+Shift+無変換| - |全消去|
 |Ctrl+Shift+変換| - |全確定|
-1. Macの場合は[Karabiner-Elements](https://karabiner-elements.pqrs.org/)をインストールします。  
+### Macの場合
+キーボードが日本語/英語どちらの設定でも動きます。  
+[Karabiner-Elements](https://karabiner-elements.pqrs.org/)をインストールします。  
 ファイル unicode_hex_input_switcher.json をフォルダ ~/.config/karabiner/assets/complex_modification にコピーし、  
 Karabiner-Elements に Unicode Hex Input Switcher を登録してください。  
 また、「キーボード設定を開く...」から「入力ソース」に英語「U.S.」を加えます。
 「英数」キーでIMをオフにしたとき「U.S.」になるようにしてください。  
-1. Linuxの場合はキーボード設定を日本語106キーボードにする。
+### Linuxの場合
+キーボード設定を日本語106キーボードにする。
 config.h に次の記述を加えてコンパイルしてください。ユニコード入力に必要です。
 ```
 #define USB_POLLING_INTERVAL_MS 8   // sets the USB polling rate in milliseconds
 #define TAP_CODE_DELAY 24   // Sets the delay between `register_code` and `unregister_code`
 ```
-1. iOSの場合は、ユーザー辞書にnaginata_dictionary.plistの中身を登録する。  
+### iOSの場合
+キーボードが日本語/英語どちらの設定でも動きます。  
+ユーザー辞書にnaginata_dictionary.plistの中身を登録する。  
 config.h の中に ``#define ENABLE_NG_IOS`` を書き加えてコンパイルします。
 
 ## QMKファームウェアの設定
