@@ -12,13 +12,23 @@
 http://oookaworks.seesaa.net/article/500180437.html#gsc.tab=0
 ## OSの設定
 
-1. OSのキーボード設定を日本語106キーボードにする。
-1. Windowsの場合は[WinCompose](http://wincompose.info/)をインストールする。
+1. Windowsの場合はキーボード設定を日本語106キーボードにする。[WinCompose](http://wincompose.info/)をインストールする。
+### IMEのキー設定
+|* キー|入力/変換済み文字なし|他|
+|---|:---:|:---:|
+|Ctrl+Shift+無変換| - |全消去|
+|Ctrl+Shift+変換| - |全確定|
 1. Macの場合は[Karabiner-Elements](https://karabiner-elements.pqrs.org/)をインストールします。  
 ファイル unicode_hex_input_switcher.json をフォルダ ~/.config/karabiner/assets/complex_modification にコピーし、  
 Karabiner-Elements に Unicode Hex Input Switcher を登録してください。  
 また、「キーボード設定を開く...」から「入力ソース」に英語「U.S.」を加えます。
 「英数」キーでIMをオフにしたとき「U.S.」になるようにしてください。  
+1. Linuxの場合はキーボード設定を日本語106キーボードにする。
+config.h に次の記述を加えてコンパイルしてください。ユニコード入力に必要です。
+```
+#define USB_POLLING_INTERVAL_MS 8   // sets the USB polling rate in milliseconds
+#define TAP_CODE_DELAY 24   // Sets the delay between `register_code` and `unregister_code`
+```
 1. iOSの場合は、ユーザー辞書にnaginata_dictionary.plistの中身を登録する。  
 config.h の中に ``#define ENABLE_NG_IOS`` を書き加えてコンパイルします。
 
@@ -108,7 +118,27 @@ iPhoneの仕様で、ひらがな変換、カタカナ変換、再変換など�
 |J離す|ある|ある|ある|
 
 DvorakJ版は、5キーくらい押すまではどのキーを離しても全部一気に入力されるようです。
-Hachikuと本バージョンは、押したままのキーが重ね押しされ得るなら待つようになっています。
+Hachikuと本バージョンは、まだキーが重なるなら待つようになっています。
+### 2キー同時押し→キー1個離す→3キー同時押し
+キー|DvorakJ|Hachiku|naginata_v15m|
+|---|---|---|---|
+|J押す||||
+|R押す||||
+|R離す|じ|じ|じ|
+|R押す|じ|じ|じ|
+|I押す|じ|じじょ|じじょ|
+|全部離す|じじょ|じじょ|じじょ|
+
+キー|DvorakJ|Hachiku|naginata_v15m|
+|---|---|---|---|
+|J押す||||
+|R押す||||
+|R離す|じ|じ|じ|
+|I押す|じ|じ|じ|
+|R押す|じ|じ|じじょ|
+|全部離す|じじょ|じしょ|じじょ|
+
+Hachikuはキーを離した後、右より左のキーを先に押さなければいけないことがあります。
 ### 4キー以上のキー押し→キー1個離す→キー押し
 キー|DvorakJ|Hachiku|naginata_v15m|
 |---|---|---|---|
