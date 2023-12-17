@@ -1066,8 +1066,8 @@ bool naginata_type(uint16_t keycode, bool pressed) {
       break;
   }
 
-  // センターシフトは連続する
-  uint32_t center_shift = pushed_key & B_SHFT;
+  // センターシフトの連続用
+  uint32_t contains_center_shift = pushed_key;
 
   // 薙刀式のキーを押した時
   if (pressed && recent_key) {
@@ -1087,7 +1087,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
     uint8_t searching_count = waiting_count;
     while (searching_count) {
       // バッファ内のキーを組み合わせる
-      uint32_t searching_key = center_shift;
+      uint32_t searching_key = contains_center_shift & B_SHFT; // センターキー
       for (uint8_t i = 0; i < searching_count; i++) {
         searching_key |= waiting_keys[i];
       }
@@ -1133,6 +1133,8 @@ bool naginata_type(uint16_t keycode, bool pressed) {
 
       // かな定義を探して出力する
       if (ng_search_and_send(searching_key)) {
+        // センターシフトの連続用
+        contains_center_shift = searching_key; // 薙刀式v15では不要
         // 1回出力したらシフト残り処理は終わり
         if (rest_shift_state == On) {
           rest_shift_state = Off;
@@ -1233,7 +1235,8 @@ int8_t number_of_candidates(uint32_t search) {
 #else
     key = ngmap[i].key;
 #endif
-    if ((search & key) == search) {
+    // search を内包し、前置シフトのみ設定ではセンターシフトも一致している
+    if ((search & key) == search && (naginata_config.kouchi_shift || (key & B_SHFT) == (search & B_SHFT))) {
       c++;
       if (search != key || c > 1) {
         return 2;
