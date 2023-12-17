@@ -1109,7 +1109,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
       if (searching_count == waiting_count && !add_key_later) {
         if (pressed && recent_key) {
           // 今押したキー以外が出力済みの時にシフト残り処理開始
-          if (waiting_count == 1 && rest_shift_state == Next && pushed_key != recent_key) {
+          if (waiting_count == 1 && rest_shift_state == Next) {
             rest_shift_state = On;
             continue;
           }
@@ -1163,8 +1163,11 @@ bool naginata_type(uint16_t keycode, bool pressed) {
 #ifdef USE_SHIFT_WHEN_SPACE_UP
     pushed_key &= ~recent_key; // キーを取り除く
 #endif
-    if (!(pushed_key & B_SHFT)) {
-      rest_shift_state = Next;  // 次回、シフト残りを含めて探す
+    // スペースを押していないなら次回、シフト残りを含めて探す
+    if (pushed_key & B_SHFT || !pushed_key) {
+      rest_shift_state = Off;
+    } else if (rest_shift_state != On) {
+      rest_shift_state = Next;
     }
 #ifndef USE_SHIFT_WHEN_SPACE_UP
     pushed_key &= ~recent_key; // キーを取り除く
