@@ -1154,6 +1154,10 @@ bool naginata_type(uint16_t keycode, bool pressed) {
     if (!searching_count) {
       waiting_count = 0;
     }
+    // シフト残り処理が始まらなかった
+    if (rest_shift_state == Next) {
+      rest_shift_state = Off;
+    }
   }
 
   // センターシフト(後置シフトなし)の時
