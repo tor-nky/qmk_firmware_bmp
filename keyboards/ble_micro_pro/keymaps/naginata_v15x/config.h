@@ -19,15 +19,13 @@
 // place overrides here
 
 
-// iOS用を使うとき
-#define ENABLE_NG_IOS
+// BMP用薙刀式
+#define NG_BMP
 
-//#define MAC_USE_KAWASEMI // Mac汎用 → かわせみ専用
+// #define NG_USE_KAWASEMI // Mac汎用 → かわせみ専用
 
-#ifndef MAC_USE_KAWASEMI
-// UNICODE入力を安定化
-//#define UNICODE_TYPE_DELAY 32     // かわせみ3では不要
-#else
+
+#ifdef NG_USE_KAWASEMI
 // Keycodes used for starting Unicode input on different platforms
 #   define UNICODE_KEY_MAC KC_NO   // かわせみ3用
 #endif

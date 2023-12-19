@@ -41,8 +41,9 @@
 #   define IS_MODIFIER_KEYCODE(code) ((code) >= KC_LEFT_CTRL && (code) <= KC_RIGHT_GUI)
 #endif
 
-
-#include "bmp_custom_keycode.h" // BMP用
+#ifdef NG_BMP
+#   include "bmp_custom_keycode.h" // BMP用
+#endif
 
 uint8_t naginata_type(bool);
 void naginata_clear(void);
@@ -93,7 +94,7 @@ void ng_saihenkan(void);
 void ng_eof(void);
 void ng_ime_cancel(void);
 void ng_ime_complete(void);
-#ifdef ENABLE_NG_IOS
+#ifdef NG_BMP
 void ios_send_string(const char *);
 void ios_send_string_with_cut_paste(const char *);
 #endif
@@ -104,7 +105,11 @@ void ios_send_string_with_cut_paste(const char *);
 // 1. 英字レイアウトがQWERTYでない場合でもOK
 // 2. 薙刀式レイヤーでもKC_を定義すれば、かな変換せず出力できる
 typedef enum naginata_keycodes {
+#ifdef NG_BMP
   NG_Q = BMP_SAFE_RANGE + 2, // 薙刀式シフトキー    // BMP用
+#else
+  NG_Q = SAFE_RANGE, // 薙刀式シフトキー
+#endif
   NG_W,
   NG_E,
   NG_R,
@@ -146,7 +151,9 @@ typedef enum naginata_keycodes {
   NGSW_WIN,
   NGSW_MAC,
   NGSW_LNX,
+#ifdef NG_BMP
   NGSW_IOS,
+#endif
   NG_MLV,
   NG_SHOS,
   NG_TAYO,
@@ -166,7 +173,7 @@ typedef union {
 
 user_config_t naginata_config;
 
-#define NG_SAFE_RANGE NG_Q + 43
+#define NG_SAFE_RANGE NG_KOTI + 1
 
 #define NG_WIN 1
 #define NG_MAC 2

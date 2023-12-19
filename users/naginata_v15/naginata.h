@@ -41,8 +41,9 @@
 #   define IS_MODIFIER_KEYCODE(code) ((code) >= KC_LEFT_CTRL && (code) <= KC_RIGHT_GUI)
 #endif
 
-
-#include "bmp_custom_keycode.h"
+#ifdef NG_BMP
+#   include "bmp_custom_keycode.h" // BMP用
+#endif
 
 void naginata_type(void);
 void naginata_clear(void);
@@ -78,7 +79,11 @@ void set_naginata(uint8_t, uint16_t *, uint16_t *);
 // 1. 英字レイアウトがQWERTYでない場合でもOK
 // 2. 薙刀式レイヤーでもKC_を定義すれば、かな変換せず出力できる
 typedef enum naginata_keycodes {
-  NG_Q = BMP_SAFE_RANGE + 2, // 薙刀式シフトキー
+#ifdef NG_BMP
+  NG_Q = BMP_SAFE_RANGE + 2, // 薙刀式シフトキー    // BMP用
+#else
+  NG_Q = SAFE_RANGE, // 薙刀式シフトキー
+#endif
   NG_W,
   NG_E,
   NG_R,
@@ -139,7 +144,7 @@ typedef union {
 
 user_config_t naginata_config;
 
-#define NG_SAFE_RANGE NG_Q + 42
+#define NG_SAFE_RANGE NG_KOTI + 1
 
 #define NG_WIN 1
 #define NG_MAC 2

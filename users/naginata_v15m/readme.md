@@ -21,6 +21,10 @@ IMEのキー設定
 |Ctrl+Shift+変換| - |全確定|
 ### Macの場合
 キーボードが日本語/英語どちらの設定でも動きます。  
+IM にかわせみを使用する場合（config.h の中に ``#define NG_USE_KAWASEMI`` を書き加えてコンパイルします）は、コード入力に Option+Shift+B が設定されているか確認してください。
+
+かわせみを使わない場合は下の設定も必要です。
+
 [Karabiner-Elements](https://karabiner-elements.pqrs.org/)をインストールします。  
 ファイル unicode_hex_input_switcher.json をフォルダ ~/.config/karabiner/assets/complex_modification にコピーし、  
 Karabiner-Elements に Unicode Hex Input Switcher を登録してください。  
@@ -33,10 +37,13 @@ config.h に次の記述を加えてコンパイルしてください。ユニ�
 #define USB_POLLING_INTERVAL_MS 8   // sets the USB polling rate in milliseconds
 #define TAP_CODE_DELAY 24   // Sets the delay between `register_code` and `unregister_code`
 ```
-### iOSの場合
+### Mac辞書式(BMP専用)の場合
+キーボードが日本語/英語どちらの設定でも動きます。  
+また、「キーボード設定を開く...」から「入力ソース」に英語「U.S.」を加えます。
+「英数」キーでIMをオフにしたとき「U.S.」になるようにしてください。
+### iOS辞書式(BMP専用)の場合
 キーボードが日本語/英語どちらの設定でも動きます。  
 ユーザー辞書にnaginata_dictionary.plistの中身を登録する。  
-config.h の中に ``#define ENABLE_NG_IOS`` を書き加えてコンパイルします。
 
 ## QMKファームウェアの設定
 
@@ -58,7 +65,8 @@ OLEDが有効な場合には左側のOLEDには、
 | OS切り替え            | Windows  | NGSW_WIN  | switchOS(NG_WIN)  | 
 |                       | MacOS    | NGSW_MAC  | switchOS(NG_MAC)  | 
 |                       | Linux    | NGSW_LNX  | switchOS(NG_LNX)  | 
-|                       | iOS    | NGSW_IOS  | switchOS(NG_IOS)  | 
+|                       | Mac辞書式(BMP専用) | NGSW_MD  | switchOS(NG_MAC_DIC)  | 
+|                       | iOS(BMP専用) | NGSW_IOS  | switchOS(NG_IOS)  | 
 | MacOSのライブ変換対応 | ON/OFFトグル   | NG_MLV   | mac_live_conversion_toggle()  | 
 | 縦書き、横書き        | ON/OFFトグル   | NG_TAYO    | tategaki_toggle()  | 
 | 後置シフト            | ON/OFFトグル   | NG_KOTI  | kouchi_shift_toggle()  | 
@@ -75,38 +83,29 @@ OLEDをオンにしているときは、設定の状態がOLEDに表示されま
  * 2行目 縦書き(T)、横書き(Y)
  * 3行目 後置シフト(Kでオン)
  * 4行目 ライブ変換(Lでオン)
-
+## 通常の QMK で使う場合
+config.h の中に ``#define NG_BMP`` がなければ、そのままコンパイルできます。
 ## BLE Micro Pro で使う場合
-iPhone の __Bluetooth接続専用__ です。  
-「選択範囲を括弧でくくる」編集モードを使ったあとにクリップボードは消去されません。
+config.h の中に ``#define NG_BMP`` を書き加えてコンパイルします。
 
-__辞書登録が必要__ です。_naginata_dictionary.plist_ 内に12個あります。
+Windows用、MacOS用、Linux用は USB、Bluetoothとも編集モードの一部が正常に動きません。
+
+Bluetooth接続専用の Mac辞書式 と iOS辞書式 が使えるのでご利用ください。
+なお、「選択範囲を括弧でくくる」編集モードを使ったあとにクリップボードは消去されません。
+
+_naginata_dictionary.plist_ 内にある12個を __辞書登録__ してください。
 
 キーボードの種類は ANSI、JIS(日本語)のどちらに設定していても使えます。
 
-* iPhone  
+* Mac辞書式(BMP専用)  
+日本語IMのライブ変換を使用中に M+Comma+Z を押すと、「　　　×　　　×　　　×」が入力できなくなる不具合が見つかっています。
+ライブ変換をやめ、変換学習をリセットすると入力できるようになります。
+* iOS辞書式(BMP専用)  
 キーボードの電源を入れた直後、あるいはキーボードをリセットした直後には、```『』【】〇``` などの辞書登録によった記号が _1〜2回_ 入力できません。  
 iPhoneの仕様で、ひらがな変換、カタカナ変換、再変換などは使えません。
-
-## 通常のQMKへの逆移植
-フォルダ users/naginata_v15m の全てのファイルをコピーし、naginata.h を少し書き換えれば使えます。
-
-```
-#include "bmp_custom_keycode.h" // BMP用
-```
-を削除。
-
-```
-  NG_Q = BMP_SAFE_RANGE + 2, // 薙刀式シフトキー    // BMP用
-```
-を次のように戻す。
-```
-  NG_Q = SAFE_RANGE, // 薙刀式シフトキー
-```
-
 ## 不具合
-* 定義が設定されていないキーを押しても、何の代わりも出力しない
-
+* 定義が設定されていないキーを押しても、何の代わりも出力しない  
+この場合、キーマップから該当するキーを NG_** でないものに変えてください。
 ## DvorakJ版、Hachikuとの違い
 ### 文字キーを押し、未出力のままスペースを押し離す
 |DvorakJ|Hachiku|naginata_v15m|
