@@ -1,3 +1,3 @@
-// LinuxでUNICODE入力を安定化
-// #define USB_POLLING_INTERVAL_MS 8
-// 入力が遅くなるのでunicode.cにwaitを入れるべき
+// 有効にするとスペースキーを離しても文字キーシフト全復活
+// 無効にするとDvorakJ風になる
+// #define NG_USE_SHIFT_WHEN_SPACE_UP
