@@ -445,9 +445,9 @@ void naginata_off(void) {
       tap_code(KC_GRV); // 半角/全角
       break;
     case NG_MAC:
-#ifdef NG_USE_KAWASEMI
+    #ifdef NG_USE_KAWASEMI
       tap_code16(LOPT(LSFT(KC_B)));
-#endif
+    #endif
     #ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
@@ -1072,7 +1072,7 @@ enum RestShiftState { Off, Next, On };
 // そうでなければ未出力のキーを全て出力し、QMKにまかせるため true を返す
 bool naginata_type(uint16_t keycode, bool pressed) {
   static uint32_t waiting_keys[NKEYS];  // 各ビットがキーに対応する
-  static uint8_t waiting_count = 0; // 文字キー入力のカウンタ
+  static uint_fast8_t waiting_count = 0; // 文字キー入力のカウンタ
   static enum RestShiftState rest_shift_state = Off;
 
   uint32_t recent_key;  // 各ビットがキーに対応する
@@ -1117,11 +1117,11 @@ bool naginata_type(uint16_t keycode, bool pressed) {
 
   // 出力
   {
-    uint8_t searching_count = waiting_count;
+    uint_fast8_t searching_count = waiting_count;
     while (searching_count) {
       // バッファ内のキーを組み合わせる
       uint32_t searching_key = contains_center_shift & B_SHFT; // センターキー
-      for (uint8_t i = 0; i < searching_count; i++) {
+      for (uint_fast8_t i = 0; i < searching_count; i++) {
         searching_key |= waiting_keys[i];
       }
       // シフト残り処理
@@ -1147,7 +1147,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
             continue;
           }
           // 変換候補を数える
-          uint8_t nc = number_of_candidates(searching_key);
+          int_fast8_t nc = number_of_candidates(searching_key);
           // 組み合わせがない = 0: 変換を開始する
           if (nc == 0) {
             searching_count--;  // 最後のキーを減らして検索
@@ -1174,7 +1174,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
         }
         // 見つかった分のキーを配列から取り除く
         waiting_count -= searching_count;
-        for (uint8_t i = 0; i < waiting_count; i++) {
+        for (uint_fast8_t i = 0; i < waiting_count; i++) {
           waiting_keys[i] = waiting_keys[i + searching_count];
         }
         searching_count = waiting_count;
@@ -1263,8 +1263,8 @@ Ngmap_num ng_search_with_rest_key(uint32_t searching_key, uint32_t pushed_key) {
 // 組み合わせをしぼれない = 2: 変換しない
 // 組み合わせが一つしかない = 1: 変換を開始する
 // 組み合わせがない = 0: 変換を開始する
-int8_t number_of_candidates(uint32_t search) {
-  int8_t c = 0;
+int_fast8_t number_of_candidates(uint32_t search) {
+  int_fast8_t c = 0;
   for (Ngmap_num i = 0; i < NGMAP_COUNT; i++) {
     uint32_t key;
 #if defined(__AVR__)

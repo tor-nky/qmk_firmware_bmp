@@ -100,7 +100,7 @@ typedef uint_fast16_t Ngmap_num;
 bool naginata_type(uint16_t, bool);
 bool ng_search_and_send(uint32_t);
 Ngmap_num ng_search_with_rest_key(uint32_t, uint32_t);
-int8_t number_of_candidates(uint32_t);
+int_fast8_t number_of_candidates(uint32_t);
 
 // bool enable_naginata(uint16_t, keyrecord_t *);
 
