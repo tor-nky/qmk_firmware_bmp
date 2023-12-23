@@ -789,7 +789,7 @@ void ng_paste() {
 }
 
 void ng_up(uint8_t c) {
-  for (uint8_t i = 0; i < c; i++) { // サイズ削減
+  for ( ; c > 0; c--) {
     if (naginata_config.tategaki) {
       tap_code(KC_UP);
     } else {
@@ -799,7 +799,7 @@ void ng_up(uint8_t c) {
 }
 
 void ng_down(uint8_t c) {
-  for (uint8_t i = 0; i < c; i++) {
+  for ( ; c > 0; c--) {
     if (naginata_config.tategaki) {
       tap_code(KC_DOWN);
     } else {
@@ -809,7 +809,7 @@ void ng_down(uint8_t c) {
 }
 
 void ng_left(uint8_t c) {
-  for (uint8_t i = 0; i < c; i++) {
+  for ( ; c > 0; c--) {
     if (naginata_config.tategaki) {
       tap_code(KC_LEFT);
     } else {
@@ -819,7 +819,7 @@ void ng_left(uint8_t c) {
 }
 
 void ng_right(uint8_t c) {
-  for (uint8_t i = 0; i < c; i++) {
+  for ( ; c > 0; c--) {
     if (naginata_config.tategaki) {
       tap_code(KC_RIGHT);
     } else {
