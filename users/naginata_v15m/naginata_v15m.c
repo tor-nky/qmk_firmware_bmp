@@ -619,29 +619,28 @@ static uint16_t fghj_buf = KC_NO; // 押しているJかKのキーコード
 bool enable_naginata(uint16_t keycode, keyrecord_t *record) {
   // キープレス
   if (record->event.pressed) {
-    // ２キー目、１キー目、両方ともかなオンキー
-    if ((keycode == ngon_keys[0] && fghj_buf == ngon_keys[1]) ||
-        (keycode == ngon_keys[1] && fghj_buf == ngon_keys[0])) {
-      naginata_on();
-      fghj_buf = KC_NO;
-      return false;
-    // ２キー目、１キー目、両方ともかなオフキー
-    } else if ((keycode == ngoff_keys[0] && fghj_buf == ngoff_keys[1]) ||
-        (keycode == ngoff_keys[1] && fghj_buf == ngoff_keys[0])) {
-      naginata_off();
-      fghj_buf = KC_NO;
-      return false;
-    } else {
-      if (fghj_buf != KC_NO) {
-        tap_code(fghj_buf); // 1キー目を出力
+    // １キー目がかなオン・オフキー
+    if (fghj_buf != KC_NO) {
+      // ２キー目、１キー目、両方ともかなオンキー
+      if ((keycode == ngon_keys[0] && fghj_buf == ngon_keys[1]) ||
+          (keycode == ngon_keys[1] && fghj_buf == ngon_keys[0])) {
+        naginata_on();
         fghj_buf = KC_NO;
-      }
-      // かなオンキーの場合
-      if (keycode == ngon_keys[0] || keycode == ngon_keys[1] || keycode == ngoff_keys[0] || keycode == ngoff_keys[1]) {
-        fghj_buf = keycode;
+        return false;
+      // ２キー目、１キー目、両方ともかなオフキー
+      } else if ((keycode == ngoff_keys[0] && fghj_buf == ngoff_keys[1]) ||
+          (keycode == ngoff_keys[1] && fghj_buf == ngoff_keys[0])) {
+        naginata_off();
+        fghj_buf = KC_NO;
         return false;
       }
-      return true; // 2キー目はQMKにまかせる
+      tap_code(fghj_buf); // 1キー目を出力
+      fghj_buf = KC_NO;
+    }
+    // かなオン・オフキーの場合
+    if (keycode == ngon_keys[0] || keycode == ngon_keys[1] || keycode == ngoff_keys[0] || keycode == ngoff_keys[1]) {
+      fghj_buf = keycode;
+      return false;
     }
   // J/K単押しだった
   } else if (fghj_buf != KC_NO) {
@@ -650,9 +649,8 @@ bool enable_naginata(uint16_t keycode, keyrecord_t *record) {
     // Shift + Jで、先にShiftを外した場合にShiftがリリースされない不具合対策
     unregister_code16(keycode);
     return false;
-  } else {
-    return true;  // QMKにまかせる
   }
+  return true;  // QMKにまかせる
 }
 
 // バッファをクリアする
