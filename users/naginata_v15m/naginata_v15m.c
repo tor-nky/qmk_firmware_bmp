@@ -648,26 +648,7 @@ bool enable_naginata(uint16_t keycode, keyrecord_t *record) {
     tap_code(fghj_buf);
     fghj_buf = KC_NO;
     // Shift + Jで、先にShiftを外した場合にShiftがリリースされない不具合対策
-    if (IS_MODIFIER_KEYCODE(keycode)) {
-      unregister_code(keycode);
-    } else if (IS_QK_MOD_TAP(keycode)) {
-      if (keycode & (MOD_LCTL << 8))
-        unregister_code(KC_LEFT_CTRL);
-      if (keycode & (MOD_LSFT << 8))
-        unregister_code(KC_LEFT_SHIFT);
-      if (keycode & (MOD_LALT << 8))
-        unregister_code(KC_LEFT_ALT);
-      if (keycode & (MOD_LGUI << 8))
-        unregister_code(KC_LEFT_GUI);
-      if (keycode & (MOD_RCTL << 8))
-        unregister_code(KC_RIGHT_CTRL);
-      if (keycode & (MOD_RSFT << 8))
-        unregister_code(KC_RIGHT_SHIFT);
-      if (keycode & (MOD_RALT << 8))
-        unregister_code(KC_RIGHT_ALT);
-      if (keycode & (MOD_RGUI << 8))
-        unregister_code(KC_RIGHT_GUI);
-    }
+    unregister_code16(keycode);
     return false;
   } else {
     return true;  // QMKにまかせる
@@ -683,13 +664,13 @@ void naginata_clear(void) {
 // #define LOG_PROCESS_NAGINATA
 // 薙刀式の入力処理
 bool process_naginata(uint16_t keycode, keyrecord_t *record) {
-  // まれに薙刀モードオンのまま、レイヤーがオフになることがあるので、対策
-  if (n_modifier == 0 && is_naginata && !layer_state_is(naginata_layer))
-    layer_on(naginata_layer);
-  if (n_modifier == 0 && !is_naginata && layer_state_is(naginata_layer))
-    layer_off(naginata_layer);
-  if (n_modifier > 0 && layer_state_is(naginata_layer))
-    layer_off(naginata_layer);
+  // // まれに薙刀モードオンのまま、レイヤーがオフになることがあるので、対策
+  // if (n_modifier == 0 && is_naginata && !layer_state_is(naginata_layer))
+  //   layer_on(naginata_layer);
+  // if (n_modifier == 0 && !is_naginata && layer_state_is(naginata_layer))
+  //   layer_off(naginata_layer);
+  // if (n_modifier > 0 && layer_state_is(naginata_layer))
+  //   layer_off(naginata_layer);
 
   // OS切り替え(UNICODE出力)
   if (record->event.pressed) {
