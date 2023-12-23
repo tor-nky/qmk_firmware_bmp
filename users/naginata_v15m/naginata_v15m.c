@@ -728,6 +728,18 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
   if (!is_naginata)
     return enable_naginata(keycode, record);
 
+  // Shift+英字 で IMEオフ
+  {
+    uint8_t mods = get_mods();
+    if ((mods & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) ||
+        (mods & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
+      del_mods(mods);
+      naginata_off();
+      add_mods(mods);
+      return true;
+    }
+  }
+
   if (process_modifier(keycode, record))
     return true;
 
