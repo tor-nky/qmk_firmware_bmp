@@ -730,13 +730,16 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
 
   // Shift+英字 で IMEオフ
   {
-    uint8_t mods = get_mods();
-    if ((mods & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) ||
-        (mods & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
-      del_mods(mods);
-      naginata_off();
-      add_mods(mods);
-      return true;
+    uint8_t basic_keycode = QK_MODS_GET_BASIC_KEYCODE(keycode);
+    if (record->event.pressed && basic_keycode >= KC_A && basic_keycode <= KC_Z) {
+      uint8_t mods = get_mods();
+      if ((mods & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) ||
+          (mods & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
+        del_mods(mods);
+        naginata_off();
+        add_mods(mods);
+        return true;
+      }
     }
   }
 

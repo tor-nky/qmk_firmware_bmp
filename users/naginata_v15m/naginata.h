@@ -37,6 +37,7 @@
 #   define UNICODE_MODE_WINCOMPOSE UC_WINC
 #   define UNICODE_MODE_MACOS UC_MAC
 #   define UNICODE_MODE_LINUX UC_LNX
+#   define QK_MODS_GET_BASIC_KEYCODE(kc) ((kc)&0xFF)
 #   define IS_QK_MOD_TAP(code) ((code) >= QK_MOD_TAP && (code) <= QK_MOD_TAP_MAX)
 #   define IS_MODIFIER_KEYCODE(code) ((code) >= KC_LEFT_CTRL && (code) <= KC_RIGHT_GUI)
 #endif
