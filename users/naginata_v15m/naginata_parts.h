@@ -207,12 +207,9 @@ void ng_send_guxwa(void);	// ぐゎ
 void ng_send_tsa(void);		// つぁ
 
   // 追加
-void ng_space_or_enter(void);
 void ng_edit_touten(void);	// 、
 void ng_edit_kuten(void);	// 。
 void ng_enter(void);		// {Enter}
-void ng_backspace(void);	// {BS}
-void ng_delete(void);		// {Del}
 
 // 編集モード
 void ng_edit_tenten(void); // ……{改行}

@@ -715,19 +715,6 @@ void ng_send_tsa(void) {	// つぁ
 }
 
 // 追加
-void ng_space_or_enter(void) {
-    extern bool ng_pushed_spc, ng_pushed_ent;
-    extern uint8_t ng_center_keycode;
-
-	if (ng_center_keycode == KC_NO)	return;
-	if (ng_pushed_spc | ng_pushed_ent) {
-		register_code(KC_LSFT);
-		tap_code(ng_center_keycode);
-		unregister_code(KC_LSFT);
-	} else {
-		tap_code(ng_center_keycode);
-	}
-}
 void ng_edit_touten(void) { // 、
 	tap_code(KC_COMMA);
 	#ifdef NG_BMP
@@ -762,16 +749,6 @@ void ng_edit_kuten(void) { // 。
 }
 void ng_enter(void) { // {Enter}
 	tap_code(KC_ENTER);
-}
-void ng_backspace(void) { // {BS}
-	extern Repeating repeating;
-    repeating.code = KC_BACKSPACE;
-	register_code(repeating.code);
-}
-void ng_delete(void) { // {Del}
-	extern Repeating repeating;
-    repeating.code = KC_DEL;
-	register_code(repeating.code);
 }
 
 // 編集モード
@@ -899,8 +876,8 @@ void ng_edit_s5_left(void) { // +{← 5}
 	ng_left(5);
 }
 void ng_edit_s20_left(void) { // +{← 20}
-	  register_code(KC_LSFT);
-	  ng_left(20);
+    register_code(KC_LSFT);
+    ng_left(20);
 }
 void ng_edit_s_home(void) { // +{Home}
 	register_code(KC_LSFT);
@@ -910,12 +887,12 @@ void ng_edit_s_home(void) { // +{Home}
 void ng_edit_s_end(void) { // +{End}
 	register_code(KC_LSFT);
 	ng_end();
-	unregister_code(KC_LSFT);
+    unregister_code(KC_LSFT);
 }
 void ng_edit_delete_to_end(void) { // +{End}{BS}
 	register_code(KC_LSFT);
 	ng_end();
-	unregister_code(KC_LSFT);
+    unregister_code(KC_LSFT);
 	tap_code(KC_BSPC);
 }
 void ng_edit_nijuu_yama_gakko(void) { // 『』{改行}{↑}
