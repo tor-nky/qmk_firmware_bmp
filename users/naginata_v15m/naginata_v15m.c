@@ -876,7 +876,6 @@ bool naginata_type(uint16_t keycode, bool pressed) {
   // 薙刀式のキーを押した時
   if (pressed && recent_key) {
     pushed_key |= recent_key;  // キーを加える
-    end_repeating_key();  // キーリピート解除
 
     // センターシフト(後置シフトなし)の時
     if (recent_key == B_SHFT && !naginata_config.kouchi_shift) {
@@ -885,7 +884,9 @@ bool naginata_type(uint16_t keycode, bool pressed) {
       // 配列に押したキーを保存
       waiting_keys[waiting_count++] = recent_key;
     }
-  } else if (!pressed && (repeating_key & recent_key)) {
+  }
+  // キーを押した時と、リピート中のキーを離した時
+  if (pressed || (repeating_key & recent_key)) {
     end_repeating_key();  // キーリピート解除
   }
 
@@ -1070,36 +1071,67 @@ void ng_paste() {
   }
 }
 
-// repeating.code にあるコードを c 回出力する
-// また、Shift 押下中は repeating.mod に KC_LSFT を入れる
-void ng_cursor_move(uint8_t c) {
-  for ( ; c > 1; c--) {
+// リピート対応の方向キー
+// リピート解除用のキー情報を残す
+void ng_cursor_move(bool shift, uint8_t code, uint8_t count) {
+  if (shift) {
+    repeating.mod = KC_LSFT;
+    register_code(repeating.mod);
+  }
+  repeating.code = code;
+  if (!naginata_config.tategaki) {
+    switch (code) {
+      case KC_LEFT:   repeating.code = KC_DOWN;   break;
+      case KC_DOWN:   repeating.code = KC_RIGHT;  break;
+      case KC_RIGHT:  repeating.code = KC_UP;     break;
+      case KC_UP:     repeating.code = KC_LEFT;   break;
+      default:    break;
+    }
+  }
+  for (uint8_t i = count; i > 1; i--) {
     tap_code(repeating.code);
   }
   register_code(repeating.code);
-  if (get_mods() & MOD_BIT(KC_LSFT)) {
-    repeating.mod = KC_LSFT;
-  }
 }
 
 void ng_up(uint8_t c) {
-  repeating.code = naginata_config.tategaki ? KC_UP : KC_LEFT;
-  ng_cursor_move(c);
+  for (uint8_t i = 0; i < c; i++) { // サイズ削減
+    if (naginata_config.tategaki) {
+      tap_code(KC_UP);
+    } else {
+      tap_code(KC_LEFT);
+    }
+  }
 }
 
 void ng_down(uint8_t c) {
-  repeating.code = naginata_config.tategaki ? KC_DOWN : KC_RIGHT;
-  ng_cursor_move(c);
+  for (uint8_t i = 0; i < c; i++) {
+    if (naginata_config.tategaki) {
+      tap_code(KC_DOWN);
+    } else {
+      tap_code(KC_RIGHT);
+    }
+  }
 }
 
 void ng_left(uint8_t c) {
-  repeating.code = naginata_config.tategaki ? KC_LEFT : KC_DOWN;
-  ng_cursor_move(c);
+  for (uint8_t i = 0; i < c; i++) {
+    if (naginata_config.tategaki) {
+      tap_code(KC_LEFT);
+    } else {
+      tap_code(KC_DOWN);
+    }
+  }
 }
 
 void ng_right(uint8_t c) {
-  repeating.code = naginata_config.tategaki ? KC_RIGHT : KC_UP;
-  ng_cursor_move(c);
+  for (uint8_t i = 0; i < c; i++) {
+    if (naginata_config.tategaki) {
+      tap_code(KC_RIGHT);
+    } else {
+      tap_code(KC_UP);
+    }
+  }
 }
 
 void ng_home() {

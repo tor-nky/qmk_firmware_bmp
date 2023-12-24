@@ -78,6 +78,7 @@ typedef uint32_t Ngkey;
 typedef uint_fast16_t Ngmap_num;
 
 bool naginata_type(uint16_t, bool);
+void end_repeating_key(void);
 
 void ng_space_or_enter(void);
 void ng_backspace(void);	// {BS}
@@ -85,6 +86,7 @@ void ng_delete(void);		// {Del}
 void ng_cut(void);
 void ng_copy(void);
 void ng_paste(void);
+void ng_cursor_move(bool, uint8_t, uint8_t);
 void ng_up(uint8_t);
 void ng_down(uint8_t);
 void ng_left(uint8_t);

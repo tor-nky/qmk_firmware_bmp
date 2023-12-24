@@ -828,56 +828,46 @@ void ng_symbol_maru(void) { // 〇{改行}
 	#endif
 }
 void ng_edit_1_up(void) { // {↑}
-	ng_up(1);
+	ng_cursor_move(false, KC_UP, 1);
 }
 void ng_edit_s1_up(void) { // +{↑}
-	register_code(KC_LSFT);
-	ng_up(1);
+	ng_cursor_move(true, KC_UP, 1);
 }
 void ng_edit_s7_up(void) { // +{↑ 7}
-	register_code(KC_LSFT);
-	ng_up(7);
+	ng_cursor_move(true, KC_UP, 7);
 }
 void ng_edit_1_down(void) { // {↓}
-	ng_down(1);
+	ng_cursor_move(false, KC_DOWN, 1);
 }
 void ng_edit_s1_down(void) { // +{↓}
-	register_code(KC_LSFT);
-	ng_down(1);
+	ng_cursor_move(true, KC_DOWN, 1);
 }
 void ng_edit_s7_down(void) { // +{↓ 7}
-	register_code(KC_LSFT);
-	ng_down(7);
+	ng_cursor_move(true, KC_DOWN, 7);
 }
 void ng_edit_1_right(void) { // {→}
-	ng_right(1);
+	ng_cursor_move(false, KC_RIGHT, 1);
 }
 void ng_edit_s1_right(void) { // +{→}
-	register_code(KC_LSFT);
-	ng_right(1);
+	ng_cursor_move(true, KC_RIGHT, 1);
 }
 void ng_edit_s5_right(void) { // +{→ 5}
-	register_code(KC_LSFT);
-	ng_right(5);
+	ng_cursor_move(true, KC_RIGHT, 5);
 }
 void ng_edit_s20_right(void) { // +{→ 20}
-	register_code(KC_LSFT);
-	ng_right(20);
+	ng_cursor_move(true, KC_RIGHT, 20);
 }
 void ng_edit_1_left(void) { // {←}
-	ng_left(1);
+	ng_cursor_move(false, KC_LEFT, 1);
 }
 void ng_edit_s1_left(void) { // +{←}
-	register_code(KC_LSFT);
-	ng_left(1);
+	ng_cursor_move(true, KC_LEFT, 1);
 }
 void ng_edit_s5_left(void) { // +{← 5}
-	register_code(KC_LSFT);
-	ng_left(5);
+	ng_cursor_move(true, KC_LEFT, 5);
 }
 void ng_edit_s20_left(void) { // +{← 20}
-    register_code(KC_LSFT);
-    ng_left(20);
+	ng_cursor_move(true, KC_LEFT, 1);
 }
 void ng_edit_s_home(void) { // +{Home}
 	register_code(KC_LSFT);
