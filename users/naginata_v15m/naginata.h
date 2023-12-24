@@ -99,8 +99,14 @@ void ios_send_string_with_cut_paste(const char *);
 typedef uint32_t Ngkey;
 // かな定義配列 ngmap[] の添字の型
 typedef uint_fast16_t Ngmap_num;
+// リピート中に使われる変数
+typedef struct {
+  uint8_t code; // リピート中の文字コード
+  uint8_t mod;  // リピート中の装飾キーの文字コード
+} Repeating;
 
 bool naginata_type(uint16_t, bool);
+void end_repeating_key(void);
 bool ng_search_and_send(Ngkey);
 Ngmap_num ng_search_with_rest_key(Ngkey, Ngkey);
 int_fast8_t number_of_candidates(Ngkey);

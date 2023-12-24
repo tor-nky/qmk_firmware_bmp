@@ -26,6 +26,8 @@ static uint8_t naginata_layer = 0; // NG_*を配置しているレイヤー番�
 static uint16_t ngon_keys[2]; // 薙刀式をオンにするキー(通常HJ)
 static uint16_t ngoff_keys[2]; // 薙刀式をオフにするキー(通常FG)
 static Ngkey pushed_key = 0; // 同時押しの状態を示す。各ビットがキーに対応する。
+// リピート中に使われる変数
+Repeating repeating = { KC_NO, KC_NO };
 
 // 31キーを32bitの各ビットに割り当てる
 #define B_Q    (1UL<<0)
@@ -803,44 +805,36 @@ void ng_paste() {
   }
 }
 
-void ng_up(uint8_t c) {
-  for ( ; c > 0; c--) {
-    if (naginata_config.tategaki) {
-      tap_code(KC_UP);
-    } else {
-      tap_code(KC_LEFT);
-    }
+// repeating.code にあるコードを c 回出力する
+// また、Shift 押下中は repeating.mod に KC_LSFT を入れる
+void ng_cursor_move(uint8_t c) {
+  for ( ; c > 1; c--) {
+    tap_code(repeating.code);
   }
+  register_code(repeating.code);
+  if (get_mods() & MOD_BIT(KC_LSFT)) {
+    repeating.mod = KC_LSFT;
+  }
+}
+
+void ng_up(uint8_t c) {
+  repeating.code = naginata_config.tategaki ? KC_UP : KC_LEFT;
+  ng_cursor_move(c);
 }
 
 void ng_down(uint8_t c) {
-  for ( ; c > 0; c--) {
-    if (naginata_config.tategaki) {
-      tap_code(KC_DOWN);
-    } else {
-      tap_code(KC_RIGHT);
-    }
-  }
+  repeating.code = naginata_config.tategaki ? KC_DOWN : KC_RIGHT;
+  ng_cursor_move(c);
 }
 
 void ng_left(uint8_t c) {
-  for ( ; c > 0; c--) {
-    if (naginata_config.tategaki) {
-      tap_code(KC_LEFT);
-    } else {
-      tap_code(KC_DOWN);
-    }
-  }
+  repeating.code = naginata_config.tategaki ? KC_LEFT : KC_DOWN;
+  ng_cursor_move(c);
 }
 
 void ng_right(uint8_t c) {
-  for ( ; c > 0; c--) {
-    if (naginata_config.tategaki) {
-      tap_code(KC_RIGHT);
-    } else {
-      tap_code(KC_UP);
-    }
-  }
+  repeating.code = naginata_config.tategaki ? KC_RIGHT : KC_UP;
+  ng_cursor_move(c);
 }
 
 void ng_home() {
@@ -1052,6 +1046,7 @@ enum RestShiftState { Off, Next, On };
 // そうでなければ未出力のキーを全て出力し、QMKにまかせるため true を返す
 bool naginata_type(uint16_t keycode, bool pressed) {
   static Ngkey waiting_keys[NKEYS];  // 各ビットがキーに対応する
+  static Ngkey repeating_key = 0;
   static uint_fast8_t waiting_count = 0; // 文字キー入力のカウンタ
   static enum RestShiftState rest_shift_state = Off;
 
@@ -1085,6 +1080,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
   // 薙刀式のキーを押した時
   if (pressed && recent_key) {
     pushed_key |= recent_key;  // キーを加える
+    end_repeating_key();  // キーリピート解除
 
     // センターシフト(後置シフトなし)の時
     if (recent_key == B_SHFT && !naginata_config.kouchi_shift) {
@@ -1093,6 +1089,8 @@ bool naginata_type(uint16_t keycode, bool pressed) {
       // 配列に押したキーを保存
       waiting_keys[waiting_count++] = recent_key;
     }
+  } else if (!pressed && (repeating_key & recent_key)) {
+    end_repeating_key();  // キーリピート解除
   }
 
   // 出力
@@ -1158,6 +1156,12 @@ bool naginata_type(uint16_t keycode, bool pressed) {
           waiting_keys[i] = waiting_keys[i + searching_count];
         }
         searching_count = waiting_count;
+        // キーを離した時、あるいはまだ探すキーが残っていたらキーリピートしない
+        if (!pressed || searching_count) {
+          end_repeating_key();  // キーリピート解除
+        } else {
+          repeating_key = searching_key;
+        }
       // 見つからなかったら最後のキーを減らして再検索
       } else {
         searching_count--;
@@ -1194,6 +1198,16 @@ bool naginata_type(uint16_t keycode, bool pressed) {
   }
 
   return (recent_key == 0);
+}
+
+// キーリピート解除
+void end_repeating_key(void) {
+  // リピート中
+  if (repeating.code != KC_NO) {
+    unregister_code(repeating.code);
+    unregister_code(repeating.mod);
+    repeating.code = repeating.mod = KC_NO;
+  }
 }
 
 // かな定義を探し出力する

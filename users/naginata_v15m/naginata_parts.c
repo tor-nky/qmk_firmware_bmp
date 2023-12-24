@@ -764,10 +764,14 @@ void ng_enter(void) { // {Enter}
 	tap_code(KC_ENTER);
 }
 void ng_backspace(void) { // {BS}
-	tap_code(KC_BACKSPACE);
+	extern Repeating repeating;
+    repeating.code = KC_BACKSPACE;
+	register_code(repeating.code);
 }
 void ng_delete(void) { // {Del}
-	tap_code(KC_DEL);
+	extern Repeating repeating;
+    repeating.code = KC_DEL;
+	register_code(repeating.code);
 }
 
 // 編集モード
@@ -852,12 +856,10 @@ void ng_edit_1_up(void) { // {↑}
 void ng_edit_s1_up(void) { // +{↑}
 	register_code(KC_LSFT);
 	ng_up(1);
-	unregister_code(KC_LSFT);
 }
 void ng_edit_s7_up(void) { // +{↑ 7}
 	register_code(KC_LSFT);
 	ng_up(7);
-	unregister_code(KC_LSFT);
 }
 void ng_edit_1_down(void) { // {↓}
 	ng_down(1);
@@ -865,12 +867,10 @@ void ng_edit_1_down(void) { // {↓}
 void ng_edit_s1_down(void) { // +{↓}
 	register_code(KC_LSFT);
 	ng_down(1);
-	unregister_code(KC_LSFT);
 }
 void ng_edit_s7_down(void) { // +{↓ 7}
 	register_code(KC_LSFT);
 	ng_down(7);
-	unregister_code(KC_LSFT);
 }
 void ng_edit_1_right(void) { // {→}
 	ng_right(1);
@@ -878,17 +878,14 @@ void ng_edit_1_right(void) { // {→}
 void ng_edit_s1_right(void) { // +{→}
 	register_code(KC_LSFT);
 	ng_right(1);
-	unregister_code(KC_LSFT);
 }
 void ng_edit_s5_right(void) { // +{→ 5}
 	register_code(KC_LSFT);
 	ng_right(5);
-	unregister_code(KC_LSFT);
 }
 void ng_edit_s20_right(void) { // +{→ 20}
 	register_code(KC_LSFT);
 	ng_right(20);
-	unregister_code(KC_LSFT);
 }
 void ng_edit_1_left(void) { // {←}
 	ng_left(1);
@@ -896,17 +893,14 @@ void ng_edit_1_left(void) { // {←}
 void ng_edit_s1_left(void) { // +{←}
 	register_code(KC_LSFT);
 	ng_left(1);
-	unregister_code(KC_LSFT);
 }
 void ng_edit_s5_left(void) { // +{← 5}
 	register_code(KC_LSFT);
 	ng_left(5);
-	unregister_code(KC_LSFT);
 }
 void ng_edit_s20_left(void) { // +{← 20}
 	  register_code(KC_LSFT);
 	  ng_left(20);
-	  unregister_code(KC_LSFT);
 }
 void ng_edit_s_home(void) { // +{Home}
 	register_code(KC_LSFT);
