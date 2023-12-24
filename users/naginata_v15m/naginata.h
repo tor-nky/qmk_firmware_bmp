@@ -95,13 +95,15 @@ void ios_send_string(const char *);
 void ios_send_string_with_cut_paste(const char *);
 #endif
 
+// 同時押し等の状態を示す、各ビットがキーに対応する型
+typedef uint32_t Ngkey;
 // かな定義配列 ngmap[] の添字の型
 typedef uint_fast16_t Ngmap_num;
 
 bool naginata_type(uint16_t, bool);
-bool ng_search_and_send(uint32_t);
-Ngmap_num ng_search_with_rest_key(uint32_t, uint32_t);
-int_fast8_t number_of_candidates(uint32_t);
+bool ng_search_and_send(Ngkey);
+Ngmap_num ng_search_with_rest_key(Ngkey, Ngkey);
+int_fast8_t number_of_candidates(Ngkey);
 
 // bool enable_naginata(uint16_t, keyrecord_t *);
 

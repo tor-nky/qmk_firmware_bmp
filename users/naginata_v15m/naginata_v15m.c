@@ -25,7 +25,7 @@ static bool is_naginata = false; // 薙刀式がオンかオフか
 static uint8_t naginata_layer = 0; // NG_*を配置しているレイヤー番号
 static uint16_t ngon_keys[2]; // 薙刀式をオンにするキー(通常HJ)
 static uint16_t ngoff_keys[2]; // 薙刀式をオフにするキー(通常FG)
-static uint32_t pushed_key = 0; // 同時押しの状態を示す。各ビットがキーに対応する。
+static Ngkey pushed_key = 0; // 同時押しの状態を示す。各ビットがキーに対応する。
 
 // 31キーを32bitの各ビットに割り当てる
 #define B_Q    (1UL<<0)
@@ -68,7 +68,7 @@ static uint32_t pushed_key = 0; // 同時押しの状態を示す。各ビット
 
 // キーコードとキービットの対応
 // メモリ削減のため配列はNG_Qを0にしている
-const uint32_t ng_key[] = {
+const Ngkey ng_key[] = {
   [NG_Q    - NG_Q] = B_Q,
   [NG_W    - NG_Q] = B_W,
   [NG_E    - NG_Q] = B_E,
@@ -114,7 +114,7 @@ const uint32_t ng_key[] = {
 
 // カナ変換テーブル
 typedef struct {
-  uint32_t key;
+  Ngkey key;
   void (*func)(void);
 } naginata_keymap;
 
@@ -1051,11 +1051,11 @@ enum RestShiftState { Off, Next, On };
 // 薙刀式のキー入力だったなら false を返す
 // そうでなければ未出力のキーを全て出力し、QMKにまかせるため true を返す
 bool naginata_type(uint16_t keycode, bool pressed) {
-  static uint32_t waiting_keys[NKEYS];  // 各ビットがキーに対応する
+  static Ngkey waiting_keys[NKEYS];  // 各ビットがキーに対応する
   static uint_fast8_t waiting_count = 0; // 文字キー入力のカウンタ
   static enum RestShiftState rest_shift_state = Off;
 
-  uint32_t recent_key;  // 各ビットがキーに対応する
+  Ngkey recent_key;  // 各ビットがキーに対応する
   bool add_key_later = false;
 
   switch (keycode) {
@@ -1080,7 +1080,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
   }
 
   // センターシフトの連続用
-  uint32_t contains_center_shift = pushed_key;
+  Ngkey contains_center_shift = pushed_key;
 
   // 薙刀式のキーを押した時
   if (pressed && recent_key) {
@@ -1100,7 +1100,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
     uint_fast8_t searching_count = waiting_count;
     while (searching_count) {
       // バッファ内のキーを組み合わせる
-      uint32_t searching_key = contains_center_shift & B_SHFT; // センターキー
+      Ngkey searching_key = contains_center_shift & B_SHFT; // センターキー
       for (uint_fast8_t i = 0; i < searching_count; i++) {
         searching_key |= waiting_keys[i];
       }
@@ -1109,7 +1109,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
         Ngmap_num num = ng_search_with_rest_key(searching_key, pushed_key);
         if (num < NGMAP_COUNT) {
 #if defined(__AVR__)
-          uint32_t key;
+          Ngkey key;
           memcpy_P(&key, &ngmap[num].key, sizeof(key));
           searching_key |= key;
 #else
@@ -1198,11 +1198,11 @@ bool naginata_type(uint16_t keycode, bool pressed) {
 
 // かな定義を探し出力する
 // 成功すれば true を返す
-bool ng_search_and_send(uint32_t searching_key) {
+bool ng_search_and_send(Ngkey searching_key) {
   // if (!searching_key)  return false;
   for (Ngmap_num num = NGMAP_COUNT; num-- > 0; ) {  // 逆順で検索
 #if defined(__AVR__)
-    uint32_t key;
+    Ngkey key;
     memcpy_P(&key, &ngmap[num].key, sizeof(key));
     if (searching_key == key) {
       void (*func)(void);
@@ -1222,11 +1222,11 @@ bool ng_search_and_send(uint32_t searching_key) {
 
 // すでに押されているキーをシフトとし、いま押したキーを含むかな定義を探し、配列の添え字を返す
 // 見つからなければ、かな定義の要素数 NGMAP_COUNT を返す
-Ngmap_num ng_search_with_rest_key(uint32_t searching_key, uint32_t pushed_key) {
+Ngmap_num ng_search_with_rest_key(Ngkey searching_key, Ngkey pushed_key) {
   // if (!(searching_key && pushed_key))  return NGMAP_COUNT;
   Ngmap_num num = 0;
   for ( ; num < NGMAP_COUNT; num++) {
-    uint32_t key;
+    Ngkey key;
 #if defined(__AVR__)
     memcpy_P(&key, &ngmap[num].key, sizeof(key));
 #else
@@ -1243,10 +1243,10 @@ Ngmap_num ng_search_with_rest_key(uint32_t searching_key, uint32_t pushed_key) {
 // 組み合わせをしぼれない = 2: 変換しない
 // 組み合わせが一つしかない = 1: 変換を開始する
 // 組み合わせがない = 0: 変換を開始する
-int_fast8_t number_of_candidates(uint32_t search) {
+int_fast8_t number_of_candidates(Ngkey search) {
   int_fast8_t c = 0;
   for (Ngmap_num i = 0; i < NGMAP_COUNT; i++) {
-    uint32_t key;
+    Ngkey key;
 #if defined(__AVR__)
     memcpy_P(&key, &ngmap[i].key, sizeof(key));
 #else
