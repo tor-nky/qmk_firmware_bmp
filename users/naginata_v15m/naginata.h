@@ -81,12 +81,12 @@ bool naginata_type(uint16_t, bool);
 void end_repeating_key(void);
 
 void ng_space_or_enter(void);
-void ng_backspace(void);	// {BS}
-void ng_delete(void);		// {Del}
+void ng_backspace_with_repeat(void);  // {BS}
+void ng_delete_with_repeat(void); // {Del}
 void ng_cut(void);
 void ng_copy(void);
 void ng_paste(void);
-void ng_cursor_move(bool, uint8_t, uint8_t);
+void ng_move_cursor_with_repeat(bool, uint8_t, uint8_t);
 void ng_up(uint8_t);
 void ng_down(uint8_t);
 void ng_left(uint8_t);

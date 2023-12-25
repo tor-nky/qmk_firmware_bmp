@@ -185,7 +185,7 @@ const PROGMEM naginata_keymap ngmap[] = {
   {.key = B_D|B_F|B_Y   , .func = ng_home}, // {Home}
   {.key = B_D|B_F|B_U   , .func = ng_edit_delete_to_end}, // +{End}{BS}
   {.key = B_D|B_F|B_I   , .func = ng_saihenkan}, // {vk1Csc079}
-  {.key = B_D|B_F|B_O   , .func = ng_delete}, // {Del}
+  {.key = B_D|B_F|B_O   , .func = ng_delete_with_repeat}, // {Del}
   {.key = B_D|B_F|B_P   , .func = ng_ime_cancel}, // {Esc 3}
   {.key = B_D|B_F|B_H   , .func = ng_edit_kakutei_end}, // {Enter}{End}
   {.key = B_D|B_F|B_J   , .func = ng_edit_1_up}, // {↑}
@@ -353,7 +353,7 @@ const PROGMEM naginata_keymap ngmap[] = {
   {.key = B_R           , .func = ng_send_si    },  // し
   {.key = B_T           , .func = ng_edit_1_left},  // {←}
   {.key = B_Y           , .func = ng_edit_1_right}, // {→}
-  {.key = B_U           , .func = ng_backspace  },  // {BS}
+  {.key = B_U           , .func = ng_backspace_with_repeat  },  // {BS}
   {.key = B_I           , .func = ng_send_ru    },  // る
   {.key = B_O           , .func = ng_send_su    },  // す
   {.key = B_P           , .func = ng_send_he    },  // へ
@@ -445,9 +445,6 @@ void naginata_off(void) {
       tap_code(KC_GRV); // 半角/全角
       break;
     case NG_MAC:
-    #ifdef NG_USE_KAWASEMI
-      tap_code16(LOPT(LSFT(KC_B)));
-    #endif
     #ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
@@ -655,6 +652,7 @@ bool enable_naginata(uint16_t keycode, keyrecord_t *record) {
 
 // バッファをクリアする
 void naginata_clear(void) {
+  end_repeating_key();  // キーリピート解除
   n_modifier = 0;
   fghj_buf = 0;
 }
@@ -1008,14 +1006,14 @@ void ng_space_or_enter(void) {
 	}
 }
 
-void ng_backspace(void) { // {BS}
-    repeating.code = KC_BACKSPACE;
-	register_code(repeating.code);
+void ng_backspace_with_repeat(void) { // {BS}
+  repeating.code = KC_BACKSPACE;
+  register_code(repeating.code);
 }
 
-void ng_delete(void) { // {Del}
-    repeating.code = KC_DEL;
-	register_code(repeating.code);
+void ng_delete_with_repeat(void) { // {Del}
+  repeating.code = KC_DEL;
+  register_code(repeating.code);
 }
 
 void ng_cut() {
@@ -1073,7 +1071,7 @@ void ng_paste() {
 
 // リピート対応の方向キー
 // リピート解除用のキー情報を残す
-void ng_cursor_move(bool shift, uint8_t code, uint8_t count) {
+void ng_move_cursor_with_repeat(bool shift, uint8_t code, uint8_t count) {
   if (shift) {
     repeating.mod = KC_LSFT;
     register_code(repeating.mod);
