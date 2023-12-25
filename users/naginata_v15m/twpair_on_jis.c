@@ -81,15 +81,15 @@ bool twpair_on_jis(uint16_t keycode, keyrecord_t *record) {
       if (((us2jis[i][1] & QK_LSFT) == QK_LSFT) == shifted) {
         tap_code(us2jis[i][1]);
       } else if (shifted) {
-        if (lshifted) unregister_code(KC_LSFT);
-        if (rshifted) unregister_code(KC_RSFT);
+        if (lshifted) del_mods(MOD_BIT(KC_LSFT));
+        if (rshifted) del_mods(MOD_BIT(KC_RSFT));
         tap_code(us2jis[i][1]);
-        if (lshifted) register_code(KC_LSFT);
-        if (rshifted) register_code(KC_RSFT);
+        if (lshifted) add_mods(MOD_BIT(KC_LSFT));
+        if (rshifted) add_mods(MOD_BIT(KC_RSFT));
       } else {
-        register_code(KC_LSFT);
+        add_mods(MOD_BIT(KC_LSFT));
         tap_code(us2jis[i][1]);
-        unregister_code(KC_LSFT);
+        del_mods(MOD_BIT(KC_LSFT));
       }
       return false;
     }
