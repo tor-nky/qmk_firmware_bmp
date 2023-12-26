@@ -816,7 +816,7 @@ int_fast8_t number_of_candidates(Ngkey search) {
 }
 
 // リピート中に使われる変数
-struct {
+static struct {
   uint8_t code; // リピート中の文字コード
   uint8_t mod;  // リピート中の装飾キーの文字コード
 } repeating = { KC_NO, KC_NO };
@@ -831,8 +831,8 @@ void end_repeating_key(void) {
   }
 }
 
-bool ng_pushed_spc = false, ng_pushed_ent = false;
-uint8_t ng_center_keycode = KC_NO;
+static bool ng_pushed_spc = false, ng_pushed_ent = false;
+static uint8_t ng_center_keycode = KC_NO;
 enum RestShiftState { Off, Next, On };
 
 // キー入力を文字に変換して出力する
@@ -998,9 +998,9 @@ bool naginata_type(uint16_t keycode, bool pressed) {
 void ng_space_or_enter(void) {
 	if (ng_center_keycode == KC_NO)	return;
 	if (ng_pushed_spc | ng_pushed_ent) {
-		register_code(KC_LSFT);
+		add_mods(MOD_BIT(KC_LSFT));
 		tap_code(ng_center_keycode);
-		unregister_code(KC_LSFT);
+		del_mods(MOD_BIT(KC_LSFT));
 	} else {
 		tap_code(ng_center_keycode);
 	}

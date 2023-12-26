@@ -870,19 +870,19 @@ void ng_edit_s20_left(void) { // +{← 20}
 	ng_move_cursor_with_repeat(true, KC_LEFT, 20);
 }
 void ng_edit_s_home(void) { // +{Home}
-	register_code(KC_LSFT);
+	add_mods(MOD_BIT(KC_LSFT));
 	ng_home();
-	unregister_code(KC_LSFT);
+	del_mods(MOD_BIT(KC_LSFT));
 }
 void ng_edit_s_end(void) { // +{End}
-	register_code(KC_LSFT);
+	add_mods(MOD_BIT(KC_LSFT));
 	ng_end();
-    unregister_code(KC_LSFT);
+    del_mods(MOD_BIT(KC_LSFT));
 }
 void ng_edit_delete_to_end(void) { // +{End}{BS}
-	register_code(KC_LSFT);
+	add_mods(MOD_BIT(KC_LSFT));
 	ng_end();
-    unregister_code(KC_LSFT);
+    del_mods(MOD_BIT(KC_LSFT));
 	tap_code(KC_BSPC);
 }
 void ng_edit_nijuu_yama_gakko(void) { // 『』{改行}{↑}
@@ -970,6 +970,15 @@ void ng_edit_nijuu_yama_kakko(void) { // 《》{改行}{↑}
 	#endif
 	ng_up(1);
 }
+
+void copy_spc_to_clipboard(void) {
+    tap_code(KC_SPC);
+    add_mods(MOD_BIT(KC_LSFT));
+    ng_up(1);
+    del_mods(MOD_BIT(KC_LSFT));
+    ng_cut();
+}
+
 void ng_edit_surround_nijuu_yama_gakko(void) { // ^x『^v』{改行}{Space}+{↑}^x
 	#ifdef NG_BMP
 	switch (naginata_config.os) {
@@ -983,11 +992,7 @@ void ng_edit_surround_nijuu_yama_gakko(void) { // ^x『^v』{改行}{Space}+{↑
 		ng_send_unicode_string_P(PSTR("『"));
 		ng_paste();
 		ng_send_unicode_string_P(PSTR("』"));
-		tap_code(KC_SPC);
-		register_code(KC_LSFT);
-		ng_up(1);
-		unregister_code(KC_LSFT);
-		ng_cut();
+        copy_spc_to_clipboard();
 	#ifdef NG_BMP
 		break;
 	}
@@ -1006,11 +1011,7 @@ void ng_edit_surround_maru_kakko(void) { // ^x(^v){改行}{Space}+{↑}^x
 		ng_send_unicode_string_P(PSTR("（"));
 		ng_paste();
 		ng_send_unicode_string_P(PSTR("）"));
-		tap_code(KC_SPC);
-		register_code(KC_LSFT);
-		ng_up(1);
-		unregister_code(KC_LSFT);
-		ng_cut();
+        copy_spc_to_clipboard();
 	#ifdef NG_BMP
 		break;
 	}
@@ -1029,11 +1030,7 @@ void ng_edit_surround_sumituki_kakko(void) { // ^x【^v】{改行}{Space}+{↑}^
 		ng_send_unicode_string_P(PSTR("【"));
 		ng_paste();
 		ng_send_unicode_string_P(PSTR("】"));
-		tap_code(KC_SPC);
-		register_code(KC_LSFT);
-		ng_up(1);
-		unregister_code(KC_LSFT);
-		ng_cut();
+        copy_spc_to_clipboard();
 	#ifdef NG_BMP
 		break;
 	}
@@ -1052,11 +1049,7 @@ void ng_edit_surround_kagi_kakko(void) { // ^x「^v」{改行}{Space}+{↑}^x
 		ng_send_unicode_string_P(PSTR("「"));
 		ng_paste();
 		ng_send_unicode_string_P(PSTR("」"));
-		tap_code(KC_SPC);
-		register_code(KC_LSFT);
-		ng_up(1);
-		unregister_code(KC_LSFT);
-		ng_cut();
+        copy_spc_to_clipboard();
 	#ifdef NG_BMP
 		break;
 	}
@@ -1080,11 +1073,7 @@ void ng_edit_surround_ruby(void) { // ^x｜{改行}^v《》{改行}{↑}{Space}+
 		ng_cut();
 		ng_send_unicode_string_P(PSTR("｜"));
 		ng_paste();
-		tap_code(KC_SPC);
-		register_code(KC_LSFT);
-		ng_up(1);
-		unregister_code(KC_LSFT);
-		ng_cut();
+        copy_spc_to_clipboard();
 		ng_send_unicode_string_P(PSTR("《》"));
 		ng_up(1);
 	#ifdef NG_BMP
