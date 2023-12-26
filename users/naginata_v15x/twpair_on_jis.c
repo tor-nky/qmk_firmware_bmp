@@ -66,9 +66,9 @@ bool twpair_on_jis(uint16_t keycode, keyrecord_t *record) {
   if (!record->event.pressed) return true;
 
   uint16_t skeycode; // シフトビットを反映したキーコード
-  bool lshifted = get_mods() & MOD_BIT(KC_LSFT); // シフトキーの状態
-  bool rshifted = get_mods() & MOD_BIT(KC_RSFT);
-  bool shifted = lshifted | rshifted;
+  uint8_t mods_lsft = get_mods() & MOD_BIT(KC_LSFT); // シフトキーの状態
+  uint8_t mods_rsft = get_mods() & MOD_BIT(KC_RSFT);
+  bool shifted = mods_lsft || mods_rsft;
 
   if (shifted) {
     skeycode = QK_LSFT | keycode;
@@ -81,15 +81,15 @@ bool twpair_on_jis(uint16_t keycode, keyrecord_t *record) {
       if (((us2jis[i][1] & QK_LSFT) == QK_LSFT) == shifted) {
         tap_code(us2jis[i][1]);
       } else if (shifted) {
-        if (lshifted) unregister_code(KC_LSFT);
-        if (rshifted) unregister_code(KC_RSFT);
+        del_mods(mods_lsft);
+        del_mods(mods_rsft);
         tap_code(us2jis[i][1]);
-        if (lshifted) register_code(KC_LSFT);
-        if (rshifted) register_code(KC_RSFT);
+        add_mods(mods_lsft);
+        add_mods(mods_rsft);
       } else {
-        register_code(KC_LSFT);
+        add_mods(MOD_BIT(KC_LSFT));
         tap_code(us2jis[i][1]);
-        unregister_code(KC_LSFT);
+        del_mods(MOD_BIT(KC_LSFT));
       }
       return false;
     }
