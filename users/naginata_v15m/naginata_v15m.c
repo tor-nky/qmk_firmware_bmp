@@ -1314,7 +1314,7 @@ void ng_ime_complete() {
 
 #ifdef NG_BMP
 void ios_send_string(const char *str) {
-  send_string(str);
+  ng_send_kana(str);
   tap_code(KC_LCTRL); tap_code(KC_LSFT); tap_code(KC_LCTRL); // ディレイの代わり
   tap_code(KC_SPC);
   tap_code(KC_ENT);
@@ -1327,6 +1327,45 @@ void ios_send_string_with_cut_paste(const char *str) {
   ng_up(1);     // 1文字戻る
   tap_code(KC_LCTRL); tap_code(KC_LSFT); // ディレイの代わり
   ng_paste();
+  tap_code(KC_LCTRL); tap_code(KC_LSFT); // ディレイの代わり
   ng_down(1);   // 1文字進む
 }
 #endif
+
+#define MAX_ROLL_OVER 6 // 予備なし
+
+void ng_send_kana(const char *str) {
+  uint_fast8_t registered_count = 0;
+  uint8_t registered[MAX_ROLL_OVER];
+  char ascii_code;
+
+  while ((ascii_code = pgm_read_byte(str++)) != '\0') {
+    uint8_t keycode = pgm_read_byte(&ascii_to_keycode_lut[(uint8_t)ascii_code]);
+    // キーを押す
+    for (uint_fast8_t i = 0; i < registered_count; i++) {
+      if (registered[i] == keycode) {
+        unregister_code(keycode);
+        // registered[] を詰める
+        registered_count--;
+        for ( ; i < registered_count; i++) {
+          registered[i] = registered[i + 1];
+        }
+        break;
+      }
+    }
+    // バッファがいっぱいだったらバッファの先頭のキーを離す
+    if (registered_count == MAX_ROLL_OVER) {
+      unregister_code(registered[0]);
+      registered_count--;
+      for (uint_fast8_t i = 0; i < registered_count; i++) {
+        registered[i] = registered[i + 1];
+      }
+    }
+    register_code(keycode);
+    registered[registered_count++] = keycode;
+  }
+  // すべてのキーを離す
+  for (uint_fast8_t i = 0; i < registered_count; i++) {
+    unregister_code(registered[i]);
+  }
+}

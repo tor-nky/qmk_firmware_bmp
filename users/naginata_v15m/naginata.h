@@ -107,7 +107,10 @@ void ios_send_string(const char *);
 void ios_send_string_with_cut_paste(const char *);
 #endif
 
-// bool enable_naginata(uint16_t, keyrecord_t *);
+void ng_send_kana(const char *str);
+
+#define NG_SEND_KANA(string) ng_send_kana(PSTR(string))
+
 
 // なぜKC_キーコードを使わず、NG_キーコードを定義するのか
 // 1. 英字レイアウトがQWERTYでない場合でもOK
