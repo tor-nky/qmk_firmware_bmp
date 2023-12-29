@@ -1000,14 +1000,14 @@ bool naginata_type(uint16_t keycode, bool pressed) {
 }
 
 void ng_space_or_enter(void) {
-	if (ng_center_keycode == KC_NO)	return;
-	if (ng_pushed_spc | ng_pushed_ent) {
-		add_mods(MOD_BIT(KC_LSFT));
-		tap_code(ng_center_keycode);
-		del_mods(MOD_BIT(KC_LSFT));
-	} else {
-		tap_code(ng_center_keycode);
-	}
+  if (ng_center_keycode == KC_NO) return;
+  if (ng_pushed_spc | ng_pushed_ent) {
+    add_mods(MOD_BIT(KC_LSFT));
+    tap_code(ng_center_keycode);
+    del_mods(MOD_BIT(KC_LSFT));
+  } else {
+    tap_code(ng_center_keycode);
+  }
 }
 
 void ng_backspace_with_repeat(void) { // {BS}
@@ -1346,7 +1346,7 @@ void ng_send_kana(const char *str) {
 
   while ((ascii_code = pgm_read_byte(str++)) != '\0') {
     uint8_t keycode = pgm_read_byte(&ascii_to_keycode_lut[(uint8_t)ascii_code]);
-    // キーを押す
+    // バッファに同じキーがあったらそのキーを離す
     for (uint_fast8_t i = 0; i < registered_count; i++) {
       if (registered[i] == keycode) {
         unregister_code(keycode);
@@ -1366,9 +1366,11 @@ void ng_send_kana(const char *str) {
         registered[i] = registered[i + 1];
       }
     }
+    // キーを押す
     register_code(keycode);
     registered[registered_count++] = keycode;
   }
+
   // すべてのキーを離す
   for (uint_fast8_t i = 0; i < registered_count; i++) {
     unregister_code(registered[i]);
