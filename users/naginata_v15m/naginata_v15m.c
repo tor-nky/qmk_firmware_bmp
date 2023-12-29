@@ -833,7 +833,7 @@ void end_repeating_key(void) {
 
 static bool ng_pushed_spc = false, ng_pushed_ent = false;
 static uint8_t ng_center_keycode = KC_NO;
-enum RestShiftState { Off, Next, On };
+enum RestShiftState { Stop, Checking, Once };
 
 // キー入力を文字に変換して出力する
 // 薙刀式のキー入力だったなら false を返す
@@ -842,7 +842,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
   static Ngkey waiting_keys[NKEYS];  // 各ビットがキーに対応する
   static Ngkey repeating_key = 0;
   static uint_fast8_t waiting_count = 0; // 文字キー入力のカウンタ
-  static enum RestShiftState rest_shift_state = Off;
+  static enum RestShiftState rest_shift_state = Stop;
 
   Ngkey recent_key;  // 各ビットがキーに対応する
   bool add_key_later = false;
@@ -898,7 +898,7 @@ bool naginata_type(uint16_t keycode, bool pressed) {
         searching_key |= waiting_keys[i];
       }
       // シフト残り処理
-      if (rest_shift_state == On) {
+      if (rest_shift_state == Once) {
         Ngmap_num num = ng_search_with_rest_key(searching_key, pushed_key);
         if (num < NGMAP_COUNT) {
 #if defined(__AVR__)
@@ -910,13 +910,13 @@ bool naginata_type(uint16_t keycode, bool pressed) {
 #endif
         }
       }
-      // バッファ内の全てのキーを組み合わせた時は
-      // (センターシフト(後置シフトなし)の時は全て出力する)
+      // バッファ内の全てのキーを組み合わせている
+      // (後置シフトなしでセンターシフトの時は全て出力する)
       if (searching_count == waiting_count && !add_key_later) {
         if (pressed && recent_key) {
           // 今押したキー以外が出力済みの時にシフト残り処理開始
-          if (waiting_count == 1 && rest_shift_state == Next) {
-            rest_shift_state = On;
+          if (waiting_count == 1 && rest_shift_state == Checking) {
+            rest_shift_state = Once;
             continue;
           }
           // 変換候補を数える
@@ -926,12 +926,11 @@ bool naginata_type(uint16_t keycode, bool pressed) {
             searching_count--;  // 最後のキーを減らして検索
             continue;
           // 組み合わせをしぼれない = 2: 変換しない
-          // (薙刀式以外のキーを押した時は全て出力する)
           } else if (nc != 1) {
             break;
           }
         // キーを離した時は、そのキーが関わるところまで出力する
-        // (薙刀式以外のキーを離した時は出力しない)
+        // (薙刀式以外のキーを離した時は出力終了)
         } else if (!pressed && !(searching_key & recent_key)) {
           break;
         }
@@ -942,8 +941,8 @@ bool naginata_type(uint16_t keycode, bool pressed) {
         // センターシフトの連続用
         contains_center_shift = searching_key; // 薙刀式v15では不要
         // 1回出力したらシフト残り処理は終わり
-        if (rest_shift_state == On) {
-          rest_shift_state = Off;
+        if (rest_shift_state == Once) {
+          rest_shift_state = Stop;
         }
         // 見つかった分のキーを配列から取り除く
         waiting_count -= searching_count;
@@ -967,8 +966,8 @@ bool naginata_type(uint16_t keycode, bool pressed) {
       waiting_count = 0;
     }
     // シフト残り処理が始まらなかった
-    if (rest_shift_state == Next) {
-      rest_shift_state = Off;
+    if (rest_shift_state == Checking) {
+      rest_shift_state = Stop;
     }
   }
 
@@ -983,9 +982,9 @@ bool naginata_type(uint16_t keycode, bool pressed) {
 #endif
     // スペースを押していないなら次回、シフト残りを含めて探す
     if (pushed_key & B_SHFT || !pushed_key) {
-      rest_shift_state = Off;
-    } else if (rest_shift_state != On) {
-      rest_shift_state = Next;
+      rest_shift_state = Stop;
+    } else if (rest_shift_state != Once) {
+      rest_shift_state = Checking;
     }
 #ifndef NG_USE_SHIFT_WHEN_SPACE_UP
     pushed_key &= ~recent_key; // キーを取り除く
@@ -1315,11 +1314,11 @@ void ng_ime_complete() {
 
 #ifdef NG_BMP
 void ios_send_string(const char *str) {
-    send_string(str);
-    tap_code(KC_LCTRL); tap_code(KC_LSFT); tap_code(KC_LCTRL); // ディレイの代わり
-    tap_code(KC_SPC);
-    tap_code(KC_ENT);
-    tap_code(KC_LCTRL); // ディレイの代わり
+  send_string(str);
+  tap_code(KC_LCTRL); tap_code(KC_LSFT); tap_code(KC_LCTRL); // ディレイの代わり
+  tap_code(KC_SPC);
+  tap_code(KC_ENT);
+  tap_code(KC_LCTRL); // ディレイの代わり
 }
 
 void ios_send_string_with_cut_paste(const char *str) {
