@@ -3,16 +3,17 @@
 薙刀式カナ配列による入力をQMKで実現します。薙刀式v15に準拠しています。
 編集モードも実装していますが、
 編集モードでの記号入力方式がOSによって異なるので、
-使用するOS(Windows、MacOS、Linux)によって切り替え る必要があります。
+使用するOS(Windows、MacOS、Linux)によって切り替える必要があります。
 切り替えは再コンパイル不要で、動的に切り替えられます。
 
 ## 薙刀式とは
 
 【薙刀式】v15fix版、発表
 http://oookaworks.seesaa.net/article/500180437.html#gsc.tab=0
-## OSの設定
+## OSの設定 (BLE Micro Pro以外)
 ### Windowsの場合
-キーボード設定を日本語106キーボードにする。[WinCompose](http://wincompose.info/)をインストールする。
+キーボード設定を日本語106キーボードにする。
+[WinCompose](http://wincompose.info/)をインストールする。
 
 IMEのキー設定
 |* キー|入力/変換済み文字なし|他|
@@ -20,16 +21,19 @@ IMEのキー設定
 |Ctrl+Shift+無変換| - |全消去|
 |Ctrl+Shift+変換| - |全確定|
 ### Macの場合
-キーボードが日本語/英語どちらの設定でも動きます。  
-IM にかわせみを使用する場合（config.h の中に ``#define NG_USE_KAWASEMI`` を書き加えてコンパイルします）は、コード入力に Option+Shift+B が設定されているか確認してください。
+キーボードが日本語/英語どちらの設定でも動きます。
+
+IM にかわせみを使用する場合は、コード入力に Option+Shift+B が設定されているか確認してください。  
+（config.h の中に ``#define NG_USE_KAWASEMI`` を書き加えてコンパイルします）
+
+また、「キーボード設定を開く...」から「入力ソース」に英語「U.S.」を加えます。  
+「英数」キーでIMをオフにしたとき「U.S.」になるようにしてください。
 
 かわせみを使わない場合は下の設定も必要です。
 
 [Karabiner-Elements](https://karabiner-elements.pqrs.org/)をインストールします。  
 ファイル unicode_hex_input_switcher.json をフォルダ ~/.config/karabiner/assets/complex_modification にコピーし、  
 Karabiner-Elements に Unicode Hex Input Switcher を登録してください。  
-また、「キーボード設定を開く...」から「入力ソース」に英語「U.S.」を加えます。
-「英数」キーでIMをオフにしたとき「U.S.」になるようにしてください。  
 ### Linuxの場合
 キーボード設定を日本語106キーボードにする。
 config.h に次の記述を加えてコンパイルしてください。ユニコード入力に必要です。
@@ -37,14 +41,38 @@ config.h に次の記述を加えてコンパイルしてください。ユニ�
 #define USB_POLLING_INTERVAL_MS 8   // sets the USB polling rate in milliseconds
 #define TAP_CODE_DELAY 24   // Sets the delay between `register_code` and `unregister_code`
 ```
-### Mac辞書式(BMP専用)の場合
-キーボードが日本語/英語どちらの設定でも動きます。  
-また、「キーボード設定を開く...」から「入力ソース」に英語「U.S.」を加えます。
-「英数」キーでIMをオフにしたとき「U.S.」になるようにしてください。
-### iOS辞書式(BMP専用)の場合
-キーボードが日本語/英語どちらの設定でも動きます。  
-ユーザー辞書にnaginata_dictionary.plistの中身を登録する。  
+## OSの設定とIMへの単語の登録 (BLE Micro Pro)
+11個を __辞書登録__ してください。
+|単語|読み|
+|---|---|
+|……|なぎてて|
+|――|なぎよせ|
+|《》|なぎにや|
+|（）|なぎまか|
+|【】|なぎすか|
+|「」|なぎかぎ|
+|『』|なぎにか|
+|／|なぎなめ|
+|×　　　×　　　×|なぎばつ|
+|｜《》|なぎる|
+|○|なぎまる|
+### Windows辞書式の場合
+キーボード設定を日本語106キーボードにする。
 
+IMEのキー設定
+|* キー|入力/変換済み文字なし|他|
+|---|:---:|:---:|
+|Ctrl+Shift+無変換| - |全消去|
+|Ctrl+Shift+変換| - |全確定|
+### Mac辞書式の場合
+キーボードが日本語/英語どちらの設定でも動きます。
+
+また、「キーボード設定を開く...」から「入力ソース」に英語「U.S.」を加えます。  
+「英数」キーでIMをオフにしたとき「U.S.」になるようにしてください。
+### Linux辞書式の場合
+キーボード設定を日本語106キーボードにする。
+### iOS辞書式の場合
+キーボードが日本語/英語どちらの設定でも動きます。  
 ## QMKファームウェアの設定
 
 独自拡張として、標準のシフト&スペースに加えて、シフト&エンターキーを追加しました。
@@ -54,6 +82,11 @@ NG_SHFT2をキーマップに配置すると、単押しならエンター、
 OLEDが有効な場合には左側のOLEDには、
 日本語入力モードに応じて「かな」または「ABC」と表紙されます。
 右側のOLEDには薙刀式のロゴが表示されます。薙刀式のロゴは大岡俊彦氏に帰属します。
+
+3キー同時押しのカーソル移動と、Delキーにだけキーリピートが効きます。
+
+F+G を押さなくても 左右シフト＋英字 で IMEオフになるので、アルファベットの入力がすぐにできます。  
+再びかな入力にするときは H+J を押して IMEオン にします。
 
 ## キーボードの切り替え操作
 
@@ -65,7 +98,9 @@ OLEDが有効な場合には左側のOLEDには、
 | OS切り替え            | Windows  | NGSW_WIN  | switchOS(NG_WIN)  | 
 |                       | MacOS    | NGSW_MAC  | switchOS(NG_MAC)  | 
 |                       | Linux    | NGSW_LNX  | switchOS(NG_LNX)  | 
-|                       | Mac辞書式(BMP専用) | NGSW_MD  | switchOS(NG_MAC_DIC)  | 
+|                       | Windows辞書式(BMP専用) | NGSW_WIN  | switchOS(NG_WIN_DIC)  | 
+|                       | Mac辞書式(BMP専用)     | NGSW_MAC  | switchOS(NG_MAC_DIC)  | 
+|                       | Linux辞書式(BMP専用)   | NGSW_LNX  | switchOS(NG_LNX_DIC)  | 
 |                       | iOS(BMP専用) | NGSW_IOS  | switchOS(NG_IOS)  | 
 | MacOSのライブ変換対応 | ON/OFFトグル   | NG_MLV   | mac_live_conversion_toggle()  | 
 | 縦書き、横書き        | ON/OFFトグル   | NG_TAYO    | tategaki_toggle()  | 
@@ -88,24 +123,20 @@ config.h の中に ``#define NG_BMP`` がなければ、そのままコンパイ
 ## BLE Micro Pro で使う場合
 config.h の中に ``#define NG_BMP`` を書き加えてコンパイルします。
 
-Windows用、MacOS用、Linux用は USB、Bluetoothとも編集モードの一部が正常に動きません。
+USB接続時には、編集モードの多くが正常に動きません。
 
-Bluetooth接続専用の Mac辞書式 と iOS辞書式 が使えるのでご利用ください。
+Bluetooth接続でご利用ください。  
 なお、「選択範囲を括弧でくくる」編集モードを使ったあとにクリップボードは消去されません。
-
-_naginata_dictionary.plist_ 内にある12個を __辞書登録__ してください。
-
-キーボードの種類は ANSI、JIS(日本語)のどちらに設定していても使えます。
-
 * Mac辞書式(BMP専用)  
-日本語IMのライブ変換を使用中に M+Comma+Z を押すと、「　　　×　　　×　　　×」が入力できなくなる不具合が見つかっています。
+日本語IMのライブ変換を使用中に M+Comma+Z を押すと、「　　　×　　　×　　　×」が入力できなくなります。
 ライブ変換をやめ、変換学習をリセットすると入力できるようになります。
 * iOS辞書式(BMP専用)  
-キーボードの電源を入れた直後、あるいはキーボードをリセットした直後には、```『』【】〇``` などの辞書登録によった記号が _1〜2回_ 入力できません。  
+キーボードの電源を入れた直後、あるいはキーボードをリセットした直後には、```『』【】〇``` などの辞書登録した記号を _しばらく_ 入力できません。  
 iPhoneの仕様で、ひらがな変換、カタカナ変換、再変換などは使えません。
 ## 不具合
 * 定義が設定されていないキーを押しても、何の代わりも出力しない  
 この場合、キーマップから該当するキーを NG_** でないものに変えてください。
+* Windows の秀丸エディタは、入力が速すぎるとクラッシュすることがあります。
 ## DvorakJ版、Hachikuとの違い
 ### 文字キーを押し、未出力のままスペースを押し離す
 |DvorakJ|Hachiku|naginata_v15m|
