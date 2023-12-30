@@ -388,21 +388,27 @@ void set_naginata(uint8_t layer, uint16_t *onk, uint16_t *offk) {
   ngoff_keys[1] = *(offk+1);
 
   naginata_config.raw = eeconfig_read_user();
-  #ifdef NG_BMP
-  if (naginata_config.os != NG_WIN && naginata_config.os != NG_MAC && naginata_config.os != NG_LINUX && naginata_config.os != NG_MAC_DIC && naginata_config.os != NG_IOS) {
-    naginata_config.os = NG_IOS;
-    naginata_config.live_conv = 0;
-    naginata_config.tategaki = 0;
-    naginata_config.kouchi_shift = 0;
-  #else
-  if (naginata_config.os != NG_WIN && naginata_config.os != NG_MAC && naginata_config.os != NG_LINUX) {
-    naginata_config.os = NG_WIN;
-    naginata_config.live_conv = 1;
-    naginata_config.tategaki = 1;
-    naginata_config.kouchi_shift = 0;
-  #endif
-    eeconfig_update_user(naginata_config.raw);
+#ifdef NG_BMP
+  switch (naginata_config.os) {
+    case NG_WIN ... NG_LINUX:
+    case NG_MAC_DIC:  case NG_IOS:
+      naginata_config.os = NG_IOS;
+      naginata_config.live_conv = 0;
+      naginata_config.tategaki = 0;
+      naginata_config.kouchi_shift = 0;
+      break;
   }
+#else
+  switch (naginata_config.os) {
+    case NG_WIN ...  NG_LINUX:
+      naginata_config.os = NG_WIN;
+      naginata_config.live_conv = 1;
+      naginata_config.tategaki = 1;
+      naginata_config.kouchi_shift = 0;
+      break;
+  }
+#endif
+  eeconfig_update_user(naginata_config.raw);
   ng_set_unicode_mode(naginata_config.os);
 }
 
@@ -420,10 +426,10 @@ void naginata_on(void) {
       tap_code(KC_INTERNATIONAL_2);
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       tap_code(KC_LANGUAGE_1);      // (Mac)かな
       break;
   }
@@ -450,10 +456,10 @@ void naginata_off(void) {
       tap_code(KC_GRV); // 半角/全角
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       tap_code(KC_LANGUAGE_2);  // (Mac)英数
       break;
     case NG_LINUX:
@@ -479,10 +485,10 @@ void ng_set_unicode_mode(uint8_t os) {
       set_unicode_input_mode(UNICODE_MODE_WINCOMPOSE);
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       set_unicode_input_mode(UNICODE_MODE_MACOS);
       break;
     case NG_LINUX:
@@ -513,10 +519,10 @@ void ng_show_os(void) {
       break;
     case NG_MAC:
       send_string("mac");
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
-      send_string("-dic");
-    #endif
+      send_string("mac-dic");
+#endif
       if (naginata_config.live_conv) {
         send_string("/"SS_TAP(X_KP_PLUS)"lc");
       } else {
@@ -526,11 +532,11 @@ void ng_show_os(void) {
     case NG_LINUX:
       send_string("linux");
       break;
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_IOS:
       send_string("ios");
       break;
-    #endif
+#endif
   }
   if (naginata_config.tategaki) {
     send_string("/tate");
@@ -562,10 +568,10 @@ void ng_send_unicode_string_P(const char *str) {
       tap_code(KC_ENT);
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
 #ifndef NG_USE_KAWASEMI
       // Karabiner-Elementsが必要
       {
@@ -700,7 +706,7 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
         switchOS(NG_LINUX);
         return false;
         break;
-      #ifdef NG_BMP
+#ifdef NG_BMP
       case NGSW_MD:
         switchOS(NG_MAC_DIC);
         return false;
@@ -709,7 +715,7 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
         switchOS(NG_IOS);
         return false;
         break;
-      #endif
+#endif
       case NG_MLV:
         mac_live_conversion_toggle();
         return false;
@@ -1027,10 +1033,10 @@ void ng_cut() {
       tap_code16(LCTL(KC_X));
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       tap_code16(LCMD(KC_X));
       break;
   }
@@ -1043,10 +1049,10 @@ void ng_copy() {
       tap_code16(LCTL(KC_C));
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       tap_code16(LCMD(KC_C));
       break;
   }
@@ -1059,10 +1065,10 @@ void ng_paste() {
       tap_code16(LCTL(KC_V));
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       register_code(KC_LCMD);
       wait_ms(100);
       tap_code(KC_V);
@@ -1143,10 +1149,10 @@ void ng_home() {
       tap_code(KC_HOME);
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       tap_code16(LCTL(KC_A));
       break;
   }
@@ -1159,10 +1165,10 @@ void ng_end() {
       tap_code(KC_END);
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       tap_code16(LCTL(KC_E));
       break;
   }
@@ -1179,10 +1185,10 @@ void ng_save() {
       tap_code16(LCTL(KC_S));
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       tap_code16(LCMD(KC_S));
       break;
   }
@@ -1199,10 +1205,10 @@ void ng_redo() {
       tap_code16(LCTL(KC_Y));
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       tap_code16(LCMD(LSFT(KC_Z)));
       break;
   }
@@ -1215,10 +1221,10 @@ void ng_undo() {
       tap_code16(LCTL(KC_Z));
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       tap_code16(LCMD(KC_Z));
       break;
   }
@@ -1233,10 +1239,10 @@ void ng_saihenkan() {
       tap_code(KC_INT4);
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       tap_code(KC_LANGUAGE_1);
       tap_code(KC_LANGUAGE_1);
       break;
@@ -1253,10 +1259,10 @@ void ng_eof() {
       tap_code16(LCTL(KC_END));
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
     case NG_IOS:
-    #endif
+#endif
       if (naginata_config.tategaki)
         tap_code16(LCMD(KC_LEFT));
       else
@@ -1273,16 +1279,16 @@ void ng_ime_cancel() {
       tap_code16(LSFT(LCTL(KC_INTERNATIONAL_5)));
       break;
     case NG_MAC:
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
-    #endif
+#endif
       tap_code(KC_NUM_LOCK);
       break;
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_IOS:
       tap_code(KC_ESC);
       break;
-    #endif
+#endif
   }
 }
 
@@ -1306,7 +1312,7 @@ void ng_ime_complete() {
       tap_code(KC_LANGUAGE_1);  // (Mac)かな
 #endif
       break;
-    #ifdef NG_BMP
+#ifdef NG_BMP
     case NG_MAC_DIC:
       tap_code(KC_LANGUAGE_2);  // (Mac)英数
       tap_code(KC_LANGUAGE_1);  // (Mac)かな
@@ -1316,7 +1322,7 @@ void ng_ime_complete() {
       tap_code(KC_LANGUAGE_1);  // (Mac)かな
       tap_code(KC_LCTRL); // ディレイの代わり
       break;
-    #endif
+#endif
   }
 }
 
