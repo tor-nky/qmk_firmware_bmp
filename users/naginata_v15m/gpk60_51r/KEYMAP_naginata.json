@@ -13,9 +13,9 @@
    "KC_TRNS", "KC_TRNS",    "KC_TRNS",       "KC_TRNS",           "NG_SHFT",        "KC_TRNS",      "KC_TRNS",      "KC_TRNS",      "KC_TRNS","KC_TRNS","KC_TRNS"],
 
 [  "KC_TRNS",       "Q",       "W",       "E",       "R",       "T",         ":",   "KC_P7",   "KC_P8",   "KC_P9", "KC_PSLS", "KC_PMNS",   "KC_TRNS", "KC_TRNS",
-   "KC_TRNS",       "A",       "S",       "D",       "F",       "G",   "KC_PEQL",   "KC_P4",   "KC_P5",   "KC_P6", "KC_PPLS", "KC_PAST",   "KC_TRNS",
+   "KC_TRNS",       "A",       "S",       "D",       "F",       "G",         "=",   "KC_P4",   "KC_P5",   "KC_P6", "KC_PPLS", "KC_PAST",   "KC_TRNS",
    "KC_TRNS",       "Z",       "X",       "C",       "V",       "B",     "KC_P0",   "KC_P1",   "KC_P2",   "KC_P3", "KC_PDOT",       "%",      "KC_TRNS",
-     "TO(0)", "KC_TRNS",    "KC_TRNS",       "KC_TRNS",           "KC_TRNS",     "LT(4,KC_PENT)",   "KC_TRNS",      "KC_TRNS",      "KC_TRNS","KC_TRNS","KC_TRNS"],
+     "TO(0)", "KC_TRNS",    "KC_TRNS",       "KC_TRNS",           "KC_TRNS",     "LT(4,KC_PENT)",        "\,",      "KC_TRNS",      "KC_TRNS","KC_TRNS","KC_TRNS"],
 
 [        "`",       "^",       "]",       "&",       "[",      "\\",         ":",       "7",       "8",       "9", "KC_PSLS", "KC_PMNS",   "KC_TRNS", "KC_TRNS",
    "KC_TRNS",       "!",       "@",       "|",       "(",       ")",         "=",       "4",       "5",       "6", "KC_PPLS", "KC_PAST",   "KC_TRNS",
@@ -23,13 +23,13 @@
    "KC_TRNS", "KC_TRNS",    "KC_TRNS",       "KC_TRNS",           "KC_TRNS",     "LT(5,KC_PENT)",   "KC_TRNS",      "KC_TRNS",      "KC_TRNS","KC_TRNS","KC_TRNS"],
 
 [   "KC_PWR",   "KC_F1",   "KC_F2",   "KC_F3",   "KC_F4",   "KC_F5",   "KC_MS_L", "KC_MS_D", "KC_MS_U", "KC_MS_R", "KC_BTN1", "KC_BTN2",   "KC_TRNS", "KC_TRNS",
-   "KC_TRNS",   "KC_F6",   "KC_F7",   "KC_F8",   "KC_F9",  "KC_F10",   "KC_LEFT", "KC_DOWN",   "KC_UP", "KC_RGHT", "KC_BTN3","SGUI(KC_4)", "KC_TRNS",
+   "KC_TRNS",   "KC_F6",   "KC_F7",   "KC_F8",   "KC_F9",  "KC_F10",   "KC_LEFT", "KC_DOWN",   "KC_UP", "KC_RGHT", "KC_BTN3","SGUI(KC_5)", "KC_TRNS",
    "KC_TRNS",  "KC_F11",  "KC_F12", "KC_PSCR", "KC_SLCK", "KC_PAUS",   "KC_HOME", "KC_PGDN", "KC_PGUP",  "KC_END", "KC_WH_D", "KC_WH_U",      "KC_TRNS",
    "KC_TRNS", "KC_TRNS",    "KC_TRNS",         "MO(5)",           "KC_TRNS",        "KC_TRNS",      "KC_TRNS",      "KC_TRNS",      "KC_TRNS","KC_TRNS","KC_TRNS"],
 
-[    "RESET",   "KC_NO",   "KC_NO", "KC_MPRV", "KC_MPLY", "KC_MNXT",     "KC_NO",   "KC_NO",   "KC_NO",   "KC_NO",   "KC_NO",   "KC_NO",     "KC_NO",   "KC_NO",
+[    "RESET",   "KC_NO",   "KC_NO", "KC_MPRV", "KC_MPLY", "KC_MNXT",     "KC_NO","NGSW_IOS",   "KC_NO",   "KC_NO",   "KC_NO",   "KC_NO",     "KC_NO",   "KC_NO",
    "RGB_TOG", "RGB_HUI", "RGB_SAI", "RGB_VAI", "KC_VOLU", "KC_BRIU",     "KC_NO",  "NG_CLR", "NG_KOTI",  "NG_MLV",   "KC_NO",   "KC_NO",     "KC_NO",
-   "RGB_MOD", "RGB_HUD", "RGB_SAD", "RGB_VAD", "KC_VOLD", "KC_BRID",     "KC_NO", "NGSW_MD","NGSW_IOS", "NG_TAYO", "NG_SHOS", "KC_RSFT",        "KC_NO",
+   "RGB_MOD", "RGB_HUD", "RGB_SAD", "RGB_VAD", "KC_VOLD", "KC_BRID",  "NGSW_WIN","NGSW_MAC","NGSW_LNX", "NG_TAYO", "NG_SHOS", "KC_RSFT",        "KC_NO",
      "KC_NO",   "KC_NO",      "MO(6)",       "KC_TRNS",           "ENT_SLP",        "KC_TRNS",       "MO(6)",         "KC_NO",        "KC_NO",  "KC_NO",  "KC_NO"],
 
 [  "ENT_DFU", "DEL_ID0", "DEL_ID1", "DEL_ID2", "DEL_ID3", "DEL_ID4",   "DEL_ID5", "DEL_ID6", "DEL_ID7",   "KC_NO",   "KC_NO", "DELBNDS",     "KC_NO",   "KC_NO",

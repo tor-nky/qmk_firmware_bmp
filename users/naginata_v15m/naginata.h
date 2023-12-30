@@ -102,11 +102,8 @@ void ng_saihenkan(void);
 void ng_eof(void);
 void ng_ime_cancel(void);
 void ng_ime_complete(void);
-#ifdef NG_BMP
 void dic_send_string(const char *);
 void dic_send_string_with_cut_paste(const char *);
-#endif
-
 void ng_send_kana(const char *str);
 
 #define NG_SEND_KANA(string) ng_send_kana(PSTR(string))
@@ -163,7 +160,6 @@ typedef enum naginata_keycodes {
   NGSW_MAC,
   NGSW_LNX,
 #ifdef NG_BMP
-  NGSW_MD,
   NGSW_IOS,
 #endif
   NG_MLV,
@@ -190,5 +186,7 @@ user_config_t naginata_config;
 #define NG_WIN 1
 #define NG_MAC 2
 #define NG_LINUX 3
+#define NG_WIN_DIC  251
 #define NG_MAC_DIC  252
+#define NG_LINUX_DIC 253
 #define NG_IOS      254

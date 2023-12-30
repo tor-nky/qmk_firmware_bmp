@@ -1185,36 +1185,38 @@ void ng_send_tsa(void) {    // つぁ
 
 // 追加
 void ng_edit_touten(void) { // 、
+#ifndef NG_BMP
     tap_code(KC_COMMA);
-    #ifdef NG_BMP
+    tap_code(KC_ENT);
+#else
     switch (naginata_config.os) {
-    case NG_MAC_DIC:
     case NG_IOS:
+        tap_code(KC_COMMA);
         ng_ime_complete();
         break;
     default:
-    #endif
+        tap_code(KC_COMMA);
         tap_code(KC_ENT);
-    #ifdef NG_BMP
         break;
     }
-    #endif
+#endif
 }
 void ng_edit_kuten(void) { // 。
+#ifndef NG_BMP
     tap_code(KC_DOT);
-    #ifdef NG_BMP
+    tap_code(KC_ENT);
+#else
     switch (naginata_config.os) {
-    case NG_MAC_DIC:
     case NG_IOS:
+        tap_code(KC_DOT);
         ng_ime_complete();
         break;
     default:
-    #endif
+        tap_code(KC_DOT);
         tap_code(KC_ENT);
-    #ifdef NG_BMP
         break;
     }
-    #endif
+#endif
 }
 void ng_enter(void) { // {Enter}
     tap_code(KC_ENTER);
@@ -1222,36 +1224,20 @@ void ng_enter(void) { // {Enter}
 
 // 編集モード
 void ng_edit_tenten(void) { // ……{改行}
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        ng_ime_complete();
-        dic_send_string("nagitete"); // "……"
-        break;
-    default:
-    #endif
-        ng_send_unicode_string_P(PSTR("……"));
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_send_unicode_string_P(PSTR("……"));
+#else
+    ng_ime_complete();
+    dic_send_string("nagitete"); // "……"
+#endif
 }
 void ng_symbol_yokobou(void) { // ――{改行}
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        ng_ime_complete();
-        dic_send_string("nagiyose"); // "──"
-        break;
-    default:
-    #endif
-        ng_send_unicode_string_P(PSTR("──"));
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_send_unicode_string_P(PSTR("──"));
+#else
+    ng_ime_complete();
+    dic_send_string("nagiyose"); // "──"
+#endif
 }
 void ng_symbol_question(void) { // ？{改行}
     tap_code16(LSFT(KC_SLSH));
@@ -1265,36 +1251,20 @@ void ng_symbol_chuuten(void) { // ・
     tap_code(KC_SLASH);
 }
 void ng_symbol_slash(void) { // ／{改行}
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        ng_ime_complete();
-        dic_send_string("naginame"); // "／"
-        break;
-    default:
-    #endif
-        ng_send_unicode_string_P(PSTR("／"));
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_send_unicode_string_P(PSTR("／"));
+#else
+    ng_ime_complete();
+    dic_send_string("naginame"); // "／"
+#endif
 }
 void ng_symbol_maru(void) { // 〇{改行}
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        ng_ime_complete();
-        dic_send_string("nagimaru"); // "〇"
-        break;
-    default:
-    #endif
-        ng_send_unicode_string_P(PSTR("〇"));
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_send_unicode_string_P(PSTR("〇"));
+#else
+    ng_ime_complete();
+    dic_send_string("nagimaru"); // "〇"
+#endif
 }
 void ng_edit_1_up(void) { // {↑}
     ng_move_cursor_with_repeat(false, KC_UP, 1);
@@ -1355,89 +1325,54 @@ void ng_edit_delete_to_end(void) { // +{End}{BS}
     tap_code(KC_BSPC);
 }
 void ng_edit_nijuu_yama_gakko(void) { // 『』{改行}{↑}
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        ng_ime_complete();
-        dic_send_string("naginika"); // "『』"
-        break;
-    default:
-    #endif
-        ng_send_unicode_string_P(PSTR("『』"));
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_send_unicode_string_P(PSTR("『』"));
     ng_up(1);
+#else
+    ng_ime_complete();
+    dic_send_string("naginika"); // "『』"
+    ng_up(1);
+#endif
 }
 void ng_edit_maru_kakko(void) { // (){改行}{↑}
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        ng_ime_complete();
-        dic_send_string("nagimaka"); // "（）"
-        break;
-    default:
-    #endif
-        ng_send_unicode_string_P(PSTR("（）"));
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_send_unicode_string_P(PSTR("（）"));
     ng_up(1);
+#else
+    ng_ime_complete();
+    dic_send_string("nagimaka"); // "（）"
+    ng_up(1);
+#endif
 }
 void ng_edit_sumituki_kakko(void) { // 【】{改行}{↑}
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        ng_ime_complete();
-        dic_send_string("nagisuka"); // "【】"
-        break;
-    default:
-    #endif
-        ng_send_unicode_string_P(PSTR("【】"));
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_send_unicode_string_P(PSTR("【】"));
     ng_up(1);
+#else
+    ng_ime_complete();
+    dic_send_string("nagisuka"); // "【】"
+    ng_up(1);
+#endif
 }
 void ng_edit_kagi_kakko(void) { // 「」{改行}{↑}
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        ng_ime_complete();
-        dic_send_string("nagikagi"); // "「」"
-        break;
-    default:
-    #endif
-        ng_send_unicode_string_P(PSTR("「」"));
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_send_unicode_string_P(PSTR("「」"));
     ng_up(1);
+#else
+    ng_ime_complete();
+    dic_send_string("nagikagi"); // "「」"
+    ng_up(1);
+#endif
 }
 void ng_edit_nijuu_yama_kakko(void) { // 《》{改行}{↑}
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        ng_ime_complete();
-        dic_send_string("naginiya"); // "《》"
-        break;
-    default:
-    #endif
-        ng_send_unicode_string_P(PSTR("《》"));
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_send_unicode_string_P(PSTR("《》"));
     ng_up(1);
+#else
+    ng_ime_complete();
+    dic_send_string("naginiya"); // "《》"
+    ng_up(1);
+#endif
 }
 
 void copy_spc_to_clipboard(void) {
@@ -1449,91 +1384,59 @@ void copy_spc_to_clipboard(void) {
 }
 
 void ng_edit_surround_nijuu_yama_gakko(void) { // ^x『^v』{改行}{Space}+{↑}^x
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        dic_send_string_with_cut_paste("naginika"); // "『』"
-        break;
-    default:
-    #endif
-        ng_cut();
-        ng_send_unicode_string_P(PSTR("『"));
-        ng_paste();
-        ng_send_unicode_string_P(PSTR("』"));
-        copy_spc_to_clipboard();
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_cut();
+    ng_send_unicode_string_P(PSTR("『"));
+    ng_paste();
+    ng_send_unicode_string_P(PSTR("』"));
+    copy_spc_to_clipboard();
+#else
+    dic_send_string_with_cut_paste("naginika"); // "『』"
+#endif
 }
 void ng_edit_surround_maru_kakko(void) { // ^x(^v){改行}{Space}+{↑}^x
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        dic_send_string_with_cut_paste("nagimaka"); // "（）"
-        break;
-    default:
-    #endif
-        ng_cut();
-        ng_send_unicode_string_P(PSTR("（"));
-        ng_paste();
-        ng_send_unicode_string_P(PSTR("）"));
-        copy_spc_to_clipboard();
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_cut();
+    ng_send_unicode_string_P(PSTR("（"));
+    ng_paste();
+    ng_send_unicode_string_P(PSTR("）"));
+    copy_spc_to_clipboard();
+#else
+    dic_send_string_with_cut_paste("nagimaka"); // "（）"
+#endif
 }
 void ng_edit_surround_sumituki_kakko(void) { // ^x【^v】{改行}{Space}+{↑}^x
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        dic_send_string_with_cut_paste("nagisuka"); // "【】"
-        break;
-    default:
-    #endif
-        ng_cut();
-        ng_send_unicode_string_P(PSTR("【"));
-        ng_paste();
-        ng_send_unicode_string_P(PSTR("】"));
-        copy_spc_to_clipboard();
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_cut();
+    ng_send_unicode_string_P(PSTR("【"));
+    ng_paste();
+    ng_send_unicode_string_P(PSTR("】"));
+    copy_spc_to_clipboard();
+#else
+    dic_send_string_with_cut_paste("nagisuka"); // "【】"
+#endif
 }
 void ng_edit_surround_kagi_kakko(void) { // ^x「^v」{改行}{Space}+{↑}^x
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        dic_send_string_with_cut_paste("nagikagi"); // "「」"
-        break;
-    default:
-    #endif
-        ng_cut();
-        ng_send_unicode_string_P(PSTR("「"));
-        ng_paste();
-        ng_send_unicode_string_P(PSTR("」"));
-        copy_spc_to_clipboard();
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_cut();
+    ng_send_unicode_string_P(PSTR("「"));
+    ng_paste();
+    ng_send_unicode_string_P(PSTR("」"));
+    copy_spc_to_clipboard();
+#else
+    dic_send_string_with_cut_paste("nagikagi"); // "「」"
+#endif
 }
 void ng_edit_surround_ruby(void) { // ^x｜{改行}^v《》{改行}{↑}{Space}+{↑}^x
-    #ifdef NG_BMP
+#ifndef NG_BMP
+    ng_cut();
+    ng_send_unicode_string_P(PSTR("｜"));
+    ng_paste();
+    copy_spc_to_clipboard();
+    ng_send_unicode_string_P(PSTR("《》"));
+    ng_up(1);
+#else
     switch (naginata_config.os) {
-    case NG_MAC_DIC:
-        ng_cut();
-        dic_send_string("nagiru"); // "｜《》"
-        ng_up(2);   // 2文字戻る
-        ng_paste();
-        ng_down(1); // 1文字進む
-        break;
     case NG_IOS:
         ng_cut();
         dic_send_string("nagiru"); // "｜《》"
@@ -1544,17 +1447,14 @@ void ng_edit_surround_ruby(void) { // ^x｜{改行}^v《》{改行}{↑}{Space}+
         ng_down(1); // 1文字進む
         break;
     default:
-    #endif
         ng_cut();
-        ng_send_unicode_string_P(PSTR("｜"));
+        dic_send_string("nagiru"); // "｜《》"
+        ng_up(2);   // 2文字戻る
         ng_paste();
-        copy_spc_to_clipboard();
-        ng_send_unicode_string_P(PSTR("《》"));
-        ng_up(1);
-    #ifdef NG_BMP
+        ng_down(1); // 1文字進む
         break;
     }
-    #endif
+#endif
 }
 void ng_edit_kakutei_down(void) { // {改行}{↓}
     ng_ime_complete();
@@ -1569,23 +1469,19 @@ void ng_edit_kakutei_end(void) { // {Enter}{End}
     ng_end();
 }
 void ng_edit_next_line_kagi_kakko(void) { // {改行}{End}{改行}「」{改行}{↑}
+#ifndef NG_BMP
     ng_ime_complete();
     ng_end();
     tap_code(KC_ENT);
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        dic_send_string("nagikagi"); // "「」"
-        break;
-    default:
-    #endif
-        ng_send_unicode_string_P(PSTR("「」"));
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+    ng_send_unicode_string_P(PSTR("「」"));
     ng_up(1);
+#else
+    ng_ime_complete();
+    ng_end();
+    tap_code(KC_ENT);
+    dic_send_string("nagikagi"); // "「」"
+    ng_up(1);
+#endif
 }
 void ng_edit_next_line_space(void) { // {改行}{End}{改行}{Space}
     ng_ime_complete();
@@ -1594,23 +1490,16 @@ void ng_edit_next_line_space(void) { // {改行}{End}{改行}{Space}
     tap_code(KC_SPC);
 }
 void ng_edit_separate_line(void) { // 　　　×　　　×　　　×{改行 2}
-    #ifdef NG_BMP
-    switch (naginata_config.os) {
-    case NG_MAC_DIC:
-    case NG_IOS:
-        tap_code(KC_SPACE);
-        tap_code(KC_SPACE);
-        tap_code(KC_SPACE);
-        dic_send_string("nagibatu"); // "　　　×　　　×　　　×"
-        break;
-    default:
-    #endif
-        ng_send_unicode_string_P(PSTR("　　　×　　　×　　　×"));
-    #ifdef NG_BMP
-        break;
-    }
-    #endif
+#ifndef NG_BMP
+    ng_send_unicode_string_P(PSTR("　　　×　　　×　　　×"));
     tap_code(KC_ENT);
+#else
+    tap_code(KC_SPACE);
+    tap_code(KC_SPACE);
+    tap_code(KC_SPACE);
+    dic_send_string("nagibatu"); // "　　　×　　　×　　　×"
+    tap_code(KC_ENT);
+#endif
 }
 void ng_edit_3_space(void) { // {Space 3}
     tap_code(KC_SPC);
