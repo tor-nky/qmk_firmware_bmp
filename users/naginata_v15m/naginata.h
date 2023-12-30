@@ -103,8 +103,8 @@ void ng_eof(void);
 void ng_ime_cancel(void);
 void ng_ime_complete(void);
 #ifdef NG_BMP
-void ios_send_string(const char *);
-void ios_send_string_with_cut_paste(const char *);
+void dic_send_string(const char *);
+void dic_send_string_with_cut_paste(const char *);
 #endif
 
 void ng_send_kana(const char *str);

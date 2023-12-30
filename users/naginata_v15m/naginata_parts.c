@@ -1227,7 +1227,7 @@ void ng_edit_tenten(void) { // ……{改行}
     case NG_MAC_DIC:
     case NG_IOS:
         ng_ime_complete();
-        ios_send_string("nagitete"); // "……"
+        dic_send_string("nagitete"); // "……"
         break;
     default:
     #endif
@@ -1243,7 +1243,7 @@ void ng_symbol_yokobou(void) { // ――{改行}
     case NG_MAC_DIC:
     case NG_IOS:
         ng_ime_complete();
-        ios_send_string("nagiyose"); // "──"
+        dic_send_string("nagiyose"); // "──"
         break;
     default:
     #endif
@@ -1270,7 +1270,7 @@ void ng_symbol_slash(void) { // ／{改行}
     case NG_MAC_DIC:
     case NG_IOS:
         ng_ime_complete();
-        ios_send_string("naginame"); // "／"
+        dic_send_string("naginame"); // "／"
         break;
     default:
     #endif
@@ -1286,7 +1286,7 @@ void ng_symbol_maru(void) { // 〇{改行}
     case NG_MAC_DIC:
     case NG_IOS:
         ng_ime_complete();
-        ios_send_string("nagimaru"); // "〇"
+        dic_send_string("nagimaru"); // "〇"
         break;
     default:
     #endif
@@ -1360,7 +1360,7 @@ void ng_edit_nijuu_yama_gakko(void) { // 『』{改行}{↑}
     case NG_MAC_DIC:
     case NG_IOS:
         ng_ime_complete();
-        ios_send_string("naginika"); // "『』"
+        dic_send_string("naginika"); // "『』"
         break;
     default:
     #endif
@@ -1377,7 +1377,7 @@ void ng_edit_maru_kakko(void) { // (){改行}{↑}
     case NG_MAC_DIC:
     case NG_IOS:
         ng_ime_complete();
-        ios_send_string("nagimaka"); // "（）"
+        dic_send_string("nagimaka"); // "（）"
         break;
     default:
     #endif
@@ -1394,7 +1394,7 @@ void ng_edit_sumituki_kakko(void) { // 【】{改行}{↑}
     case NG_MAC_DIC:
     case NG_IOS:
         ng_ime_complete();
-        ios_send_string("nagisuka"); // "【】"
+        dic_send_string("nagisuka"); // "【】"
         break;
     default:
     #endif
@@ -1411,7 +1411,7 @@ void ng_edit_kagi_kakko(void) { // 「」{改行}{↑}
     case NG_MAC_DIC:
     case NG_IOS:
         ng_ime_complete();
-        ios_send_string("nagikagi"); // "「」"
+        dic_send_string("nagikagi"); // "「」"
         break;
     default:
     #endif
@@ -1428,7 +1428,7 @@ void ng_edit_nijuu_yama_kakko(void) { // 《》{改行}{↑}
     case NG_MAC_DIC:
     case NG_IOS:
         ng_ime_complete();
-        ios_send_string("naginiya"); // "《》"
+        dic_send_string("naginiya"); // "《》"
         break;
     default:
     #endif
@@ -1453,7 +1453,7 @@ void ng_edit_surround_nijuu_yama_gakko(void) { // ^x『^v』{改行}{Space}+{↑
     switch (naginata_config.os) {
     case NG_MAC_DIC:
     case NG_IOS:
-        ios_send_string_with_cut_paste("naginika"); // "『』"
+        dic_send_string_with_cut_paste("naginika"); // "『』"
         break;
     default:
     #endif
@@ -1472,7 +1472,7 @@ void ng_edit_surround_maru_kakko(void) { // ^x(^v){改行}{Space}+{↑}^x
     switch (naginata_config.os) {
     case NG_MAC_DIC:
     case NG_IOS:
-        ios_send_string_with_cut_paste("nagimaka"); // "（）"
+        dic_send_string_with_cut_paste("nagimaka"); // "（）"
         break;
     default:
     #endif
@@ -1491,7 +1491,7 @@ void ng_edit_surround_sumituki_kakko(void) { // ^x【^v】{改行}{Space}+{↑}^
     switch (naginata_config.os) {
     case NG_MAC_DIC:
     case NG_IOS:
-        ios_send_string_with_cut_paste("nagisuka"); // "【】"
+        dic_send_string_with_cut_paste("nagisuka"); // "【】"
         break;
     default:
     #endif
@@ -1510,7 +1510,7 @@ void ng_edit_surround_kagi_kakko(void) { // ^x「^v」{改行}{Space}+{↑}^x
     switch (naginata_config.os) {
     case NG_MAC_DIC:
     case NG_IOS:
-        ios_send_string_with_cut_paste("nagikagi"); // "「」"
+        dic_send_string_with_cut_paste("nagikagi"); // "「」"
         break;
     default:
     #endif
@@ -1528,9 +1528,15 @@ void ng_edit_surround_ruby(void) { // ^x｜{改行}^v《》{改行}{↑}{Space}+
     #ifdef NG_BMP
     switch (naginata_config.os) {
     case NG_MAC_DIC:
+        ng_cut();
+        dic_send_string("nagiru"); // "｜《》"
+        ng_up(2);   // 2文字戻る
+        ng_paste();
+        ng_down(1); // 1文字進む
+        break;
     case NG_IOS:
         ng_cut();
-        ios_send_string("nagiru"); // "｜《》"
+        dic_send_string("nagiru"); // "｜《》"
         ng_up(2);   // 2文字戻る
         tap_code(KC_LCTRL); tap_code(KC_LSFT); // ディレイの代わり
         ng_paste();
@@ -1570,7 +1576,7 @@ void ng_edit_next_line_kagi_kakko(void) { // {改行}{End}{改行}「」{改行}
     switch (naginata_config.os) {
     case NG_MAC_DIC:
     case NG_IOS:
-        ios_send_string("nagikagi"); // "「」"
+        dic_send_string("nagikagi"); // "「」"
         break;
     default:
     #endif
@@ -1595,7 +1601,7 @@ void ng_edit_separate_line(void) { // 　　　×　　　×　　　×{改行 2
         tap_code(KC_SPACE);
         tap_code(KC_SPACE);
         tap_code(KC_SPACE);
-        ios_send_string("nagibatu"); // "　　　×　　　×　　　×"
+        dic_send_string("nagibatu"); // "　　　×　　　×　　　×"
         break;
     default:
     #endif
