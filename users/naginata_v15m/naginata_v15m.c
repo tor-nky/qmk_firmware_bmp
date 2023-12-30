@@ -459,11 +459,11 @@ void naginata_off(void) {
       // Shift+Ctrl+変換 にIMEの確定を設定しておくこと
       // 確定→ひらがな→半角/全角
       tap_code16(LSFT(LCTL(KC_INTERNATIONAL_4))); // Shift+Ctrl+変換
-#ifdef USB_POLLING_INTERVAL_MS
+# ifdef USB_POLLING_INTERVAL_MS
       wait_ms(USB_POLLING_INTERVAL_MS + 7); // 確実にIMEオフにするため 8ms 空ける
-#else
+# else
       wait_ms(8); // 確実にIMEオフにするため
-#endif
+# endif
       tap_code(KC_INTERNATIONAL_2); // ひらがな
       tap_code(KC_GRV); // 半角/全角
       break;
