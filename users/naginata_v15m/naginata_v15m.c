@@ -1481,11 +1481,11 @@ void dic_send_string_with_cut_paste(const char *str) {
   }
 }
 
-#define MAX_ROLL_OVER 6 // 予備なし
+#define MAX_REGISTER_KEY 4 // 6ロールオーバーだが、予備用に2を減ずる
 
 void ng_send_kana(const char *str) {
   uint_fast8_t registered_count = 0;
-  uint8_t registered[MAX_ROLL_OVER];
+  uint8_t registered[MAX_REGISTER_KEY];
   char ascii_code;
 
   while ((ascii_code = pgm_read_byte(str++)) != '\0') {
@@ -1503,7 +1503,7 @@ void ng_send_kana(const char *str) {
       }
     }
     // バッファがいっぱいだったらバッファの先頭のキーを離す
-    if (registered_count == MAX_ROLL_OVER) {
+    if (registered_count == MAX_REGISTER_KEY) {
       unregister_code(registered[0]);
       registered_count--;
       for (uint_fast8_t i = 0; i < registered_count; i++) {
