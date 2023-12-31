@@ -40,10 +40,11 @@
 #   define QK_MODS_GET_BASIC_KEYCODE(kc) ((kc)&0xFF)
 #   define IS_QK_MOD_TAP(code) ((code) >= QK_MOD_TAP && (code) <= QK_MOD_TAP_MAX)
 #   define IS_MODIFIER_KEYCODE(code) ((code) >= KC_LEFT_CTRL && (code) <= KC_RIGHT_GUI)
-#endif
-
-#ifdef NG_BMP
-#   include "bmp_custom_keycode.h" // BMP用
+# ifdef NG_BMP
+#   include "bmp_custom_keycode.h" // For BLE Miro Pro old firmware(<1.0.0)
+# endif
+#elif (defined(NG_BMP))
+#   include "bmp_custom_keycodes.h" // For BLE Miro Pro new firmware(>=1.0.0)
 #endif
 
 void naginata_clear(void);
@@ -113,10 +114,12 @@ void ng_send_kana(const char *str);
 // 1. 英字レイアウトがQWERTYでない場合でもOK
 // 2. 薙刀式レイヤーでもKC_を定義すれば、かな変換せず出力できる
 typedef enum naginata_keycodes {
-#ifdef NG_BMP
-  NG_Q = BMP_SAFE_RANGE + 2, // 薙刀式シフトキー    // BMP用
-#else
-  NG_Q = SAFE_RANGE, // 薙刀式シフトキー
+#ifndef NG_BMP
+  NG_Q = SAFE_RANGE,  // 薙刀式シフトキー
+#elif (defined(IS_QK_KB) || defined(KC_LNG9))
+  NG_Q = BATT_LV + 1, // 薙刀式シフトキー // For BLE Miro Pro new firmware(>=1.0.0)
+#else  // 参照: https://github.com/sekigon-gonnoc/vial-qmk/blob/dev/ble-micro-pro/tmk_core/protocol/bmp/bmp_custom_keycodes.h
+  NG_Q = BMP_SAFE_RANGE + 2,  // 薙刀式シフトキー // For BLE Miro Pro old firmware(<1.0.0)
 #endif
   NG_W,
   NG_E,

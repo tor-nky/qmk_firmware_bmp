@@ -1441,9 +1441,9 @@ void ng_edit_surround_ruby(void) { // ^x｜{改行}^v《》{改行}{↑}{Space}+
         ng_cut();
         dic_send_string("nagiru"); // "｜《》"
         ng_up(2);   // 2文字戻る
-        tap_code(KC_LCTRL); tap_code(KC_LSFT); // ディレイの代わり
+        tap_code(KC_LCTL); tap_code(KC_LSFT); // ディレイの代わり
         ng_paste();
-        tap_code(KC_LCTRL); tap_code(KC_LSFT); // ディレイの代わり
+        tap_code(KC_LCTL); tap_code(KC_LSFT); // ディレイの代わり
         ng_down(1); // 1文字進む
         break;
     default:
