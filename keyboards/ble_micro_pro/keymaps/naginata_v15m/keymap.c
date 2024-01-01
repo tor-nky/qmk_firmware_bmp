@@ -22,11 +22,14 @@
 #include "naginata.h"
 NGKEYS naginata_keys;
 // 薙刀式
+#include "twpair_on_jis.h"
 
 // Defines the keycodes used by our macros in process_record_user
 enum custom_keycodes {
     LOWER = BMP_SAFE_RANGE,
     RAISE,
+    US_KEY = NG_SAFE_RANGE,
+    US2JIS,
 };
 
 const key_string_map_t custom_keys_user =
@@ -34,8 +37,8 @@ const key_string_map_t custom_keys_user =
     .start_kc = LOWER,
     // .end_kc = RAISE,
     // .key_strings = "LOWER\0RAISE\0"
-    .end_kc = NG_KOTI,
-    .key_strings = "LOWER\0RAISE\0NG_Q\0NG_W\0NG_E\0NG_R\0NG_T\0NG_Y\0NG_U\0NG_I\0NG_O\0NG_P\0NG_A\0NG_S\0NG_D\0NG_F\0NG_G\0NG_H\0NG_J\0NG_K\0NG_L\0NG_SCLN\0NG_Z\0NG_X\0NG_C\0NG_V\0NG_B\0NG_N\0NG_M\0NG_COMM\0NG_DOT\0NG_SLSH\0NG_SHFT\0NG_SHFT2\0NG_ON\0NG_OFF\0NGSW_WIN\0NGSW_MAC\0NGSW_LNX\0NGSW_IOS\0NG_SHOS\0NG_TAYO\0NG_KOTI\0"
+    .end_kc = US2JIS,
+    .key_strings = "LOWER\0RAISE\0NG_Q\0NG_W\0NG_E\0NG_R\0NG_T\0NG_Y\0NG_U\0NG_I\0NG_O\0NG_P\0NG_A\0NG_S\0NG_D\0NG_F\0NG_G\0NG_H\0NG_J\0NG_K\0NG_L\0NG_SCLN\0NG_Z\0NG_X\0NG_C\0NG_V\0NG_B\0NG_N\0NG_M\0NG_COMM\0NG_DOT\0NG_SLSH\0NG_SHFT\0NG_SHFT2\0NG_ON\0NG_OFF\0NGSW_WIN\0NGSW_MAC\0NGSW_LNX\0NGSW_IOS\0NG_SHOS\0NG_TAYO\0NG_KOTI\0US_KEY\0US2JIS\0"
 };
 
 enum layers {
@@ -57,6 +60,8 @@ uint32_t keymaps_len() {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  static bool is_us2jis = false;
+
   bool continue_process = process_record_user_bmp(keycode, record);
   if (continue_process == false)
   {
@@ -82,13 +87,40 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         update_tri_layer(_LOWER, _RAISE, _ADJUST);
       }
       return false;
-    default:
-      // 薙刀式
-      if (!process_naginata(keycode, record))
-        return false;
-      // 薙刀式
+    case US_KEY:
+      is_us2jis = false;
+      return false;
+    case US2JIS:
+      is_us2jis = true;
+      return false;
+    case KC_PEQL:
+      if (naginata_config.os == NG_MAC_DIC || naginata_config.os == NG_IOS)
+        break;
+      if (record->event.pressed) {
+        if (is_us2jis)
+          tap_code16(LSFT(KC_MINS));
+        else
+          tap_code(KC_EQL);
+      }
+      return false;
+// 薙刀式 OLEDを使う場合
+#ifdef OLED_ENABLE
+    case NGSW_WIN...NG_KOTI:
+      if (record->event.pressed)
+        update_oled = true; // 設定をOLED表示に反映する
       break;
+#endif
+// 薙刀式
   }
+
+  // 薙刀式
+  if (!process_naginata(keycode, record))
+    return false;
+  // 薙刀式
+
+  // typewriter pairing on jis keyboard
+  if (is_us2jis && !twpair_on_jis(keycode, record))
+    return false;
 
   return true;
 }
