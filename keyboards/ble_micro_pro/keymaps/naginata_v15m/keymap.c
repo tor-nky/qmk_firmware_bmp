@@ -88,10 +88,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
     case US_KEY:
-      is_us2jis = false;
+      if (record->event.pressed)
+        is_us2jis = false;
       return false;
     case US2JIS:
-      is_us2jis = true;
+      if (record->event.pressed)
+        is_us2jis = true;
       return false;
     case KC_PEQL:
       if (naginata_config.os == NG_MAC_DIC || naginata_config.os == NG_IOS)
