@@ -102,7 +102,7 @@ F+G を押さなくても 左右シフト＋英字 で IMEオフになるので�
 |                       | Mac辞書式(BMP専用)     | NGSW_MAC  | switchOS(NG_MAC_DIC)  | 
 |                       | Linux辞書式(BMP専用)   | NGSW_LNX  | switchOS(NG_LNX_DIC)  | 
 |                       | iOS(BMP専用) | NGSW_IOS  | switchOS(NG_IOS)  | 
-| MacOSのライブ変換対応 | ON/OFFトグル   | NG_MLV   | mac_live_conversion_toggle()  | 
+| MacOSのライブ変換対応(BMPにはなし) | ON/OFFトグル   | NG_MLV   | mac_live_conversion_toggle()  | 
 | 縦書き、横書き        | ON/OFFトグル   | NG_TAYO    | tategaki_toggle()  | 
 | 後置シフト            | ON/OFFトグル   | NG_KOTI  | kouchi_shift_toggle()  | 
 | 現在設定の出力        |   | NG_SHOS   | ng_show_os()  | 
@@ -140,8 +140,8 @@ iPhoneの仕様で、ひらがな変換、カタカナ変換、再変換など�
 ```keyboards/ble_micro_pro/keymaps/naginata_v15m/```
 と
 ```users/naginata_v15m/```
-内を編集するだけでは使えるようになりません。(bmp-vial-1.1.1で確認)  
-さらに辞書式での記号入力もほぼできません。
+内を編集するだけでは使えるようになりません。  
+さらに __iOSでは__ 辞書式での記号入力ができません。(bmp-vial-1.1.1で確認)
 * 定義が設定されていないキーを押しても、何の代わりも出力しない  
 この場合、キーマップから該当するキーを NG_** でないものに変えてください。
 * Windows の秀丸エディタは、入力が速すぎるとクラッシュすることがあります。

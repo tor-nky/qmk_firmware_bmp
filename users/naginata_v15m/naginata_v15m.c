@@ -715,10 +715,10 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
       case NG_OFF:
         naginata_off();
         return false;
+#ifndef NG_BMP
       case NG_CLR:
         naginata_clear();
         return false;
-#ifndef NG_BMP
       case NGSW_WIN:
         switchOS(NG_WIN);
         return false;
@@ -727,6 +727,9 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
         return false;
       case NGSW_LNX:
         switchOS(NG_LINUX);
+        return false;
+      case NG_MLV:
+        mac_live_conversion_toggle();
         return false;
 #else
       case NGSW_WIN:
@@ -742,9 +745,6 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
         switchOS(NG_IOS);
         return false;
 #endif
-      case NG_MLV:
-        mac_live_conversion_toggle();
-        return false;
       case NG_SHOS:
         ng_show_os();
         return false;
