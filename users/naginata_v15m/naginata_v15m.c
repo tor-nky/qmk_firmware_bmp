@@ -682,8 +682,8 @@ bool enable_naginata(uint16_t keycode, keyrecord_t *record) {
     tap_code(fghj_buf);
     fghj_buf = KC_NO;
     // Shift + Jで、先にShiftを外した場合にShiftがリリースされない不具合対策
-    unregister_code16(keycode);
-    return false;
+    // unregister_code16(keycode);
+    // return false;
   }
   return true;  // QMKにまかせる
 }
