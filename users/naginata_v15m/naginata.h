@@ -79,7 +79,7 @@ typedef uint32_t Ngkey;
 // かな定義配列 ngmap[] の添字の型
 typedef uint_fast16_t Ngmap_num;
 
-bool naginata_type(uint16_t, bool);
+bool naginata_type(uint16_t, keyrecord_t *);
 void end_repeating_key(void);
 
 void ng_space_or_enter(void);

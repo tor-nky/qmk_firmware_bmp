@@ -779,7 +779,7 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
     return true;
 
   // キー入力を文字に変換して出力する
-  return naginata_type(keycode, record->event.pressed);
+  return naginata_type(keycode, record);
 }
 
 // かな定義を探し出力する
@@ -871,13 +871,17 @@ enum RestShiftState { Stop, Checking, Once };
 // キー入力を文字に変換して出力する
 // 薙刀式のキー入力だったなら false を返す
 // そうでない時は未出力を全て出力、true を返してQMKにまかせる
-bool naginata_type(uint16_t keycode, bool pressed) {
+bool naginata_type(uint16_t keycode, keyrecord_t *record) {
   static Ngkey waiting_keys[NKEYS];  // 各ビットがキーに対応する
   static Ngkey repeating_key = 0;
+#ifdef NG_KOUCHI_SHIFT_MS
+  static uint16_t previous_pushed_ms = 0;
+#endif
   static uint_fast8_t waiting_count = 0; // 文字キーを数える
   static enum RestShiftState rest_shift_state = Stop;
 
   Ngkey recent_key;  // 各ビットがキーに対応する
+  const bool pressed = record->event.pressed;
   bool add_key_later = false;
 
   switch (keycode) {
@@ -905,16 +909,25 @@ bool naginata_type(uint16_t keycode, bool pressed) {
   Ngkey contains_center_shift = pushed_key;
 
   // 薙刀式のキーを押した
-  if (pressed && recent_key) {
+  if (pressed) {
     pushed_key |= recent_key;  // キーを加える
 
+#ifdef NG_KOUCHI_SHIFT_MS
+    // センターシフト(時間制限内のため後置シフトとして処理するものを除く)
+    if (recent_key == B_SHFT && (!naginata_config.kouchi_shift
+        || (uint16_t)(record->event.time - previous_pushed_ms) > (NG_KOUCHI_SHIFT_MS))) {
+#else
     // センターシフト(前置シフト限定)
     if (recent_key == B_SHFT && !naginata_config.kouchi_shift) {
+#endif
       add_key_later = true;
-    } else {
+    } else if (recent_key) {
       // 配列に押したキーを保存
       waiting_keys[waiting_count++] = recent_key;
     }
+#ifdef NG_KOUCHI_SHIFT_MS
+    previous_pushed_ms = record->event.time;
+#endif
   }
   // 何かキーを押したか、リピート中のキーを離した時
   if (pressed || (repeating_key & recent_key)) {
