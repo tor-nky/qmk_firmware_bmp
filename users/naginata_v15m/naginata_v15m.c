@@ -882,7 +882,7 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
 
   Ngkey recent_key;  // 各ビットがキーに対応する
   const bool pressed = record->event.pressed;
-  bool add_key_later = false;
+  bool store_key_later = false;
 
   switch (keycode) {
     case NG_Q ... NG_SLSH:
@@ -920,7 +920,7 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
     // センターシフト(前置シフト限定)
     if (recent_key == B_SHFT && !naginata_config.kouchi_shift) {
 #endif
-      add_key_later = true;
+      store_key_later = true;
     } else if (recent_key) {
       // 配列に押したキーを保存
       waiting_keys[waiting_count++] = recent_key;
@@ -943,6 +943,7 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
       for (uint_fast8_t i = 0; i < searching_count; i++) {
         searching_key |= waiting_keys[i];
       }
+
       // シフト復活処理
       if (rest_shift_state == Once) {
         Ngmap_num num = ng_search_with_rest_key(searching_key, pushed_key);
@@ -956,9 +957,10 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
 #endif
         }
       }
+
       // バッファ内の全てのキーを組み合わせている
       // (前置シフト限定でセンターシフトの時は全て出力する)
-      if (searching_count == waiting_count && !add_key_later) {
+      if (searching_count == waiting_count && !store_key_later) {
         if (pressed && recent_key) {
           // 今押したキー以外の出力が済んでいるとシフト復活へ
           if (waiting_count == 1 && rest_shift_state == Checking) {
@@ -1008,6 +1010,7 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
         searching_count--;
       }
     }
+
     // 何も定義がないキー
     if (!searching_count) {
       waiting_count = 0;
@@ -1019,7 +1022,7 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
   }
 
   // センターシフト(前置シフト限定)
-  if (add_key_later) {
+  if (store_key_later) {
     // 配列に押したキーを保存
     waiting_keys[waiting_count++] = recent_key;
   // キーを離した時
