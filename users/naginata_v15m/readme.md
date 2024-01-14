@@ -1,3 +1,5 @@
+このソースは eswaiさんの [naginata_v15](https://github.com/eswai/qmk_firmware/tree/master/users/naginata_v15) を元に作成しています。
+
 # 薙刀式カナ配列キーマップ
 
 薙刀式カナ配列による入力をQMKで実現します。薙刀式v15に準拠しています。
