@@ -1485,11 +1485,11 @@ void ng_ime_complete() {
 void dic_send_string(const char *str) {
   switch (naginata_config.os) {
     case NG_IOS:
-      ng_send_kana(str);
-      tap_code(KC_LCTL); tap_code(KC_LSFT); tap_code(KC_LCTL); // ディレイの代わり
-      tap_code(KC_SPC);
-      tap_code(KC_ENT);
-      tap_code(KC_LCTL); // ディレイの代わり
+      // ng_send_kana(str);
+      // tap_code(KC_LCTL); tap_code(KC_LSFT); tap_code(KC_LCTL); // ディレイの代わり
+      // tap_code(KC_SPC);
+      // tap_code(KC_ENT);
+      // tap_code(KC_LCTL); // ディレイの代わり
       break;
     default:
       ng_send_kana(str);
@@ -1502,13 +1502,13 @@ void dic_send_string(const char *str) {
 void dic_send_string_with_cut_paste(const char *str) {
   switch (naginata_config.os) {
     case NG_IOS:
-      ng_cut();
-      dic_send_string(str);
-      ng_up(1);     // 1文字戻る
-      tap_code(KC_LCTL); tap_code(KC_LSFT); // ディレイの代わり
-      ng_paste();
-      tap_code(KC_LCTL); tap_code(KC_LSFT); // ディレイの代わり
-      ng_down(1);   // 1文字進む
+      // ng_cut();
+      // dic_send_string(str);
+      // ng_up(1);     // 1文字戻る
+      // tap_code(KC_LCTL); tap_code(KC_LSFT); // ディレイの代わり
+      // ng_paste();
+      // tap_code(KC_LCTL); tap_code(KC_LSFT); // ディレイの代わり
+      // ng_down(1);   // 1文字進む
       break;
     default:
       ng_cut();
