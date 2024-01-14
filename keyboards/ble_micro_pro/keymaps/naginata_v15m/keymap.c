@@ -21,6 +21,10 @@
 // 薙刀式
 #include "naginata.h"
 NGKEYS naginata_keys;
+#ifdef OLED_ENABLE
+bool update_oled = true;
+bool ng_state = false;
+#endif
 // 薙刀式
 #include "twpair_on_jis.h"
 

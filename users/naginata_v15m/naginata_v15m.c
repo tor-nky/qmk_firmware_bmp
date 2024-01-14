@@ -1249,7 +1249,17 @@ void ng_end() {
 }
 
 void ng_katakana() {
+#ifndef NG_BMP
   tap_code(KC_F7);
+#else
+  switch (naginata_config.os) {
+    case NG_IOS:
+      break;
+    default:
+      tap_code(KC_F7);
+      break;
+  }
+#endif
 }
 
 void ng_save() {
@@ -1268,15 +1278,26 @@ void ng_save() {
       tap_code16(LCTL(KC_S));
       break;
     case NG_MAC_DIC:
-    case NG_IOS:
       tap_code16(LCMD(KC_S));
+      break;
+    case NG_IOS:
       break;
 #endif
   }
 }
 
 void ng_hiragana() {
+#ifndef NG_BMP
   tap_code(KC_F6);
+#else
+  switch (naginata_config.os) {
+    case NG_IOS:
+      break;
+    default:
+      tap_code(KC_F6);
+      break;
+  }
+#endif
 }
 
 void ng_redo() {

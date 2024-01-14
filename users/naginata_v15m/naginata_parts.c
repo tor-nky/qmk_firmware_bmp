@@ -18,6 +18,8 @@
 #include "naginata.h"
 #include "naginata_parts.h"
 
+void ng_null(void) {}
+
 // アルファベット
 void ng_send_a(void) {  // あ
     tap_code(KC_A);
@@ -1227,8 +1229,19 @@ void ng_edit_tenten(void) { // ……{改行}
 #ifndef NG_BMP
     ng_send_unicode_string_P(PSTR("……"));
 #else
-    ng_ime_complete();
-    dic_send_string("nagitete"); // "……"
+    switch (naginata_config.os) {
+    case NG_IOS:
+        register_code(KC_LOPT);
+        tap_code(KC_SCLN);
+        tap_code(KC_SCLN);
+        unregister_code(KC_LOPT);
+        ng_ime_complete();
+        break;
+    default:
+        ng_ime_complete();
+        dic_send_string("nagitete"); // "……"
+        break;
+    }
 #endif
 }
 void ng_symbol_yokobou(void) { // ――{改行}
@@ -1240,12 +1253,38 @@ void ng_symbol_yokobou(void) { // ――{改行}
 #endif
 }
 void ng_symbol_question(void) { // ？{改行}
+#ifndef NG_BMP
     tap_code16(LSFT(KC_SLSH));
-    ng_ime_complete();
+    tap_code(KC_ENT);
+#else
+    switch (naginata_config.os) {
+    case NG_IOS:
+        tap_code16(LSFT(KC_SLSH));
+        ng_ime_complete();
+        break;
+    default:
+        tap_code16(LSFT(KC_SLSH));
+        tap_code(KC_ENT);
+        break;
+    }
+#endif
 }
 void ng_symbol_exclaim(void) { // ！{改行}
+#ifndef NG_BMP
     tap_code16(LSFT(KC_1));
-    ng_ime_complete();
+    tap_code(KC_ENT);
+#else
+    switch (naginata_config.os) {
+    case NG_IOS:
+        tap_code16(LSFT(KC_1));
+        ng_ime_complete();
+        break;
+    default:
+        tap_code16(LSFT(KC_1));
+        tap_code(KC_ENT);
+        break;
+    }
+#endif
 }
 void ng_symbol_chuuten(void) { // ・
     tap_code(KC_SLASH);
@@ -1254,8 +1293,16 @@ void ng_symbol_slash(void) { // ／{改行}
 #ifndef NG_BMP
     ng_send_unicode_string_P(PSTR("／"));
 #else
-    ng_ime_complete();
-    dic_send_string("naginame"); // "／"
+    switch (naginata_config.os) {
+    case NG_IOS:
+        tap_code16(LOPT(KC_SLSH));
+        ng_ime_complete();
+        break;
+    default:
+        ng_ime_complete();
+        dic_send_string("naginame"); // "／"
+        break;
+    }
 #endif
 }
 void ng_symbol_maru(void) { // 〇{改行}

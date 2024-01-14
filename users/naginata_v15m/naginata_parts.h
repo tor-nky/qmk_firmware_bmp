@@ -16,6 +16,8 @@
 
 #pragma once
 
+void ng_null(void);
+
 // アルファベット
 void ng_send_a(void); // あ
 void ng_send_b(void);
