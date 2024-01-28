@@ -337,10 +337,10 @@ const PROGMEM naginata_keymap ngmap[] = {
   {.key = B_SHFT|B_Z    , .func = ng_send_ho    },  // ほ
   {.key = B_SHFT|B_X    , .func = ng_send_hi    },  // ひ
   {.key = B_SHFT|B_C    , .func = ng_send_wo    },  // を
-  {.key = B_V|B_SHFT    , .func = ng_edit_touten},  // 、
+  {.key = B_SHFT|B_V    , .func = ng_edit_touten},  // 、
   {.key = B_SHFT|B_B    , .func = ng_send_mi    },  // み
   {.key = B_SHFT|B_N    , .func = ng_send_o     },  // お
-  {.key = B_M|B_SHFT    , .func = ng_edit_kuten },  // 。
+  {.key = B_SHFT|B_M    , .func = ng_edit_kuten },  // 。
   {.key = B_SHFT|B_COMM , .func = ng_send_mu    },  // む
   {.key = B_SHFT|B_DOT  , .func = ng_send_wa    },  // わ
   {.key = B_SHFT|B_SLSH , .func = ng_send_re    },  // れ
@@ -536,48 +536,48 @@ void ng_show_os(void) {
   switch (naginata_config.os) {
 #ifndef NG_BMP
     case NG_WIN:
-      send_string("win");
+      SEND_STRING("win");
       break;
     case NG_MAC:
-      send_string("mac");
+      SEND_STRING("mac");
       if (naginata_config.live_conv) {
-        send_string("/"SS_TAP(X_KP_PLUS)"lc");
+        SEND_STRING("/"SS_TAP(X_KP_PLUS)"lc");
       } else {
-        send_string("/-lc");
+        SEND_STRING("/-lc");
       }
       break;
     case NG_LINUX:
-      send_string("linux");
+      SEND_STRING("linux");
       break;
 #else
     case NG_WIN_DIC:
-      send_string("win-dic");
+      SEND_STRING("win-dic");
       break;
     case NG_MAC_DIC:
-      send_string("mac-dic");
+      SEND_STRING("mac-dic");
       if (naginata_config.live_conv) {
-        send_string("/"SS_TAP(X_KP_PLUS)"lc");
+        SEND_STRING("/"SS_TAP(X_KP_PLUS)"lc");
       } else {
-        send_string("/-lc");
+        SEND_STRING("/-lc");
       }
       break;
     case NG_LINUX_DIC:
-      send_string("linux-dic");
+      SEND_STRING("linux-dic");
       break;
     case NG_IOS:
-      send_string("ios");
+      SEND_STRING("ios");
       break;
 #endif
   }
   if (naginata_config.tategaki) {
-    send_string("/tate");
+    SEND_STRING("/tate");
   } else {
-    send_string("/yoko");
+    SEND_STRING("/yoko");
   }
   if (naginata_config.kouchi_shift) {
-    send_string("/"SS_TAP(X_KP_PLUS)"kouchi");
+    SEND_STRING("/"SS_TAP(X_KP_PLUS)"kouchi");
   } else {
-    send_string("/-kouchi");
+    SEND_STRING("/-kouchi");
   }
 }
 

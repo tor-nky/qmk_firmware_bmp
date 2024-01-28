@@ -21,6 +21,7 @@
 
 // BMP用薙刀式
 #define NG_BMP
+#define QK_NG (BMP_SAFE_RANGE + 2)  // 薙刀式シフトキーのキーコード開始位置
 
 // #define NG_USE_KAWASEMI // Mac汎用 → かわせみ専用
 
