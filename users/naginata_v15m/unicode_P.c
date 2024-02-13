@@ -17,6 +17,45 @@
 #include QMK_KEYBOARD_H
 #include "unicode_P.h"
 
+// Keycodes used for starting Unicode input on different platforms
+#ifndef UNICODE_KEY_MAC
+#    define UNICODE_KEY_MAC KC_LEFT_ALT
+#endif
+
+// Delay finishing Unicode input, in ms
+#ifndef UNICODE_FINISH_DELAY_LINUX
+#    define UNICODE_FINISH_DELAY_LINUX 80
+#endif
+
+void unicode_input_finish(void) {
+    extern unicode_config_t unicode_config;
+    extern uint8_t          unicode_saved_mods;
+    extern bool             unicode_saved_caps_lock;
+
+    switch (unicode_config.input_mode) {
+        case UC_MAC:
+            unregister_code(UNICODE_KEY_MAC);
+            break;
+        case UC_LNX:
+            tap_code(KC_SPC);
+#if (UNICODE_FINISH_DELAY_LINUX > TAP_CODE_DELAY)
+            wait_ms(UNICODE_FINISH_DELAY_LINUX - TAP_CODE_DELAY);
+#endif
+            if (unicode_saved_caps_lock) {
+                tap_code(KC_CAPS);
+            }
+            break;
+        case UC_WIN:
+            unregister_code(KC_LALT);
+            break;
+        case UC_WINC:
+            tap_code(KC_ENTER);
+            break;
+    }
+
+    set_mods(unicode_saved_mods);  // Reregister previously set mods
+}
+
 #if defined(__AVR__)
 // Borrowed from https://github.com/qmk/qmk_firmware/blob/master/quantum/unicode/utf8.c
 // Borrowed from https://nullprogram.com/blog/2017/10/06/

@@ -1192,7 +1192,7 @@ void ng_edit_touten(void) { // 、
     tap_code(KC_ENT);
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_IOS_BMP:
         tap_code(KC_COMMA);
         ng_ime_complete();
         break;
@@ -1209,7 +1209,7 @@ void ng_edit_kuten(void) { // 。
     tap_code(KC_ENT);
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_IOS_BMP:
         tap_code(KC_DOT);
         ng_ime_complete();
         break;
@@ -1230,7 +1230,7 @@ void ng_edit_tenten(void) { // ……{改行}
     ng_send_unicode_string_P(PSTR("……"));
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_IOS_BMP:
         register_code(KC_LOPT);
         tap_code(KC_SCLN);
         tap_code(KC_SCLN);
@@ -1249,7 +1249,8 @@ void ng_symbol_yokobou(void) { // ――{改行}
     ng_send_unicode_string_P(PSTR("──"));
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:
@@ -1265,7 +1266,7 @@ void ng_symbol_question(void) { // ？{改行}
     tap_code(KC_ENT);
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_IOS_BMP:
         tap_code16(LSFT(KC_SLSH));
         ng_ime_complete();
         break;
@@ -1282,7 +1283,7 @@ void ng_symbol_exclaim(void) { // ！{改行}
     tap_code(KC_ENT);
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_IOS_BMP:
         tap_code16(LSFT(KC_1));
         ng_ime_complete();
         break;
@@ -1301,7 +1302,7 @@ void ng_symbol_slash(void) { // ／{改行}
     ng_send_unicode_string_P(PSTR("／"));
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_IOS_BMP:
         tap_code16(LOPT(KC_SLSH));
         ng_ime_complete();
         break;
@@ -1317,7 +1318,8 @@ void ng_symbol_maru(void) { // 〇{改行}
     ng_send_unicode_string_P(PSTR("〇"));
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:
@@ -1391,7 +1393,8 @@ void ng_edit_nijuu_yama_gakko(void) { // 『』{改行}{↑}
     ng_up(1);
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:
@@ -1408,7 +1411,8 @@ void ng_edit_maru_kakko(void) { // (){改行}{↑}
     ng_up(1);
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:
@@ -1425,7 +1429,8 @@ void ng_edit_sumituki_kakko(void) { // 【】{改行}{↑}
     ng_up(1);
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:
@@ -1442,7 +1447,8 @@ void ng_edit_kagi_kakko(void) { // 「」{改行}{↑}
     ng_up(1);
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:
@@ -1459,7 +1465,8 @@ void ng_edit_nijuu_yama_kakko(void) { // 《》{改行}{↑}
     ng_up(1);
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:
@@ -1472,11 +1479,24 @@ void ng_edit_nijuu_yama_kakko(void) { // 《》{改行}{↑}
 }
 
 void copy_spc_to_clipboard(void) {
-    tap_code(KC_SPC);
-    add_mods(MOD_BIT(KC_LSFT));
-    ng_up(1);
-    del_mods(MOD_BIT(KC_LSFT));
-    ng_cut();
+    switch (naginata_config.os) {
+    case NG_LINUX:
+        tap_code(KC_SPC);
+        wait_ms(16); // 確実に動作させるため
+        add_mods(MOD_BIT(KC_LSFT));
+        ng_up(1);
+        del_mods(MOD_BIT(KC_LSFT));
+        wait_ms(16); // 確実に動作させるため
+        ng_cut();
+        break;
+    default:
+        tap_code(KC_SPC);
+        add_mods(MOD_BIT(KC_LSFT));
+        ng_up(1);
+        del_mods(MOD_BIT(KC_LSFT));
+        ng_cut();
+        break;
+    }
 }
 
 void ng_edit_surround_nijuu_yama_gakko(void) { // ^x『^v』{改行}{Space}+{↑}^x
@@ -1488,7 +1508,8 @@ void ng_edit_surround_nijuu_yama_gakko(void) { // ^x『^v』{改行}{Space}+{↑
     copy_spc_to_clipboard();
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:
@@ -1506,7 +1527,8 @@ void ng_edit_surround_maru_kakko(void) { // ^x(^v){改行}{Space}+{↑}^x
     copy_spc_to_clipboard();
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:
@@ -1525,7 +1547,8 @@ void ng_edit_surround_sumituki_kakko(void) { // ^x【^v】{改行}{Space}+{↑}^
     copy_spc_to_clipboard();
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:
@@ -1544,7 +1567,8 @@ void ng_edit_surround_kagi_kakko(void) { // ^x「^v」{改行}{Space}+{↑}^x
     copy_spc_to_clipboard();
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:
@@ -1559,12 +1583,12 @@ void ng_edit_surround_ruby(void) { // ^x｜{改行}^v《》{改行}{↑}{Space}+
     ng_cut();
     ng_send_unicode_string_P(PSTR("｜"));
     ng_paste();
-    copy_spc_to_clipboard();
+    copy_spc_to_clipboard();  // 最後に持っていくと失敗する
     ng_send_unicode_string_P(PSTR("《》"));
     ng_up(1);
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_IOS_BMP:
         // ng_cut();
         // dic_send_string("nagiru"); // "｜《》"
         // ng_up(2);   // 2文字戻る
@@ -1604,7 +1628,8 @@ void ng_edit_next_line_kagi_kakko(void) { // {改行}{End}{改行}「」{改行}
     ng_up(1);
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:
@@ -1629,7 +1654,8 @@ void ng_edit_separate_line(void) { // 　　　×　　　×　　　×{改行 2
     tap_code(KC_ENT);
 #else
     switch (naginata_config.os) {
-    case NG_IOS:
+    case NG_LINUX_BMP:
+    case NG_IOS_BMP:
         // 動作しないので省略
         break;
     default:

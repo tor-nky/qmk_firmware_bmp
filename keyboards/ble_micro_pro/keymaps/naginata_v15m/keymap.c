@@ -100,7 +100,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         is_us2jis = true;
       return false;
     case KC_PEQL:
-      if (naginata_config.os == NG_MAC_DIC || naginata_config.os == NG_IOS)
+      if (naginata_config.os == NG_MAC_BMP || naginata_config.os == NG_IOS_BMP)
         break;
       if (record->event.pressed) {
         if (is_us2jis)
@@ -130,6 +130,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
   return true;
 }
+
+#if defined(RGBLIGHT_ENABLE) || defined(RGB_MATRIX_ENABLE)
+layer_state_t layer_state_set_user(layer_state_t state) {
+  if (naginata_state()) {
+    if (naginata_config.tategaki) {
+      rgblight_sethsv_noeeprom(HSV_RED);
+    } else {
+      rgblight_sethsv_noeeprom(HSV_CYAN);
+    }
+  } else {
+    rgblight_sethsv(HSV_GOLD);
+  }
+  return state;
+}
+#endif
 
 void matrix_init_user(void) {
   // 薙刀式
