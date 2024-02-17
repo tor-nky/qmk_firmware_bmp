@@ -24,9 +24,3 @@
 #define QK_NG (BMP_SAFE_RANGE + 2)  // 薙刀式シフトキーのキーコード開始位置
 
 // #define NG_USE_KAWASEMI // Mac汎用 → かわせみ専用
-
-
-#ifdef NG_USE_KAWASEMI
-// Keycodes used for starting Unicode input on different platforms
-#   define UNICODE_KEY_MAC KC_NO   // かわせみ3用
-#endif
