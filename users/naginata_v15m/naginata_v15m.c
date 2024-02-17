@@ -767,6 +767,7 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
       if ((mods & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) ||
           (mods & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
         del_mods(mods);
+        naginata_type(KC_NO, record); // 未出力キーを処理
         naginata_off();
         add_mods(mods);
         return true;
