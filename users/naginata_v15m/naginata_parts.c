@@ -1230,6 +1230,9 @@ void ng_edit_tenten(void) { // ……{改行}
     ng_send_unicode_string_P(PSTR("……"));
 #else
     switch (naginata_config.os) {
+    case NG_LINUX_BMP:
+        // 動作しないので省略
+        break;
     case NG_IOS_BMP:
         register_code(KC_LOPT);
         tap_code(KC_SCLN);
@@ -1244,7 +1247,7 @@ void ng_edit_tenten(void) { // ……{改行}
     }
 #endif
 }
-void ng_symbol_yokobou(void) { // ――{改行}
+void ng_edit_yokobou(void) { // ――{改行}
 #ifndef NG_BMP
     ng_send_unicode_string_P(PSTR("──"));
 #else
@@ -1260,7 +1263,7 @@ void ng_symbol_yokobou(void) { // ――{改行}
     }
 #endif
 }
-void ng_symbol_question(void) { // ？{改行}
+void ng_edit_question(void) { // ？{改行}
 #ifndef NG_BMP
     tap_code16(LSFT(KC_SLSH));
     tap_code(KC_ENT);
@@ -1277,7 +1280,7 @@ void ng_symbol_question(void) { // ？{改行}
     }
 #endif
 }
-void ng_symbol_exclaim(void) { // ！{改行}
+void ng_edit_exclaim(void) { // ！{改行}
 #ifndef NG_BMP
     tap_code16(LSFT(KC_1));
     tap_code(KC_ENT);
@@ -1297,7 +1300,7 @@ void ng_symbol_exclaim(void) { // ！{改行}
 void ng_symbol_chuuten(void) { // ・
     tap_code(KC_SLASH);
 }
-void ng_symbol_slash(void) { // ／{改行}
+void ng_edit_slash(void) { // ／{改行}
 #ifndef NG_BMP
     ng_send_unicode_string_P(PSTR("／"));
 #else
@@ -1308,12 +1311,14 @@ void ng_symbol_slash(void) { // ／{改行}
         break;
     default:
         ng_ime_complete();
-        dic_send_string("naginame"); // "／"
+        tap_code(KC_SLSH);
+        tap_code(KC_F9);
+        tap_code(KC_ENT);
         break;
     }
 #endif
 }
-void ng_symbol_maru(void) { // 〇{改行}
+void ng_edit_maru(void) { // 〇{改行}
 #ifndef NG_BMP
     ng_send_unicode_string_P(PSTR("〇"));
 #else
@@ -1481,8 +1486,7 @@ void ng_edit_nijuu_yama_kakko(void) { // 《》{改行}{↑}
 void copy_spc_to_clipboard(void) {
     switch (naginata_config.os) {
     case NG_LINUX:
-        tap_code(KC_SPC);
-        wait_ms(16); // 確実に動作させるため
+        tap_code_delay(KC_SPC, 16);
         add_mods(MOD_BIT(KC_LSFT));
         ng_up(1);
         del_mods(MOD_BIT(KC_LSFT));
@@ -1589,13 +1593,7 @@ void ng_edit_surround_ruby(void) { // ^x｜{改行}^v《》{改行}{↑}{Space}+
 #else
     switch (naginata_config.os) {
     case NG_IOS_BMP:
-        // ng_cut();
-        // dic_send_string("nagiru"); // "｜《》"
-        // ng_up(2);   // 2文字戻る
-        // tap_code(KC_LCTL); tap_code(KC_LSFT); // ディレイの代わり
-        // ng_paste();
-        // tap_code(KC_LCTL); tap_code(KC_LSFT); // ディレイの代わり
-        // ng_down(1); // 1文字進む
+        // 動作しないので省略
         break;
     default:
         ng_cut();

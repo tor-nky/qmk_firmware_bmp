@@ -25,7 +25,8 @@ static bool is_naginata = false; // 薙刀式がオンかオフか
 static uint8_t naginata_layer = 0; // NG_*を配置しているレイヤー番号
 static uint16_t ngon_keys[2]; // 薙刀式をオンにするキー(通常HJ)
 static uint16_t ngoff_keys[2]; // 薙刀式をオフにするキー(通常FG)
-static Ngkey pushed_key = 0; // 同時押しの状態を示す。各ビットがキーに対応する。
+static Ngkey pressed_key = 0; // 同時押しの状態を示す。各ビットがキーに対応する。
+static uint8_t center_shift_count = 0;
 
 // 31キーを32bitの各ビットに割り当てる
 #define B_Q    (1UL<<0)
@@ -183,63 +184,63 @@ const PROGMEM naginata_keymap ngmap[] = {
 
   // 編集モード
   {.key = B_D|B_F|B_Y   , .func = ng_home}, // {Home}
-  {.key = B_D|B_F|B_U   , .func = ng_edit_delete_to_end}, // +{End}{BS}
-  {.key = B_D|B_F|B_I   , .func = ng_saihenkan}, // {vk1Csc079}
-  {.key = B_D|B_F|B_O   , .func = ng_delete_with_repeat}, // {Del}
-  {.key = B_D|B_F|B_P   , .func = ng_ime_cancel}, // {Esc 3}
   {.key = B_D|B_F|B_H   , .func = ng_edit_kakutei_end}, // {Enter}{End}
-  {.key = B_D|B_F|B_J   , .func = ng_edit_1_up}, // {↑}
-  {.key = B_D|B_F|B_K   , .func = ng_edit_s1_up}, // +{↑}
-  {.key = B_D|B_F|B_L   , .func = ng_edit_s7_up}, // +{↑ 7}
-  {.key = B_D|B_F|B_SCLN, .func = ng_katakana}, // ^i
   {.key = B_D|B_F|B_N   , .func = ng_end}, // {End}
+  {.key = B_D|B_F|B_U   , .func = ng_edit_delete_to_end}, // +{End}{BS}
+  {.key = B_D|B_F|B_J   , .func = ng_edit_1_up}, // {↑}
   {.key = B_D|B_F|B_M   , .func = ng_edit_1_down}, // {↓}
+  {.key = B_D|B_F|B_I   , .func = ng_saihenkan}, // {vk1Csc079}
+  {.key = B_D|B_F|B_K   , .func = ng_edit_s1_up}, // +{↑}
   {.key = B_D|B_F|B_COMM, .func = ng_edit_s1_down}, // +{↓}
+  {.key = B_D|B_F|B_O   , .func = ng_delete_with_repeat}, // {Del}
+  {.key = B_D|B_F|B_L   , .func = ng_edit_s7_up}, // +{↑ 7}
   {.key = B_D|B_F|B_DOT , .func = ng_edit_s7_down}, // +{↓ 7}
+  {.key = B_D|B_F|B_P   , .func = ng_ime_cancel}, // {Esc 3}
+  {.key = B_D|B_F|B_SCLN, .func = ng_katakana}, // ^i
   {.key = B_D|B_F|B_SLSH, .func = ng_hiragana}, // ^u
   {.key = B_J|B_K|B_Q   , .func = ng_eof}, // ^{End}
-  {.key = B_J|B_K|B_W   , .func = ng_edit_nijuu_yama_gakko}, // 『』{改行}{↑}
-  {.key = B_J|B_K|B_R   , .func = ng_save}, // ^s
-  {.key = B_J|B_K|B_T   , .func = ng_symbol_chuuten}, // ・
   {.key = B_J|B_K|B_A   , .func = ng_edit_tenten}, // ……{改行}
+  {.key = B_J|B_K|B_Z   , .func = ng_edit_yokobou}, // ――{改行}
+  {.key = B_J|B_K|B_W   , .func = ng_edit_nijuu_yama_gakko}, // 『』{改行}{↑}
   {.key = B_J|B_K|B_S   , .func = ng_edit_maru_kakko}, // (){改行}{↑}
-  {.key = B_J|B_K|B_D   , .func = ng_symbol_question}, // ？{改行}
-  {.key = B_J|B_K|B_F   , .func = ng_edit_kagi_kakko}, // 「」{改行}{↑}
-  {.key = B_J|B_K|B_G   , .func = ng_edit_nijuu_yama_kakko}, // 《》{改行}{↑}
-  {.key = B_J|B_K|B_Z   , .func = ng_symbol_yokobou}, // ――{改行}
   {.key = B_J|B_K|B_X   , .func = ng_edit_sumituki_kakko}, // 【】{改行}{↑}
-  {.key = B_J|B_K|B_C   , .func = ng_symbol_exclaim}, // ！{改行}
+  {.key = B_J|B_K|B_D   , .func = ng_edit_question}, // ？{改行}
+  {.key = B_J|B_K|B_C   , .func = ng_edit_exclaim}, // ！{改行}
+  {.key = B_J|B_K|B_R   , .func = ng_save}, // ^s
+  {.key = B_J|B_K|B_F   , .func = ng_edit_kagi_kakko}, // 「」{改行}{↑}
   {.key = B_J|B_K|B_V   , .func = ng_edit_kakutei_down}, // {改行}{↓}
+  {.key = B_J|B_K|B_T   , .func = ng_symbol_chuuten}, // ・
+  {.key = B_J|B_K|B_G   , .func = ng_edit_nijuu_yama_kakko}, // 《》{改行}{↑}
   {.key = B_J|B_K|B_B   , .func = ng_edit_kakutei_left}, // {改行}{←}
   {.key = B_C|B_V|B_Y   , .func = ng_edit_s_home}, // +{Home}
-  {.key = B_C|B_V|B_U   , .func = ng_cut}, // ^x
-  {.key = B_C|B_V|B_I   , .func = ng_paste}, // ^v
-  {.key = B_C|B_V|B_O   , .func = ng_redo}, // ^y
-  {.key = B_C|B_V|B_P   , .func = ng_undo}, // ^z
   {.key = B_C|B_V|B_H   , .func = ng_copy}, // ^c
-  {.key = B_C|B_V|B_J   , .func = ng_edit_1_right}, // {→}
-  {.key = B_C|B_V|B_K   , .func = ng_edit_s1_right}, // +{→}
-  {.key = B_C|B_V|B_L   , .func = ng_edit_s5_right}, // +{→ 5}
-  {.key = B_C|B_V|B_SCLN, .func = ng_edit_s20_right}, // +{→ 20}
   {.key = B_C|B_V|B_N   , .func = ng_edit_s_end}, // +{End}
+  {.key = B_C|B_V|B_U   , .func = ng_cut}, // ^x
+  {.key = B_C|B_V|B_J   , .func = ng_edit_1_right}, // {→}
   {.key = B_C|B_V|B_M   , .func = ng_edit_1_left}, // {←}
+  {.key = B_C|B_V|B_I   , .func = ng_paste}, // ^v
+  {.key = B_C|B_V|B_K   , .func = ng_edit_s1_right}, // +{→}
   {.key = B_C|B_V|B_COMM, .func = ng_edit_s1_left}, // +{←}
+  {.key = B_C|B_V|B_O   , .func = ng_redo}, // ^y
+  {.key = B_C|B_V|B_L   , .func = ng_edit_s5_right}, // +{→ 5}
   {.key = B_C|B_V|B_DOT , .func = ng_edit_s5_left}, // +{← 5}
+  {.key = B_C|B_V|B_P   , .func = ng_undo}, // ^z
+  {.key = B_C|B_V|B_SCLN, .func = ng_edit_s20_right}, // +{→ 20}
   {.key = B_C|B_V|B_SLSH, .func = ng_edit_s20_left}, // +{← 20}
   {.key = B_M|B_COMM|B_Q, .func = ng_edit_togaki_zengyo}, // {Home}{→}{End}{Del 4}{←}
-  {.key = B_M|B_COMM|B_W, .func = ng_edit_surround_nijuu_yama_gakko}, // ^x『^v』{改行}{Space}+{↑}^x
-  {.key = B_M|B_COMM|B_E, .func = ng_edit_togaki}, // {Home}{改行}{Space 3}{←}
-  {.key = B_M|B_COMM|B_R, .func = ng_edit_3_space}, // {Space 3}
-  {.key = B_M|B_COMM|B_T, .func = ng_symbol_maru}, // 〇{改行}
   {.key = B_M|B_COMM|B_A, .func = ng_edit_serifu_zengyo}, // {Home}{→}{End}{Del 2}{←}
-  {.key = B_M|B_COMM|B_S, .func = ng_edit_surround_maru_kakko}, // ^x(^v){改行}{Space}+{↑}^x
-  {.key = B_M|B_COMM|B_D, .func = ng_edit_serifu}, // {Home}{改行}{Space 1}{←}
-  {.key = B_M|B_COMM|B_F, .func = ng_edit_surround_kagi_kakko}, // ^x「^v」{改行}{Space}+{↑}^x
-  {.key = B_M|B_COMM|B_G, .func = ng_edit_surround_ruby}, // ^x｜{改行}^v《》{改行}{↑}{Space}+{↑}^x
   {.key = B_M|B_COMM|B_Z, .func = ng_edit_separate_line}, // 　　　×　　　×　　　×{改行 2}
+  {.key = B_M|B_COMM|B_W, .func = ng_edit_surround_nijuu_yama_gakko}, // ^x『^v』{改行}{Space}+{↑}^x
+  {.key = B_M|B_COMM|B_S, .func = ng_edit_surround_maru_kakko}, // ^x(^v){改行}{Space}+{↑}^x
   {.key = B_M|B_COMM|B_X, .func = ng_edit_surround_sumituki_kakko}, // ^x【^v】{改行}{Space}+{↑}^x
-  {.key = B_M|B_COMM|B_C, .func = ng_symbol_slash}, // ／{改行}
+  {.key = B_M|B_COMM|B_E, .func = ng_edit_togaki}, // {Home}{改行}{Space 3}{←}
+  {.key = B_M|B_COMM|B_D, .func = ng_edit_serifu}, // {Home}{改行}{Space 1}{←}
+  {.key = B_M|B_COMM|B_C, .func = ng_edit_slash}, // ／{改行}
+  {.key = B_M|B_COMM|B_R, .func = ng_edit_3_space}, // {Space 3}
+  {.key = B_M|B_COMM|B_F, .func = ng_edit_surround_kagi_kakko}, // ^x「^v」{改行}{Space}+{↑}^x
   {.key = B_M|B_COMM|B_V, .func = ng_edit_next_line_kagi_kakko}, // {改行}{End}{改行}「」{改行}{↑}
+  {.key = B_M|B_COMM|B_T, .func = ng_edit_maru}, // 〇{改行}
+  {.key = B_M|B_COMM|B_G, .func = ng_edit_surround_ruby}, // ^x｜{改行}^v《》{改行}{↑}{Space}+{↑}^x
   {.key = B_M|B_COMM|B_B, .func = ng_edit_next_line_space}, // {改行}{End}{改行}{Space}
 
   // ********** 2キー同時 **********
@@ -418,8 +419,6 @@ void set_naginata(uint8_t layer, uint16_t *onk, uint16_t *offk) {
 // 薙刀式をオン
 void naginata_on(void) {
   is_naginata = true;
-  // pushed_key = 0;
-  // naginata_clear();
   layer_on(naginata_layer);
 
   switch (naginata_config.os) {
@@ -449,7 +448,8 @@ void naginata_on(void) {
 // 薙刀式をオフ
 void naginata_off(void) {
   is_naginata = false;
-  pushed_key = 0;
+  pressed_key = 0;
+  center_shift_count = 0;
   naginata_clear();
   layer_off(naginata_layer);
 
@@ -457,14 +457,9 @@ void naginata_off(void) {
 #ifndef NG_BMP
     case NG_WIN:
     case NG_LINUX:
-      // Shift+Ctrl+変換 にIMEの確定を設定しておくこと
       // 確定→ひらがな→半角/全角
-      tap_code16(LSFT(LCTL(KC_HENK)));  // Shift+Ctrl+変換
-# ifdef USB_POLLING_INTERVAL_MS
-      wait_ms(USB_POLLING_INTERVAL_MS + 7); // 確実にIMEオフにするため 8ms 空ける
-# else
-      wait_ms(8); // 確実にIMEオフにするため
-# endif
+      tap_code16(LSFT(LCTL(KC_HENK))); // Shift+Ctrl+変換
+      wait_ms(8);
       tap_code(KC_KANA);  // ひらがな
       tap_code(KC_ZKHK);  // 半角/全角
       break;
@@ -474,9 +469,6 @@ void naginata_off(void) {
 #else
     case NG_WIN_BMP:
     case NG_LINUX_BMP:
-      // Shift+Ctrl+変換 にIMEの確定を設定しておくこと
-      // 確定→ひらがな→半角/全角
-      tap_code16(LSFT(LCTL(KC_HENK)));  // Shift+Ctrl+変換
       tap_code(KC_KANA);  // ひらがな
       tap_code(KC_ZKHK);  // 半角/全角
       break;
@@ -585,14 +577,14 @@ void ng_send_unicode_string_P(const char *str) {
 #endif
 
   switch (naginata_config.os) {
+    case NG_WIN:
+      send_unicode_string_P(str);
+      tap_code(KC_ENT);
+      break;
     case NG_LINUX:
       tap_code(KC_ZKHK);
       send_unicode_string_P(str);
       tap_code(KC_KANA);
-      break;
-    case NG_WIN:
-      send_unicode_string_P(str);
-      tap_code(KC_ENT);
       break;
     case NG_MAC:
 #ifndef NG_USE_KAWASEMI
@@ -764,12 +756,11 @@ bool process_naginata(uint16_t keycode, keyrecord_t *record) {
     uint8_t basic_keycode = keycode & 0xFF; // QK_MODS_GET_BASIC_KEYCODE(keycode);
     if (record->event.pressed && basic_keycode >= KC_A && basic_keycode <= KC_Z) {
       uint8_t mods = get_mods();
-      if ((mods & MOD_BIT(KC_LSFT)) == MOD_BIT(KC_LSFT) ||
-          (mods & MOD_BIT(KC_RSFT)) == MOD_BIT(KC_RSFT)) {
-        del_mods(mods);
+      if (mods == MOD_BIT(KC_LSFT) || mods == MOD_BIT(KC_RSFT)) {
+        clear_mods();
         naginata_type(KC_NO, record); // 未出力キーを処理
         naginata_off();
-        add_mods(mods);
+        set_mods(mods);
         return true;
       }
     }
@@ -808,8 +799,8 @@ bool ng_search_and_send(Ngkey searching_key) {
 
 // 押されているキーのどれかをシフトとするかな定義を探し、配列の添え字を返す
 // 見つからないと NGMAP_COUNT を返す
-Ngmap_num ng_search_with_rest_key(Ngkey searching_key, Ngkey pushed_key) {
-  // if (!(searching_key && pushed_key))  return NGMAP_COUNT;
+Ngmap_num ng_search_with_rest_key(Ngkey searching_key, Ngkey pressed_key) {
+  // if (!(searching_key && pressed_key))  return NGMAP_COUNT;
   Ngmap_num num = 0;
   for ( ; num < NGMAP_COUNT; num++) {
     Ngkey key;
@@ -819,7 +810,7 @@ Ngmap_num ng_search_with_rest_key(Ngkey searching_key, Ngkey pushed_key) {
     key = ngmap[num].key;
 #endif
     // 押しているキーに全て含まれ、今回のキーを含み、スペースを押さない定義を探す
-    if ((pushed_key & key) == key && (key & searching_key) == searching_key && !(key & B_SHFT)) {
+    if ((pressed_key & key) == key && (key & searching_key) == searching_key && !(key & B_SHFT)) {
       break;
     }
   }
@@ -864,7 +855,6 @@ void end_repeating_key(void) {
   }
 }
 
-static bool ng_pushed_spc = false, ng_pushed_ent = false;
 static uint8_t ng_center_keycode = KC_NO;
 enum RestShiftState { Stop, Checking, Once };
 
@@ -880,8 +870,8 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
   static uint_fast8_t waiting_count = 0; // 文字キーを数える
   static enum RestShiftState rest_shift_state = Stop;
 
-  Ngkey recent_key;  // 各ビットがキーに対応する
-  const bool pressed = record->event.pressed;
+  Ngkey recent_key = 0;  // 各ビットがキーに対応する
+  const bool pressing = record->event.pressed;
   bool store_key_later = false;
 
   switch (keycode) {
@@ -889,28 +879,28 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
       recent_key = ng_key[keycode - NG_Q];
       break;
     case NG_SHFT: // スペースキー
-      recent_key = B_SHFT;
-      ng_pushed_spc = pressed;
-      // センターキーの渡り対策
-      ng_center_keycode = pressed || ng_center_keycode == KC_SPACE ? KC_SPACE : KC_NO;
-      break;
     case NG_SHFT2:  // エンターキー
-      recent_key = B_SHFT;
-      ng_pushed_ent = pressed;
-      // センターキーの渡り対策
-      ng_center_keycode = pressed || ng_center_keycode == KC_ENTER ? KC_ENTER : KC_NO;
+      if (pressing) {
+        center_shift_count++;
+        recent_key = B_SHFT;
+        ng_center_keycode = (keycode == NG_SHFT ? KC_SPC : KC_ENT);
+      } else {
+        center_shift_count--;
+        if (!center_shift_count) {
+          recent_key = B_SHFT;
+        }
+      }
       break;
     default:
-      recent_key = 0;
       break;
   }
 
   // センターシフトの連続用
-  Ngkey contains_center_shift = pushed_key;
+  Ngkey contains_center_shift = pressed_key;
 
   // 薙刀式のキーを押した
-  if (pressed) {
-    pushed_key |= recent_key;  // キーを加える
+  if (pressing) {
+    pressed_key |= recent_key;  // キーを加える
 
 #ifdef NG_KOUCHI_SHIFT_MS
     // センターシフト(前置シフト限定か制限時間外の後置シフトの場合)
@@ -930,7 +920,7 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
 #endif
   }
   // 何かキーを押したか、リピート中のキーを離した時
-  if (pressed || (repeating_key & recent_key)) {
+  if (pressing || (repeating_key & recent_key)) {
     end_repeating_key();  // キーリピート解除
   }
 
@@ -946,7 +936,7 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
 
       // シフト復活処理
       if (rest_shift_state == Once) {
-        Ngmap_num num = ng_search_with_rest_key(searching_key, pushed_key);
+        Ngmap_num num = ng_search_with_rest_key(searching_key, pressed_key);
         if (num < NGMAP_COUNT) {
 #if defined(__AVR__)
           Ngkey key;
@@ -962,7 +952,7 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
       // (前置シフト限定でセンターシフトの時は全て出力する)
       if (searching_count == waiting_count && !store_key_later) {
         // 薙刀式のキーを押した時(同時押し定義の最大数に達していたら変換するため飛ばす)
-        if (pressed && recent_key && waiting_count < NKEYS) {
+        if (pressing && recent_key && waiting_count < NKEYS) {
           // 今押したキー以外の出力が済んでいるとシフト復活へ
           if (waiting_count == 1 && rest_shift_state == Checking) {
             rest_shift_state = Once;
@@ -980,7 +970,7 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
           }
         // キーを離した時は、そのキーが関わるところまで出力する
         // (薙刀式以外のキーを離したのなら出力しない)
-        } else if (!pressed && !(searching_key & recent_key)) {
+        } else if (!pressing && !(searching_key & recent_key)) {
           break;
         }
       }
@@ -1002,7 +992,7 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
         }
         searching_count = waiting_count;
         // キーを離したり、まだ探すキーが残ってたらキーリピートしない
-        if (!pressed || searching_count) {
+        if (!pressing || searching_count) {
           end_repeating_key();  // キーリピート解除
         // リピートするキーを保存
         } else {
@@ -1025,18 +1015,18 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
     // 配列に押したキーを保存
     waiting_keys[waiting_count++] = recent_key;
   // キーを離した時
-  } else if (!pressed) {
+  } else if (!pressing) {
 #ifdef NG_USE_SHIFT_WHEN_SPACE_UP
-    pushed_key &= ~recent_key; // キーを取り除く
+    pressed_key &= ~recent_key; // キーを取り除く
 #endif
-    // スペースを押していないなら次回、シフト復活可能
-    if (pushed_key & B_SHFT || !pushed_key) {
+    if (pressed_key & B_SHFT || !pressed_key) {
       rest_shift_state = Stop;
+    // スペースを押していないなら次回、シフト復活可能
     } else if (rest_shift_state != Once) {
       rest_shift_state = Checking;
     }
 #ifndef NG_USE_SHIFT_WHEN_SPACE_UP
-    pushed_key &= ~recent_key; // キーを取り除く
+    pressed_key &= ~recent_key; // キーを取り除く
 #endif
   }
 
@@ -1045,13 +1035,12 @@ bool naginata_type(uint16_t keycode, keyrecord_t *record) {
 
 void ng_space_or_enter(void) {
   if (ng_center_keycode == KC_NO) return;
-  if (ng_pushed_spc | ng_pushed_ent) {
-    add_mods(MOD_BIT(KC_LSFT));
-    tap_code(ng_center_keycode);
-    del_mods(MOD_BIT(KC_LSFT));
+  if (center_shift_count) {
+    tap_code16(LSFT(ng_center_keycode));
   } else {
     tap_code(ng_center_keycode);
   }
+  ng_center_keycode = KC_NO;
 }
 
 void ng_backspace_with_repeat(void) { // {BS}
@@ -1071,7 +1060,8 @@ void ng_cut() {
       tap_code16(LCTL(KC_X));
       break;
     case NG_LINUX:
-      tap_code16_delay(LCTL(KC_X), LINUX_WAIT_MS);
+      tap_code16(LCTL(KC_X));
+      wait_ms(LINUX_WAIT_MS);
       break;
     case NG_MAC:
       tap_code16(LCMD(KC_X));
@@ -1096,7 +1086,8 @@ void ng_copy() {
       tap_code16(LCTL(KC_C));
       break;
     case NG_LINUX:
-      tap_code16_delay(LCTL(KC_C), LINUX_WAIT_MS);
+      tap_code16(LCTL(KC_C));
+      wait_ms(LINUX_WAIT_MS);
       break;
     case NG_MAC:
       tap_code16(LCMD(KC_C));
@@ -1121,13 +1112,13 @@ void ng_paste() {
       tap_code16(LCTL(KC_V));
       break;
     case NG_LINUX:
-      tap_code16_delay(LCTL(KC_V), LINUX_WAIT_MS);
+      tap_code16(LCTL(KC_V));
+      wait_ms(LINUX_WAIT_MS);
       break;
     case NG_MAC:
       register_code(KC_LCMD);
       wait_ms(100);
-      tap_code(KC_V);
-      wait_ms(100);
+      tap_code_delay(KC_V, 100);
       unregister_code(KC_LCMD);
       wait_ms(100);
       break;
@@ -1278,7 +1269,8 @@ void ng_save() {
       tap_code16(LCTL(KC_S));
       break;
     case NG_LINUX:
-      tap_code16_delay(LCTL(KC_S), LINUX_WAIT_MS);
+      tap_code16(LCTL(KC_S));
+      wait_ms(LINUX_WAIT_MS);
       break;
     case NG_MAC:
       tap_code16(LCMD(KC_S));
@@ -1318,7 +1310,8 @@ void ng_redo() {
       tap_code16(LCTL(KC_Y));
       break;
     case NG_LINUX:
-      tap_code16_delay(LCTL(KC_Y), LINUX_WAIT_MS);
+      tap_code16(LCTL(KC_Y));
+      wait_ms(LINUX_WAIT_MS);
       break;
     case NG_MAC:
       tap_code16(LCMD(LSFT(KC_Z)));
@@ -1343,7 +1336,8 @@ void ng_undo() {
       tap_code16(LCTL(KC_Z));
       break;
     case NG_LINUX:
-      tap_code16_delay(LCTL(KC_Z), LINUX_WAIT_MS);
+      tap_code16(LCTL(KC_Z));
+      wait_ms(LINUX_WAIT_MS);
       break;
     case NG_MAC:
       tap_code16(LCMD(KC_Z));
@@ -1398,7 +1392,8 @@ void ng_eof() {
       tap_code16(LCTL(KC_END));
       break;
     case NG_LINUX:
-      tap_code16_delay(LCTL(KC_END), LINUX_WAIT_MS);
+      tap_code16(LCTL(KC_END));
+      wait_ms(LINUX_WAIT_MS);
       break;
     case NG_MAC:
       if (naginata_config.tategaki)
@@ -1408,8 +1403,6 @@ void ng_eof() {
       break;
 #else
     case NG_WIN_BMP:
-      tap_code16(LCTL(KC_END));
-      break;
     case NG_LINUX_BMP:
       tap_code16(LCTL(KC_END));
       break;
@@ -1455,12 +1448,9 @@ void ng_ime_complete() {
 #ifndef NG_BMP
   switch (naginata_config.os) {
     case NG_WIN:
-      tap_code16(LSFT(LCTL(KC_HENK)));  // Shift+Ctrl+変換
-      tap_code16(LSFT(LCTL(KC_HENK)));  // Shift+Ctrl+変換
-      break;
     case NG_LINUX:
-      tap_code(KC_ZKHK);  // 半角/全角
-      tap_code(KC_KANA);  // ひらがな
+      tap_code16(LSFT(LCTL(KC_HENK)));  // Shift+Ctrl+変換
+      tap_code16(LSFT(LCTL(KC_HENK)));  // Shift+Ctrl+変換
       break;
     case NG_MAC:
 # ifndef NG_USE_KAWASEMI
@@ -1484,13 +1474,9 @@ void ng_ime_complete() {
       tap_code(KC_KANA);  // ひらがな
       break;
     case NG_MAC_BMP:
-      tap_code(KC_LANG2); // (Mac)英数
-      tap_code(KC_LANG1); // (Mac)かな
-      break;
     case NG_IOS_BMP:
       tap_code(KC_LANG2); // (Mac)英数
       tap_code(KC_LANG1); // (Mac)かな
-      tap_code(KC_LCTL);  // ディレイの代わり
       break;
   }
 #endif
@@ -1501,11 +1487,7 @@ void dic_send_string(const char *str) {
   switch (naginata_config.os) {
     case NG_LINUX_BMP:
     case NG_IOS_BMP:
-      // ng_send_kana(str);
-      // tap_code(KC_LCTL); tap_code(KC_LSFT); tap_code(KC_LCTL); // ディレイの代わり
-      // tap_code(KC_SPC);
-      // tap_code(KC_ENT);
-      // tap_code(KC_LCTL); // ディレイの代わり
+      // 動作しないので省略
       break;
     default:
       ng_send_kana(str);
@@ -1519,13 +1501,7 @@ void dic_send_string_with_cut_paste(const char *str) {
   switch (naginata_config.os) {
     case NG_LINUX_BMP:
     case NG_IOS_BMP:
-      // ng_cut();
-      // dic_send_string(str);
-      // ng_up(1);     // 1文字戻る
-      // tap_code(KC_LCTL); tap_code(KC_LSFT); // ディレイの代わり
-      // ng_paste();
-      // tap_code(KC_LCTL); tap_code(KC_LSFT); // ディレイの代わり
-      // ng_down(1);   // 1文字進む
+      // 動作しないので省略
       break;
     default:
       ng_cut();

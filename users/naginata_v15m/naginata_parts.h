@@ -217,12 +217,12 @@ void ng_enter(void);        // {Enter}
 
 // 編集モード
 void ng_edit_tenten(void); // ……{改行}
-void ng_symbol_yokobou(void); // ――{改行}
-void ng_symbol_question(void); // ？{改行}
-void ng_symbol_exclaim(void); // ！{改行}
+void ng_edit_yokobou(void); // ――{改行}
+void ng_edit_question(void); // ？{改行}
+void ng_edit_exclaim(void); // ！{改行}
 void ng_symbol_chuuten(void); // ・
-void ng_symbol_slash(void); // ／{改行}
-void ng_symbol_maru(void); // 〇{改行}
+void ng_edit_slash(void); // ／{改行}
+void ng_edit_maru(void); // 〇{改行}
 
 void ng_edit_1_up(void); // {↑}
 void ng_edit_s1_up(void); // +{↑}

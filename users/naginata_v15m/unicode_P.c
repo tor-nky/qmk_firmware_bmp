@@ -37,10 +37,7 @@ void unicode_input_finish(void) {
             unregister_code(UNICODE_KEY_MAC);
             break;
         case UC_LNX:
-            tap_code(KC_SPC);
-#if (UNICODE_FINISH_DELAY_LINUX > TAP_CODE_DELAY)
-            wait_ms(UNICODE_FINISH_DELAY_LINUX - TAP_CODE_DELAY);
-#endif
+            tap_code_delay(KC_SPC, UNICODE_FINISH_DELAY_LINUX);
             if (unicode_saved_caps_lock) {
                 tap_code(KC_CAPS);
             }
